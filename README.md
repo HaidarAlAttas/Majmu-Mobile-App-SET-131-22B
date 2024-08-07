@@ -1,4 +1,4 @@
-# majmu
+# Majmu' Mobile App
 
 A new Flutter project.
 
