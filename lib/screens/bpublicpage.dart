@@ -23,17 +23,15 @@ class _BPublicPageState extends State<BPublicPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // nak bagi wallpaper masuk belakang app bar skali (extend body ngan pakai color transparent)
-        extendBodyBehindAppBar: true,
-
-        // body
-        body: Center(
-          child: Container(
-            
-          ),
-
-          // home page
+      backgroundColor: Colors.transparent,
+      // body
+      body: Center(
+        child: Container(
+          
         ),
-        );
+
+        // home page
+      ),
+    );
   }
 }

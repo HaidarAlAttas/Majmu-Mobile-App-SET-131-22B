@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_import
+// ignore_for_file: unused_import, prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:majmu/screens/bprivatepage.dart';
@@ -11,29 +11,18 @@ import 'package:majmu/theme/theme.dart';
 import 'package:majmu/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-class SettingPage extends StatefulWidget {
-  const SettingPage({super.key});
+class AlquranKareemPage extends StatefulWidget {
+  const AlquranKareemPage({super.key});
 
   @override
-  State<SettingPage> createState() => _SettingPageState();
+  State<AlquranKareemPage> createState() => _AlquranKareemPageState();
 }
 
-class _SettingPageState extends State<SettingPage> {
-
-  int currentIndex = 0;
+class _AlquranKareemPageState extends State<AlquranKareemPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.transparent,
-
-        // body
-        body: Center(
-          child: Container(
-            
-          ),
-
-          // home page
-        ),
-        );
+      appBar: AppBar(actions: [],),
+    );
   }
 }

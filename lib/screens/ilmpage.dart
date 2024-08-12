@@ -23,123 +23,14 @@ class _IlmPageState extends State<IlmPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // nak bagi wallpaper masuk belakang app bar skali (extend body ngan pakai color transparent)
-      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
 
       // body
       body: Center(
-          child:
+        child: Container(),
 
-              // home page
-              currentIndex == 0
-                  ? Container(
-                      // attribute for wallpaper
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          // Change wallpaper based on the setting (lightmode/darkmode)
-                          // need to test with xcode
-
-                          image: Provider.of<ThemeProvider>(context)
-                                      .themeData ==
-                                  lightmode
-                              ? AssetImage("assets/Lightwallpaper.png")
-                              : Provider.of<ThemeProvider>(context).themeData ==
-                                      darkmode
-                                  ? AssetImage("assets/Darkwallpaper.png")
-                                  : AssetImage("assets/Lightwallpaper.png"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    )
-                  :
-
-                  // go to public bookmark page
-                  currentIndex == 1
-                      ? BPublicPage()
-                      :
-
-                      // go to create post page
-                      currentIndex == 2
-                          ? CreatePostPage()
-                          :
-
-                          // go to Ilm Page
-                          currentIndex == 3
-                              ? SingleChildScrollView(
-                                  child: Scaffold(
-                                    appBar: AppBar(
-                                      title: Text(""),
-                                    ),
-                                  ),
-                                )
-                              :
-
-                              // go to setting page
-                              currentIndex == 4
-                                  ? SettingPage()
-                                  :
-
-                                  // stays at home page
-                                  HomePage()),
-
-      // navigationbar
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        backgroundColor: Colors.transparent,
-
-        // to change pages
-        onTap: (int index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-
-        iconSize: 47,
-
-        // to remove shadow under bottom navigation bar
-        elevation: 0,
-
-        // to make sure bottom navigation bar muat 5 item
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            label: "",
-            icon: Icon(
-              Icons.home_rounded,
-              color: Colors.black,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: "",
-            icon: Icon(
-              Icons.menu_book_rounded,
-              color: Colors.black,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: "",
-            icon: Icon(
-              Icons.add_circle_rounded,
-              color: Colors.black,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: "",
-            icon: Icon(
-              Icons.newspaper,
-              color: Colors.black,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: "",
-            icon: Icon(
-              Icons.settings,
-              color: Colors.black,
-            ),
-          ),
-        ],
+        // home page
       ),
-      extendBody: true,
     );
   }
 }

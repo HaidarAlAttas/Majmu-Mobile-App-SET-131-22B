@@ -1,4 +1,7 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
+import 'package:majmu/content/alqurankareempage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
 import 'package:majmu/screens/homepage.dart';
@@ -11,10 +14,12 @@ import 'package:majmu/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-    create: (context) => ThemeProvider(),
-    child: const MyApp(),
-  ));
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -30,11 +35,17 @@ class MyApp extends StatelessWidget {
         "/home": (context) => const HomePage(),
         "/bpublic": (context) => const BPublicPage(),
         "/createp": (context) => const CreatePostPage(),
-        "/ilm": (context) => const IlmPage(),
-        "/setting": (context) => const SettingPage(),
+        "/ilmp": (context) => const IlmPage(),
+        "/settingp": (context) => const SettingPage(),
         "/profilep": (context) => const ProfilePage(),
         "/searchp": (context) => const SearchPage(),
+
+
+        // content routes
+        "/alqurankareemp": (context) => const AlquranKareemPage(),
       },
+
+      
       debugShowCheckedModeBanner: false,
     );
   }

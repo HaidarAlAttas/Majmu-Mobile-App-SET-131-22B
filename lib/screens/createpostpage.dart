@@ -24,8 +24,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // nak bagi wallpaper masuk belakang app bar skali (extend body ngan pakai color transparent)
-        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.transparent,
 
         // body
         body: Center(
