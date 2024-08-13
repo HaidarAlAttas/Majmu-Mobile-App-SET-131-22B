@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Navigator.of(context).pushNamed("");
+                                    Navigator.of(context).pushNamed("/dailyinvocationsp");
                                   });
                                 },
                                 child: Container(
@@ -239,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Navigator.of(context).pushNamed("");
+                                    Navigator.of(context).pushNamed("/fridaysupplicationsp");
                                   });
                                 },
                                 child: Container(
@@ -261,7 +261,7 @@ class _HomePageState extends State<HomePage> {
                                     children: <Widget>[
                                       // Black stroke text
                                       Text(
-                                        "Friday Supplication",
+                                        "Friday Supplications",
                                         style: TextStyle(
                                           fontSize: contentfontSize,
                                           foreground: Paint()
@@ -272,7 +272,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       // White fill text
                                       Text(
-                                        "Friday Supplication",
+                                        "Friday Supplications",
                                         style: TextStyle(
                                           fontSize: contentfontSize,
                                           color: Colors
@@ -291,7 +291,7 @@ class _HomePageState extends State<HomePage> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Navigator.of(context).pushNamed("");
+                                    Navigator.of(context).pushNamed("/islamiceventsp");
                                   });
                                 },
                                 child: Container(
@@ -343,7 +343,7 @@ class _HomePageState extends State<HomePage> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Navigator.of(context).pushNamed("");
+                                    Navigator.of(context).pushNamed("/ziyarahp");
                                   });
                                 },
                                 child: Container(
@@ -399,7 +399,7 @@ class _HomePageState extends State<HomePage> {
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        Navigator.of(context).pushNamed("");
+                                        Navigator.of(context).pushNamed("/protectionprayersp");
                                       });
                                     },
                                     child: Container(
@@ -451,7 +451,7 @@ class _HomePageState extends State<HomePage> {
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        Navigator.of(context).pushNamed("");
+                                        Navigator.of(context).pushNamed("/biographiesnreferencep");
                                       });
                                     },
                                     child: Container(
