@@ -20,7 +20,7 @@ class CreatePostPage extends StatefulWidget {
 
 class _CreatePostPageState extends State<CreatePostPage> {
 
-  int currentIndex = 0;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

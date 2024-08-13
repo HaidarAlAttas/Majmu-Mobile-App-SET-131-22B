@@ -20,7 +20,7 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
 
-  int currentIndex = 0;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

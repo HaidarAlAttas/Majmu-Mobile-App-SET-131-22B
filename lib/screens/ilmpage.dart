@@ -19,7 +19,7 @@ class IlmPage extends StatefulWidget {
 }
 
 class _IlmPageState extends State<IlmPage> {
-  int currentIndex = 0;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
