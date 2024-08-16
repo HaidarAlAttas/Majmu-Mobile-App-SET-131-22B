@@ -1,13 +1,13 @@
 // ignore_for_file: unused_import
 
 import 'package:flutter/material.dart';
-import 'package:majmu/content/alqurankareempage.dart';
-import 'package:majmu/content/biographiesnreferencepage.dart';
-import 'package:majmu/content/dailyinvocationspage.dart';
-import 'package:majmu/content/fridaysupplicationspage.dart';
-import 'package:majmu/content/islamiceventspage.dart';
-import 'package:majmu/content/protectionprayerspage.dart';
-import 'package:majmu/content/ziyarahpage.dart';
+import 'package:majmu/screens/content/alqurankareempage.dart';
+import 'package:majmu/screens/content/biographiesnreferencepage.dart';
+import 'package:majmu/screens/content/dailyinvocationspage.dart';
+import 'package:majmu/screens/content/fridaysupplicationspage.dart';
+import 'package:majmu/screens/content/islamiceventspage.dart';
+import 'package:majmu/screens/content/protectionprayerspage.dart';
+import 'package:majmu/screens/content/ziyarahpage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
 import 'package:majmu/screens/homepage.dart';
