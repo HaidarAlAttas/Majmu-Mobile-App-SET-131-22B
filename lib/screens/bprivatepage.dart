@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:majmu/screens/docscan.dart';
+import 'package:majmu/screens/camera.dart';
 
 
 class BPrivatePage extends StatefulWidget {
