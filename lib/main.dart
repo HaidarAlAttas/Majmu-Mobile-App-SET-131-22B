@@ -10,6 +10,7 @@ import 'package:majmu/screens/content/protectionprayerspage.dart';
 import 'package:majmu/screens/content/ziyarahpage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
+import 'package:majmu/screens/docscan.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/screens/ilmpage.dart';
 import 'package:majmu/screens/profilepage.dart';
@@ -57,6 +58,9 @@ class MyApp extends StatelessWidget {
         "/ziyarahp": (context) => const ZiyarahPage(),
         "/protectionprayersp": (context) => const ProtectionPrayersPage(),
         "/biographiesnreferencep": (context) => const BiographiesnReferencePage(),
+
+        // camera routes
+        "/docscan" : (context) => const DocScan(),
 
       },
 

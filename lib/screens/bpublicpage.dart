@@ -60,7 +60,7 @@ class _BPublicPageState extends State<BPublicPage> {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: Color.fromARGB(255, 119, 196, 122),
+              color: Color.fromARGB(255, 201, 218, 162),
               border: Border.all(color: Colors.black, width: 2),
             ),
             child: Row(
