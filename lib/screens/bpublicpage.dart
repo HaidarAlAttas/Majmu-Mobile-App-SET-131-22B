@@ -106,7 +106,7 @@ class _BPublicPageState extends State<BPublicPage> {
         child: Container(
           child: Column(
             children: [
-              // container for public and private bookmark
+              // container for public and private bookmark navigator
               Padding(
                 padding:
                     const EdgeInsets.only(right: 20.0, left: 20.0, bottom: 30),

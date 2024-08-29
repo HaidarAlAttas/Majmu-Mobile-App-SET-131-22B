@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:majmu/screens/camera.dart';
 
 
 class BPrivatePage extends StatefulWidget {
@@ -28,7 +27,6 @@ class _BPrivatePageState extends State<BPrivatePage> {
           // box design
           child: Container(
             width: 400,
-            height: 300,
             padding: EdgeInsets.only(top: 20, bottom: 20, left: 8, right: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
@@ -51,11 +49,14 @@ class _BPrivatePageState extends State<BPrivatePage> {
                     height: 240,
                     width: 160,
                     fit: BoxFit.cover,
+                    
+                    // demo file image
                     image: AssetImage("assets/RatibAlattas.jpg"),
                   ),
                 ),
 
                 // for title, date created, and descriptions of the bookmark
+                // demo file description
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,

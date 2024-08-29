@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, no_leading_underscores_for_local_identifiers, avoid_print
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -85,9 +85,9 @@ class _CameraScanState extends State<CameraScan> with WidgetsBindingObserver {
                   );
                 },
                 icon: const Icon(
-                  size: 100,
-                  Icons.camera,
-                  color: Colors.red,
+                  size: 50,
+                  Icons.camera_alt_rounded,
+                  color: Colors.black,
                 ))
           ],
         ),
