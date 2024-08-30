@@ -10,7 +10,7 @@ import 'package:majmu/screens/content/protectionprayerspage.dart';
 import 'package:majmu/screens/content/ziyarahpage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
-import 'package:majmu/screens/camera.dart';
+import 'package:majmu/screens/camerascan.dart';
 import 'package:majmu/screens/docscan.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/screens/ilmpage.dart';
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const HomePage(),
+      home: HomePage(),
       theme: Provider.of<ThemeProvider>(context).themeData,
       routes: {
 
@@ -46,8 +46,6 @@ class MyApp extends StatelessWidget {
         "/bpublic": (context) => const BPublicPage(),
         "/createp": (context) => const CreatePostPage(),
         "/ilmp": (context) => const IlmPage(),
-        "/settingp": (context) => const SettingPage(),
-        "/profilep": (context) => const ProfilePage(),
         "/searchp": (context) => const SearchPage(),
 
 

@@ -5,6 +5,7 @@ import 'package:majmu/screens/bprivatepage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
 import 'package:majmu/screens/ilmpage.dart';
+import 'package:majmu/screens/profilepage.dart';
 import 'package:majmu/screens/settingpage.dart';
 import 'package:majmu/theme/theme.dart';
 import 'package:majmu/theme/theme_provider.dart';
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage> {
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    Navigator.of(context).pushNamed("/profilep");
+                    profileDialog(context);
                   });
                 },
                 child: Icon(
@@ -127,15 +128,14 @@ class _HomePageState extends State<HomePage> {
                     ? Container(
                         child: Column(
                           children: [
-
-
                             // Alquran Kareem content button
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Navigator.of(context).pushNamed("/alqurankareemp");
+                                    Navigator.of(context)
+                                        .pushNamed("/alqurankareemp");
                                   });
                                 },
                                 child: Container(
@@ -187,7 +187,8 @@ class _HomePageState extends State<HomePage> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Navigator.of(context).pushNamed("/dailyinvocationsp");
+                                    Navigator.of(context)
+                                        .pushNamed("/dailyinvocationsp");
                                   });
                                 },
                                 child: Container(
@@ -239,7 +240,8 @@ class _HomePageState extends State<HomePage> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Navigator.of(context).pushNamed("/fridaysupplicationsp");
+                                    Navigator.of(context)
+                                        .pushNamed("/fridaysupplicationsp");
                                   });
                                 },
                                 child: Container(
@@ -291,7 +293,8 @@ class _HomePageState extends State<HomePage> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Navigator.of(context).pushNamed("/islamiceventsp");
+                                    Navigator.of(context)
+                                        .pushNamed("/islamiceventsp");
                                   });
                                 },
                                 child: Container(
@@ -343,15 +346,15 @@ class _HomePageState extends State<HomePage> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    Navigator.of(context).pushNamed("/ziyarahp");
+                                    Navigator.of(context)
+                                        .pushNamed("/ziyarahp");
                                   });
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     image: DecorationImage(
                                       fit: BoxFit.fitWidth,
-                                      image: AssetImage(
-                                          "assets/ziyarah.jpg"),
+                                      image: AssetImage("assets/ziyarah.jpg"),
                                     ),
                                     borderRadius:
                                         BorderRadius.circular(borderRadius),
@@ -395,11 +398,13 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 // Protection prayers content button
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 23.0, right: 8),
+                                  padding: const EdgeInsets.only(
+                                      left: 23.0, right: 8),
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        Navigator.of(context).pushNamed("/protectionprayersp");
+                                        Navigator.of(context)
+                                            .pushNamed("/protectionprayersp");
                                       });
                                     },
                                     child: Container(
@@ -451,11 +456,11 @@ class _HomePageState extends State<HomePage> {
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        Navigator.of(context).pushNamed("/biographiesnreferencep");
+                                        Navigator.of(context).pushNamed(
+                                            "/biographiesnreferencep");
                                       });
                                     },
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
                                           fit: BoxFit.fitWidth,
@@ -470,7 +475,6 @@ class _HomePageState extends State<HomePage> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(23.0),
                                         child: Stack(
-                                          
                                           children: <Widget>[
                                             // Black stroke text
                                             Text(
@@ -482,7 +486,6 @@ class _HomePageState extends State<HomePage> {
                                                   ..strokeWidth = strokeWidth
                                                   ..color = Colors.black,
                                               ),
-                                              
                                             ),
                                             // White fill text
                                             Text(
@@ -521,10 +524,6 @@ class _HomePageState extends State<HomePage> {
                                 ? IlmPage()
                                 :
 
-                                // go to setting page
-                                currentIndex == 4
-                                    ? SettingPage()
-                                    :
 
                                     // stays at home page
                                     HomePage()),
@@ -579,13 +578,21 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.black,
               ),
             ),
+
+            // Setting buttons logic
             BottomNavigationBarItem(
               label: "",
-              icon: Icon(
-                Icons.settings,
-                color: Colors.black,
+              icon: GestureDetector(
+                // if clicked
+                onTap: () {
+                  // go to the setting page
+                  settingsDialog(context);
+                },
+                child: Icon(
+                  Icons.settings,
+                  color: Colors.black,
+                ),
               ),
-              
             ),
           ],
         ),

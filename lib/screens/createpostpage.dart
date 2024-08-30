@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:majmu/screens/bprivatepage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
+import 'package:majmu/screens/camerascan.dart';
 import 'package:majmu/screens/createpostpage.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/screens/ilmpage.dart';
@@ -171,7 +172,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                             GestureDetector(
                               // to display the photos (create by 25/8)
                               onTap: () {
-                                setState(() {});
+                                setState(() {
+                                  Navigator.pushNamed(context, "/camerascan");
+                                });
                               },
 
                               // photo icon
@@ -183,7 +186,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                             GestureDetector(
                               // to display the location (create by 25/8)
                               onTap: () {
-                                setState(() {});
+                                setState(() {
+                                  
+                                });
                               },
 
                               // location icon

@@ -1,11 +1,11 @@
-// ignore_for_file: unused_import, prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: unused_import
 
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
-
-
-// masukkan document scanner package here
-// continue 23/8 && 24/8
 
 class DocScan extends StatefulWidget {
   const DocScan({super.key});
@@ -23,8 +23,9 @@ class _DocScanState extends State<DocScan> {
     initPlatformState();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {}
+  Future<void> initPlatformState() async {
+    // Initialize the document scanner if needed
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,29 +33,78 @@ class _DocScanState extends State<DocScan> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Scanning demo'),
+          title: const Text('Scanning Demo'),
         ),
         body: SingleChildScrollView(
-            child: Column(
-          children: [
-            
-          ],
-        )),
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: onPressed,
+                child: const Text('Scan Document'),
+              ),
+              ElevatedButton(
+                onPressed: saveAsPDF,
+                child: const Text('Save as PDF'),
+              ),
+              _pictures.isEmpty
+                  ? const Text('No pictures scanned yet.')
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _pictures.length,
+                      itemBuilder: (context, index) {
+                        return Image.file(
+                          File(_pictures[index]),
+                          width: MediaQuery.of(context).size.width,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   void onPressed() async {
-    List<String> pictures;
     try {
-      pictures = await CunningDocumentScanner.getPictures() ?? [];
+      List<String> scannedImages =
+          await CunningDocumentScanner.getPictures() ?? [];
       if (!mounted) return;
+
       setState(() {
-        _pictures = pictures;
+        _pictures = scannedImages;
       });
     } catch (exception) {
-      // Handle exception here
+      print('Error: $exception');
+    }
+  }
+
+  Future<void> saveAsPDF() async {
+    final pdf = pw.Document();
+    final directory = await getApplicationDocumentsDirectory();
+    final pdfFilePath =
+        '${directory.path}/scanned_document_${DateTime.now().millisecondsSinceEpoch}.pdf';
+
+    try {
+      for (String imagePath in _pictures) {
+        final imageBytes = await File(imagePath).readAsBytes();
+        final pdfImage = pw.MemoryImage(imageBytes);
+
+        pdf.addPage(
+          pw.Page(
+            build: (pw.Context context) => pw.Image(pdfImage),
+          ),
+        );
+      }
+
+      final outputFile = File(pdfFilePath);
+      await outputFile.writeAsBytes(await pdf.save());
+
+      print('PDF saved at $pdfFilePath');
+    } catch (e) {
+      print('Error saving PDF: $e');
     }
   }
 }
-
