@@ -40,14 +40,12 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       theme: Provider.of<ThemeProvider>(context).themeData,
       routes: {
-
         // main routes
         "/home": (context) => const HomePage(),
         "/bpublic": (context) => const BPublicPage(),
         "/createp": (context) => const CreatePostPage(),
         "/ilmp": (context) => const IlmPage(),
         "/searchp": (context) => const SearchPage(),
-
 
         // content routes
         "/alqurankareemp": (context) => const AlquranKareemPage(),
@@ -56,15 +54,13 @@ class MyApp extends StatelessWidget {
         "/islamiceventsp": (context) => const IslamicEventsPage(),
         "/ziyarahp": (context) => const ZiyarahPage(),
         "/protectionprayersp": (context) => const ProtectionPrayersPage(),
-        "/biographiesnreferencep": (context) => const BiographiesnReferencePage(),
+        "/biographiesnreferencep": (context) =>
+            const BiographiesnReferencePage(),
 
         // camera routes
-        "/docscan" : (context) => const DocScan(),
+        "/docscan": (context) => const DocScan(),
         "/camerascan": (context) => const CameraScan(),
-
       },
-
-      
       debugShowCheckedModeBanner: false,
     );
   }
