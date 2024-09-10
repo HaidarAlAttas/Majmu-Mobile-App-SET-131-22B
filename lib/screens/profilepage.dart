@@ -70,6 +70,7 @@ Future profileDialog(BuildContext context) {
                     GestureDetector(
                       onTap: () {
                         // Implement your logic here
+                        Navigator.pushNamed(context, "/editprofilep");
                       },
                       child: Container(
                         width: 330,
@@ -124,6 +125,7 @@ Future profileDialog(BuildContext context) {
                     GestureDetector(
                       onTap: () {
                         // Implement your logic here
+                        Navigator.pushNamed(context, "/yourpostsp");
                       },
                       child: Container(
                         width: 330,
@@ -178,6 +180,7 @@ Future profileDialog(BuildContext context) {
                     GestureDetector(
                       onTap: () {
                         // Implement your logic here
+                        Navigator.pushNamed(context, "/logoutp");
                       },
                       child: Container(
                         width: 330,

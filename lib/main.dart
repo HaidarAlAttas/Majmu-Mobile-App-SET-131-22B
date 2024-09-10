@@ -14,9 +14,16 @@ import 'package:majmu/screens/camerascan.dart';
 import 'package:majmu/screens/docscan.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/screens/ilmpage.dart';
+import 'package:majmu/screens/profile/editprofilepage.dart';
+import 'package:majmu/screens/profile/logoutpage.dart';
+import 'package:majmu/screens/profile/yourpostspage.dart';
 import 'package:majmu/screens/profilepage.dart';
 import 'package:majmu/screens/searchpage.dart';
 import 'package:majmu/screens/settingpage.dart';
+import 'package:majmu/screens/settings/accountpage.dart';
+import 'package:majmu/screens/settings/customerservicepage.dart';
+import 'package:majmu/screens/settings/storagendatapage.dart';
+import 'package:majmu/screens/settings/themepage.dart';
 import 'package:majmu/theme/theme.dart';
 import 'package:majmu/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -60,6 +67,18 @@ class MyApp extends StatelessWidget {
         // camera routes
         "/docscan": (context) => const DocScan(),
         "/camerascan": (context) => const CameraScan(),
+
+        // settings route
+        "/storagep": (context) => const StorageAndDataPage(),
+        "/customerservp": (context) => const CustomerServicePage(),
+        "/accountp": (context) => const AccountPage(),
+        "/themep": (context) => const ThemePage(),
+
+        // profile page route
+
+        "/editprofilep": (context) => const EditProfilePage(),
+        "/logoutp": (context) => const LogoutPage(),
+        "/yourpostsp": (context) => const YourPostsPage(),
       },
       debugShowCheckedModeBanner: false,
     );
