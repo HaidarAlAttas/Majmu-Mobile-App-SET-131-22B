@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_import, avoid_unnecessary_containers, sized_box_for_whitespace, dead_code
 import 'package:flutter/material.dart';
+import 'package:majmu/screens/profilepage.dart';
 import 'package:majmu/screens/searchpage.dart';
 
 // Create a dialog for settings
@@ -70,7 +71,7 @@ Future settingsDialog(BuildContext context) {
                       onTap: () {
                         // Implement your logic here
                         // demo
-                        Navigator.pushNamed(context, "/searchp");
+                        Navigator.pushNamed(context, "/biographiesnreferencep");
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -125,6 +126,7 @@ Future settingsDialog(BuildContext context) {
                     GestureDetector(
                       onTap: () {
                         // Implement your logic here
+                        profileDialog(context);
                       },
                       child: Container(
                         width: 330,
@@ -192,6 +194,7 @@ Future settingsDialog(BuildContext context) {
                   GestureDetector(
                     onTap: () {
                       // Implement your logic here
+                      Navigator.pushNamed(context, "/storagep");
                     },
                     child: Container(
                       width: 330,
@@ -244,6 +247,7 @@ Future settingsDialog(BuildContext context) {
                   GestureDetector(
                     onTap: () {
                       // Implement your logic here
+                      Navigator.pushNamed(context, "/themep");
                     },
                     child: Container(
                       width: 330,
@@ -296,6 +300,7 @@ Future settingsDialog(BuildContext context) {
                   GestureDetector(
                     onTap: () {
                       // Implement your logic here
+                      Navigator.pushNamed(context, "/customerservp");
                     },
                     child: Container(
                       width: 330,

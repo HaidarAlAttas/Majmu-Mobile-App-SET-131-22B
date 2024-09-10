@@ -11,14 +11,14 @@ import 'package:majmu/theme/theme.dart';
 import 'package:majmu/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-class AccountPage extends StatefulWidget {
-  const AccountPage({super.key});
+class LogoutPage extends StatefulWidget {
+  const LogoutPage({super.key});
 
   @override
-  State<AccountPage> createState() => _AccountPageState();
+  State<LogoutPage> createState() => _LogoutPageState();
 }
 
-class _AccountPageState extends State<AccountPage> {
+class _LogoutPageState extends State<LogoutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -21,6 +21,10 @@ class DailyInvocationsPage extends StatefulWidget {
 class _DailyInvocationsPageState extends State<DailyInvocationsPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(actions: [],),);
+    return Scaffold(
+      appBar: AppBar(
+        actions: [],
+      ),
+    );
   }
 }

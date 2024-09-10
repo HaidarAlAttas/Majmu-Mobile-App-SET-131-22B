@@ -55,14 +55,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       GestureDetector(
                         // if clicked
                         onTap: () {
-                          setState(() {});
+                          setState(() {
+                            _post.clear();
+                          });
                         },
 
                         child: Text(
                           "Cancel",
                           style: TextStyle(
                             fontWeight: FontWeight.w900,
-                            color: Colors.black,
+                            color: Colors.red,
                           ),
                         ),
                       ),
@@ -186,9 +188,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                             GestureDetector(
                               // to display the location (create by 25/8)
                               onTap: () {
-                                setState(() {
-                                  
-                                });
+                                setState(() {});
                               },
 
                               // location icon
