@@ -22,7 +22,12 @@ class CreatePostPage extends StatefulWidget {
 class _CreatePostPageState extends State<CreatePostPage> {
   @override
   Widget build(BuildContext context) {
+    // post input
     TextEditingController _post = TextEditingController();
+
+    // variable to make it compatible with devices
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return SafeArea(
       child: Column(
@@ -30,8 +35,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
         children: [
           Container(
             // design of the baseline for the create content
-            width: 400,
-            height: 470,
+            width: screenWidth * 0.96,
+            height: screenHeight * 0.6,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(9),
@@ -46,8 +51,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
               children: [
                 // cancel and post button
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 8, right: 8, top: 8, bottom: 20),
+                  padding: EdgeInsets.only(
+                    top: screenHeight * 0.01,
+                    bottom: screenHeight * 0.02,
+                    left: screenWidth * 0.02,
+                    right: screenWidth * 0.02,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -65,6 +74,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           style: TextStyle(
                             fontWeight: FontWeight.w900,
                             color: Colors.red,
+                            fontSize: screenWidth * 0.035,
                           ),
                         ),
                       ),
@@ -72,11 +82,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       // Post button
                       GestureDetector(
                         // if clicked
-                        onTap: () {
+                        onTap: () async {
                           setState(() {});
                         },
                         child: Container(
-                          width: 50,
+                          width: screenWidth * 0.16,
                           decoration: BoxDecoration(
                             color: Colors.green,
                             borderRadius: BorderRadius.circular(10),
@@ -87,6 +97,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w900,
+                                fontSize: screenWidth * 0.037,
                               ),
                             ),
                           ),
@@ -106,8 +117,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
                         child: Container(
-                          width: 30,
-                          height: 30,
+                          width: screenWidth * 0.09,
+                          height: screenHeight * 0.04,
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
@@ -120,17 +131,24 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
                       // textfield to insert content
                       Container(
-                        height: 360,
-                        width: 340,
+                        height: screenHeight * 0.45,
+                        width: screenWidth * 0.8,
                         child: TextField(
                           // controller
                           controller: _post,
+
+                          // cursor color
+                          cursorColor: Colors.black,
+
+                          // no maxline
                           maxLines:
                               null, // Allows the TextField to have unlimited lines
+
+                          // distance between borders and the input
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0,
-                              horizontal: 10.0,
+                              vertical: screenHeight * 0.015,
+                              horizontal: screenWidth * 0.02,
                             ),
 
                             // hint text configuration
@@ -138,6 +156,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                             hintStyle: TextStyle(
                               fontWeight: FontWeight.w900,
                             ),
+
+                            // remove lines on textfield
                             border: InputBorder.none,
                           ),
 
@@ -159,8 +179,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8),
                       child: Container(
-                        height: 50,
-                        width: 380,
+                        height: screenHeight * 0.05,
+                        width: screenWidth * 0.9,
                         decoration: BoxDecoration(
                           border: Border(
                             // to make one line on the top of container
@@ -182,7 +202,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                               // photo icon
                               child: Icon(
                                 Icons.photo_size_select_actual_rounded,
-                                size: 30,
+                                size: screenWidth * 0.08,
                               ),
                             ),
                             GestureDetector(
@@ -194,7 +214,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                               // location icon
                               child: Icon(
                                 Icons.add_location_alt_rounded,
-                                size: 30,
+                                size: screenWidth * 0.08,
                               ),
                             )
                           ],

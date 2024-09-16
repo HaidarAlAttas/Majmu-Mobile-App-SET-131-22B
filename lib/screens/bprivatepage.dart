@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-
 class BPrivatePage extends StatefulWidget {
   const BPrivatePage({super.key});
 
@@ -13,8 +12,13 @@ class BPrivatePage extends StatefulWidget {
 class _BPrivatePageState extends State<BPrivatePage> {
   @override
   Widget build(BuildContext context) {
+    // variable to make it compatible with devices
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     // create method to apply a blueprint for the bookmarks (public)
 
+    // private content box
     Widget PrivateContent() {
       return GestureDetector(
         // action to do after clicked
@@ -26,8 +30,12 @@ class _BPrivatePageState extends State<BPrivatePage> {
 
           // box design
           child: Container(
-            width: 400,
-            padding: EdgeInsets.only(top: 20, bottom: 20, left: 8, right: 8),
+            width: screenWidth * 0.94,
+            padding: EdgeInsets.only(
+                top: screenHeight * 0.02,
+                bottom: screenHeight * 0.02,
+                left: screenWidth * 0.02,
+                right: screenWidth * 0.02),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               color: Color.fromARGB(255, 201, 218, 162),
@@ -46,10 +54,10 @@ class _BPrivatePageState extends State<BPrivatePage> {
                     width: 2,
                   )),
                   child: Image(
-                    height: 240,
-                    width: 160,
+                    height: screenHeight * 0.26,
+                    width: screenWidth * 0.37,
                     fit: BoxFit.cover,
-                    
+
                     // demo file image
                     image: AssetImage("assets/RatibAlattas.jpg"),
                   ),
@@ -61,27 +69,33 @@ class _BPrivatePageState extends State<BPrivatePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // title
+                    //  demo title
                     Text(
                       "Ratib Alattas.pdf",
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: screenWidth * 0.05,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
 
-                    // date n time
+                    // demo date n time
                     Text(
                       "created: 2/3/2024",
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: screenWidth * 0.04,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
 
-                    // description
+                    // demo description
                     Text(
                       "Description: \n- Daily dua' \n- After Maghrib's prayer",
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.036,
+                      ),
                     ),
                   ],
                 ),
@@ -105,15 +119,19 @@ class _BPrivatePageState extends State<BPrivatePage> {
 
         // box design
         child: Container(
-          width: 400,
-          height: 300,
-          padding: EdgeInsets.only(top: 20, bottom: 20, left: 8, right: 8),
+          width: screenWidth * 0.94,
+          height: screenHeight * 0.29,
+          padding: EdgeInsets.only(
+              top: screenHeight * 0.02,
+              bottom: screenHeight * 0.02,
+              left: screenWidth * 0.02,
+              right: screenWidth * 0.02),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: Color.fromARGB(255, 201, 218, 162),
             border: Border.all(color: Colors.black, width: 2),
           ),
-   
+
           // add logo and title
 
           child: Column(
@@ -126,10 +144,7 @@ class _BPrivatePageState extends State<BPrivatePage> {
               ),
               Text(
                 "Add New",
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 20
-                ),
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20),
               ),
             ],
           ),
@@ -138,9 +153,8 @@ class _BPrivatePageState extends State<BPrivatePage> {
     }
 
     // page base
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8.0, right: 8.0, left: 8.0),
+    return SafeArea(
+      child: SingleChildScrollView(
         child: Column(
           children: [
             PrivateContent(),

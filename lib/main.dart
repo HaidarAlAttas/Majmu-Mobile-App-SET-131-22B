@@ -1,6 +1,10 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, prefer_const_constructors
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:majmu/firebase_options.dart';
+import 'package:majmu/screens/auth/registerpage.dart';
+import 'package:majmu/screens/auth/loginpage.dart';
 import 'package:majmu/screens/content/alqurankareempage.dart';
 import 'package:majmu/screens/content/biographiesnreferencepage.dart';
 import 'package:majmu/screens/content/dailyinvocationspage.dart';
@@ -24,17 +28,18 @@ import 'package:majmu/screens/settings/accountpage.dart';
 import 'package:majmu/screens/settings/customerservicepage.dart';
 import 'package:majmu/screens/settings/storagendatapage.dart';
 import 'package:majmu/screens/settings/themepage.dart';
+import 'package:majmu/screens/splashscreen.dart';
 import 'package:majmu/theme/theme.dart';
 import 'package:majmu/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
-      child: const MyApp(),
-    ),
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -44,10 +49,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(),
-      theme: Provider.of<ThemeProvider>(context).themeData,
+      home: SplashScreen(),
       routes: {
-        // main routes
+        // authentication routes
+        "/registerp": (context) => const RegisterPage(),
+        "/loginp": (context) => const LoginPage(),
+
+        // main app routes
+        "/splash": (context) => const SplashScreen(),
         "/home": (context) => const HomePage(),
         "/bpublic": (context) => const BPublicPage(),
         "/createp": (context) => const CreatePostPage(),
@@ -75,11 +84,12 @@ class MyApp extends StatelessWidget {
         "/themep": (context) => const ThemePage(),
 
         // profile page route
-
         "/editprofilep": (context) => const EditProfilePage(),
         "/logoutp": (context) => const LogoutPage(),
         "/yourpostsp": (context) => const YourPostsPage(),
       },
+
+      // remove demo sign
       debugShowCheckedModeBanner: false,
     );
   }

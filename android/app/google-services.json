@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "767846292948",
+    "firebase_url": "https://nothing-v2zdm3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "nothing-v2zdm3",
+    "storage_bucket": "nothing-v2zdm3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767846292948:android:50f729736292ee46554a41",
+        "android_client_info": {
+          "package_name": "com.example.majmu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "767846292948-3d2gir4kkds9rn1k8s2dne65kq2h78t6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAs90RbRAFgo4QAdqta_hrRuhOSlEfF-nk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "767846292948-3d2gir4kkds9rn1k8s2dne65kq2h78t6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "767846292948-1j73pccuac9dv4vqona47pdid0nc63f7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.majmu"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

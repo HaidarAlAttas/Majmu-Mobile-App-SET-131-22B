@@ -23,29 +23,21 @@ class _HomePageState extends State<HomePage> {
   int currentIndex;
 
   // variable for the content buttons
-  final double contentWidth;
-  final double contentHeight;
   final double strokeWidth;
   final double borderRadius;
-  final double contentfontSize;
-
-  //variable for mini content buttons
-  final double miniContentWidth;
-  final double miniContentHeight;
 
   _HomePageState({
     this.currentIndex = 0,
-    this.contentWidth = 400,
-    this.contentHeight = 100,
     this.strokeWidth = 4,
     this.borderRadius = 10,
-    this.contentfontSize = 20,
-    this.miniContentWidth = 196,
-    this.miniContentHeight = 100,
   });
 
   @override
   Widget build(BuildContext context) {
+    // variable to make it compatible with devices
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Container(
       // attribute for wallpaper
       decoration: BoxDecoration(
@@ -53,11 +45,7 @@ class _HomePageState extends State<HomePage> {
           // Change wallpaper based on the setting (lightmode/darkmode)
           // need to test with xcode
 
-          image: Provider.of<ThemeProvider>(context).themeData == lightmode
-              ? AssetImage("assets/Lightwallpaper.png")
-              : Provider.of<ThemeProvider>(context).themeData == darkmode
-                  ? AssetImage("assets/Darkwallpaper.png")
-                  : AssetImage("assets/Lightwallpaper.png"),
+          image: AssetImage("assets/Lightwallpaper.png"),
           fit: BoxFit.fill,
         ),
       ),
@@ -67,7 +55,7 @@ class _HomePageState extends State<HomePage> {
 
         appBar: AppBar(
           // majmu' logo
-          toolbarHeight: 100,
+          toolbarHeight: screenHeight * 0.10,
           backgroundColor: Colors.transparent,
           title: Center(
             // when click the majmu' logo, it will go back to the home page
@@ -123,7 +111,7 @@ class _HomePageState extends State<HomePage> {
         body: Center(
             child:
 
-                // HOME PAGE
+                // HOME PAGE UI
                 currentIndex == 0
                     ? Container(
                         child: Column(
@@ -148,8 +136,8 @@ class _HomePageState extends State<HomePage> {
                                     borderRadius:
                                         BorderRadius.circular(borderRadius),
                                   ),
-                                  width: contentWidth,
-                                  height: contentHeight,
+                                  width: screenWidth * 0.93,
+                                  height: screenHeight * 0.1,
                                   child: Center(
 
                                       //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
@@ -159,7 +147,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Al-quran Kareem",
                                         style: TextStyle(
-                                          fontSize: contentfontSize,
+                                          fontSize: screenWidth * 0.05,
                                           foreground: Paint()
                                             ..style = PaintingStyle.stroke
                                             ..strokeWidth = strokeWidth
@@ -170,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Al-quran Kareem",
                                         style: TextStyle(
-                                          fontSize: contentfontSize,
+                                          fontSize: screenWidth * 0.05,
                                           color: Colors
                                               .white, // This sets the inside color of the text
                                         ),
@@ -201,8 +189,8 @@ class _HomePageState extends State<HomePage> {
                                     borderRadius:
                                         BorderRadius.circular(borderRadius),
                                   ),
-                                  width: contentWidth,
-                                  height: contentHeight,
+                                  width: screenWidth * 0.93,
+                                  height: screenHeight * 0.1,
                                   child: Center(
 
                                       //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
@@ -212,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Daily Invocations",
                                         style: TextStyle(
-                                          fontSize: contentfontSize,
+                                          fontSize: screenWidth * 0.05,
                                           foreground: Paint()
                                             ..style = PaintingStyle.stroke
                                             ..strokeWidth = strokeWidth
@@ -223,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Daily Invocations",
                                         style: TextStyle(
-                                          fontSize: contentfontSize,
+                                          fontSize: screenWidth * 0.05,
                                           color: Colors
                                               .white, // This sets the inside color of the text
                                         ),
@@ -254,8 +242,8 @@ class _HomePageState extends State<HomePage> {
                                     borderRadius:
                                         BorderRadius.circular(borderRadius),
                                   ),
-                                  width: contentWidth,
-                                  height: contentHeight,
+                                  width: screenWidth * 0.93,
+                                  height: screenHeight * 0.1,
                                   child: Center(
 
                                       //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
@@ -265,7 +253,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Friday Supplications",
                                         style: TextStyle(
-                                          fontSize: contentfontSize,
+                                          fontSize: screenWidth * 0.05,
                                           foreground: Paint()
                                             ..style = PaintingStyle.stroke
                                             ..strokeWidth = strokeWidth
@@ -276,7 +264,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Friday Supplications",
                                         style: TextStyle(
-                                          fontSize: contentfontSize,
+                                          fontSize: screenWidth * 0.05,
                                           color: Colors
                                               .white, // This sets the inside color of the text
                                         ),
@@ -307,8 +295,8 @@ class _HomePageState extends State<HomePage> {
                                     borderRadius:
                                         BorderRadius.circular(borderRadius),
                                   ),
-                                  width: contentWidth,
-                                  height: contentHeight,
+                                  width: screenWidth * 0.93,
+                                  height: screenHeight * 0.1,
                                   child: Center(
 
                                       //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
@@ -318,7 +306,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Islamic Events",
                                         style: TextStyle(
-                                          fontSize: contentfontSize,
+                                          fontSize: screenWidth * 0.05,
                                           foreground: Paint()
                                             ..style = PaintingStyle.stroke
                                             ..strokeWidth = strokeWidth
@@ -329,7 +317,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Islamic Events",
                                         style: TextStyle(
-                                          fontSize: contentfontSize,
+                                          fontSize: screenWidth * 0.05,
                                           color: Colors
                                               .white, // This sets the inside color of the text
                                         ),
@@ -359,8 +347,8 @@ class _HomePageState extends State<HomePage> {
                                     borderRadius:
                                         BorderRadius.circular(borderRadius),
                                   ),
-                                  width: contentWidth,
-                                  height: contentHeight,
+                                  width: screenWidth * 0.93,
+                                  height: screenHeight * 0.1,
                                   child: Center(
 
                                       //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
@@ -370,7 +358,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Ziyarah (visits)",
                                         style: TextStyle(
-                                          fontSize: contentfontSize,
+                                          fontSize: screenWidth * 0.05,
                                           foreground: Paint()
                                             ..style = PaintingStyle.stroke
                                             ..strokeWidth = strokeWidth
@@ -381,7 +369,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Ziyarah (visits)",
                                         style: TextStyle(
-                                          fontSize: contentfontSize,
+                                          fontSize: screenWidth * 0.05,
                                           color: Colors
                                               .white, // This sets the inside color of the text
                                         ),
@@ -398,8 +386,9 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 // Protection prayers content button
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 23.0, right: 8),
+                                  padding: EdgeInsets.only(
+                                      left: screenWidth * 0.036,
+                                      right: screenWidth * 0.025),
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
@@ -417,8 +406,8 @@ class _HomePageState extends State<HomePage> {
                                         borderRadius:
                                             BorderRadius.circular(borderRadius),
                                       ),
-                                      width: miniContentWidth,
-                                      height: miniContentHeight,
+                                      width: screenWidth * 0.45,
+                                      height: screenHeight * 0.1,
                                       child: Center(
 
                                           //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
@@ -428,7 +417,7 @@ class _HomePageState extends State<HomePage> {
                                           Text(
                                             "Protection Prayers",
                                             style: TextStyle(
-                                              fontSize: contentfontSize,
+                                              fontSize: screenWidth * 0.048,
                                               foreground: Paint()
                                                 ..style = PaintingStyle.stroke
                                                 ..strokeWidth = strokeWidth
@@ -439,7 +428,7 @@ class _HomePageState extends State<HomePage> {
                                           Text(
                                             "Protection Prayers",
                                             style: TextStyle(
-                                              fontSize: contentfontSize,
+                                              fontSize: screenWidth * 0.048,
                                               color: Colors
                                                   .white, // This sets the inside color of the text
                                             ),
@@ -452,7 +441,8 @@ class _HomePageState extends State<HomePage> {
 
                                 // Biographies and references content button
                                 Padding(
-                                  padding: const EdgeInsets.only(right: 23.0),
+                                  padding: EdgeInsets.only(
+                                      right: screenWidth * 0.036),
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
@@ -470,33 +460,37 @@ class _HomePageState extends State<HomePage> {
                                         borderRadius:
                                             BorderRadius.circular(borderRadius),
                                       ),
-                                      width: miniContentWidth,
-                                      height: miniContentHeight,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(23.0),
-                                        child: Stack(
-                                          children: <Widget>[
-                                            // Black stroke text
-                                            Text(
-                                              "Biographies and References",
-                                              style: TextStyle(
-                                                fontSize: contentfontSize,
-                                                foreground: Paint()
-                                                  ..style = PaintingStyle.stroke
-                                                  ..strokeWidth = strokeWidth
-                                                  ..color = Colors.black,
+                                      width: screenWidth * 0.45,
+                                      height: screenHeight * 0.1,
+                                      child: Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: screenWidth * 0.06),
+                                          child: Stack(
+                                            children: <Widget>[
+                                              // Black stroke text
+                                              Text(
+                                                "Biographies and References",
+                                                style: TextStyle(
+                                                  fontSize: screenWidth * 0.040,
+                                                  foreground: Paint()
+                                                    ..style =
+                                                        PaintingStyle.stroke
+                                                    ..strokeWidth = strokeWidth
+                                                    ..color = Colors.black,
+                                                ),
                                               ),
-                                            ),
-                                            // White fill text
-                                            Text(
-                                              "Biographies and References",
-                                              style: TextStyle(
-                                                fontSize: contentfontSize,
-                                                color: Colors
-                                                    .white, // This sets the inside color of the text
+                                              // White fill text
+                                              Text(
+                                                "Biographies and References",
+                                                style: TextStyle(
+                                                  fontSize: screenWidth * 0.040,
+                                                  color: Colors
+                                                      .white, // This sets the inside color of the text
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -524,9 +518,8 @@ class _HomePageState extends State<HomePage> {
                                 ? IlmPage()
                                 :
 
-
-                                    // stays at home page
-                                    HomePage()),
+                                // stays at home page
+                                HomePage()),
 
         // navigationbar
         bottomNavigationBar: BottomNavigationBar(

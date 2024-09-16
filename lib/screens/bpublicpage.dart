@@ -20,8 +20,6 @@ class BPublicPage extends StatefulWidget {
 
 class _BPublicPageState extends State<BPublicPage> {
   // variable for the public and private button
-  final double buttonWidth;
-  final double buttonHeight;
   final Color whiteColor;
   final Color blackColor;
   bool publicChoice = true;
@@ -32,31 +30,31 @@ class _BPublicPageState extends State<BPublicPage> {
   int puborpriv = 0;
 
   _BPublicPageState({
-    this.buttonWidth = 185,
-    this.buttonHeight = 30,
     this.whiteColor = Colors.white,
     this.blackColor = Colors.black,
   });
 
   @override
   Widget build(BuildContext context) {
-
+    // variable to make it compatible with devices
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     // create method to apply a blueprint for the bookmarks (public)
     Widget PublicBContent() {
-
-
       return GestureDetector(
-
         // detect input
         onTap: () {
           setState(() {});
         },
         child: Padding(
-          padding: EdgeInsets.only(right: 20.0, left: 20.0, bottom: 15),
+          padding: EdgeInsets.only(
+              right: screenWidth * 0.03,
+              left: screenWidth * 0.03,
+              bottom: screenHeight * 0.01),
           child: Container(
             padding: EdgeInsets.all(10),
-            height: 70,
+            height: screenHeight * 0.073,
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
@@ -65,21 +63,17 @@ class _BPublicPageState extends State<BPublicPage> {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
               children: [
-
-                // content name
+                // demo content name
                 Text(
                   "Surah Ad-Dhuha",
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-
-                      // conditional statement for the text in the button color
-                      color: blackColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      ),
-                      
+                    // conditional statement for the text in the button color
+                    color: blackColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: screenWidth * 0.04,
+                  ),
                 ),
 
                 // icon to go to the content file (>)
@@ -88,12 +82,11 @@ class _BPublicPageState extends State<BPublicPage> {
                   child: Icon(
                     Icons.navigate_next_rounded,
                     color: Colors.black,
-                    size: 35,
+                    size: screenWidth * 0.089,
                   ),
                 )
               ],
             ),
-            
           ),
         ),
       );
@@ -101,123 +94,141 @@ class _BPublicPageState extends State<BPublicPage> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      // body
-      body: Center(
-        child: Container(
-          child: Column(
-            children: [
-              // container for public and private bookmark navigator
-              Padding(
-                padding:
-                    const EdgeInsets.only(right: 20.0, left: 20.0, bottom: 30),
-                child: Container(
-                  height: 45,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black, width: 2),
-                  ),
+      // body of the page
+      body: SafeArea(
+        child: Center(
+          child: Container(
+            child: Column(
+              children: [
+                // container for public and private bookmark navigator
+                Padding(
+                  padding: EdgeInsets.only(
+                      right: screenWidth * 0.03,
+                      left: screenWidth * 0.03,
+                      bottom: screenHeight * 0.03),
+                  child: Container(
+                    height: screenHeight * 0.047,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black, width: 2),
+                    ),
 
-                  // button for public and private bookmark
-                  child: Row(
-                    children: [
-                      // public button
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            // to change the color of the button when clicked
-                            publicChoice = true;
-                            privateChoice = true;
-                            puborpriv = 0;
-                            // get the public bookmark
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
-                          child: Container(
-                            height: buttonHeight,
-                            width: buttonWidth,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
+                    // button for public and private bookmark
+                    child: Row(
+                      children: [
+                        // public button
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              // to change the color of the button when clicked
+                              publicChoice = true;
+                              privateChoice = true;
+                              puborpriv = 0;
+                              // get the public bookmark
+                            });
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: screenWidth * 0.02,
+                                right: screenWidth * 0.01),
+                            child: Container(
+                              height: screenHeight * 0.035,
+                              width: screenWidth * 0.43,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
 
-                              // conditional statement for the button color
-                              color: publicChoice == true
-                                  ? blackColor
-                                  : whiteColor,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Public",
-                                style: TextStyle(
+                                // conditional statement for the button color
+                                color: publicChoice == true
+                                    ? blackColor
+                                    : whiteColor,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Public",
+                                  style: TextStyle(
 
-                                    // conditional statement for the text in the button color
-                                    color: publicChoice == false
-                                        ? blackColor
-                                        : whiteColor,
-                                    fontWeight: FontWeight.bold),
+                                      // conditional statement for the text in the button color
+                                      color: publicChoice == false
+                                          ? blackColor
+                                          : whiteColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
 
-                      // private button
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            publicChoice = false;
-                            privateChoice = false;
-                            puborpriv = 1;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
-                          child: Container(
-                            height: buttonHeight,
-                            width: buttonWidth,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
+                        // private button
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              publicChoice = false;
+                              privateChoice = false;
+                              puborpriv = 1;
+                            });
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: screenWidth * 0.02,
+                                right: screenWidth * 0.01),
+                            child: Container(
+                              height: screenHeight * 0.035,
+                              width: screenWidth * 0.43,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
 
-                              // conditional statement for the button color
-                              color: publicChoice == false
-                                  ? blackColor
-                                  : whiteColor,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Private",
-                                style: TextStyle(
+                                // conditional statement for the button color
+                                color: publicChoice == false
+                                    ? blackColor
+                                    : whiteColor,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Private",
+                                  style: TextStyle(
 
-                                    // conditional statement for the text in the button color
-                                    color: publicChoice == true
-                                        ? blackColor
-                                        : whiteColor,
-                                    fontWeight: FontWeight.bold),
+                                      // conditional statement for the text in the button color
+                                      color: publicChoice == true
+                                          ? blackColor
+                                          : whiteColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-              // conditional statement to change from public to private bookmark
-              // if public clicked
-              puborpriv == 0
+                // conditional statement to change from public to private bookmark
+                // if public clicked
+                Expanded(
+                  child: puborpriv == 0
 
-              // bila dah dapat all content, buat ListView widget kat sini
-                  ? PublicBContent()
+                      // bila dah dapat all content, buat ListView widget kat sini
+                      ? Container(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: List.generate(14, (index) {
+                                return PublicBContent();
+                              }),
+                            ),
+                          ),
+                        )
 
-                  // if private clicked
-                  : BPrivatePage(),
-            ],
+                      // if private clicked
+                      : BPrivatePage(),
+                ),
+              ],
+            ),
           ),
-        ),
 
-        // home page
+          // home page
+        ),
       ),
     );
   }

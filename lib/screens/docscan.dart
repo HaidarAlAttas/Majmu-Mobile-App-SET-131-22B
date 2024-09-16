@@ -33,34 +33,36 @@ class _DocScanState extends State<DocScan> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Scanning Demo'),
+          actions: [],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              ElevatedButton(
-                onPressed: onPressed,
-                child: const Text('Scan Document'),
-              ),
-              ElevatedButton(
-                onPressed: saveAsPDF,
-                child: const Text('Save as PDF'),
-              ),
-              _pictures.isEmpty
-                  ? const Text('No pictures scanned yet.')
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _pictures.length,
-                      itemBuilder: (context, index) {
-                        return Image.file(
-                          File(_pictures[index]),
-                          width: MediaQuery.of(context).size.width,
-                          height: 200,
-                          fit: BoxFit.cover,
-                        );
-                      },
-                    ),
-            ],
+        body: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: onPressed,
+                  child: const Text('Scan Document'),
+                ),
+                ElevatedButton(
+                  onPressed: saveAsPDF,
+                  child: const Text('Save as PDF'),
+                ),
+                _pictures.isEmpty
+                    ? const Text('No pictures scanned yet.')
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _pictures.length,
+                        itemBuilder: (context, index) {
+                          return Image.file(
+                            File(_pictures[index]),
+                            width: MediaQuery.of(context).size.width,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
+              ],
+            ),
           ),
         ),
       ),
