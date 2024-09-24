@@ -47,6 +47,8 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   firebase_core: ^3.4.1
   firebase_auth: ^5.2.1
+  firebase_storage: ^12.3.1
+  gallery_picker: ^0.5.1
 
 dev_dependencies:
   flutter_test:

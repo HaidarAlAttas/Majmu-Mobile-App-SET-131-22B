@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:majmu/firebase_options.dart';
 import 'package:majmu/screens/auth/registerpage.dart';
 import 'package:majmu/screens/auth/loginpage.dart';
-import 'package:majmu/screens/content/alqurankareempage.dart';
+import 'package:majmu/screens/content/alquran/alqurankareempage.dart';
+import 'package:majmu/screens/content/alquran/juz.dart';
+import 'package:majmu/screens/content/alquran/surah.dart';
 import 'package:majmu/screens/content/biographiesnreferencepage.dart';
 import 'package:majmu/screens/content/dailyinvocationspage.dart';
 import 'package:majmu/screens/content/fridaysupplicationspage.dart';
@@ -87,6 +89,10 @@ class MyApp extends StatelessWidget {
         "/editprofilep": (context) => const EditProfilePage(),
         "/logoutp": (context) => const LogoutPage(),
         "/yourpostsp": (context) => const YourPostsPage(),
+
+        // alquran kareem route
+        "/alquransurahp": (context) => const SurahPage(),
+        "/alquranjuzp": (context) => const JuzPage(),
       },
 
       // remove demo sign

@@ -15,12 +15,20 @@ class BiographiesnReferencePage extends StatefulWidget {
   const BiographiesnReferencePage({super.key});
 
   @override
-  State<BiographiesnReferencePage> createState() => _BiographiesnReferencePageState();
+  State<BiographiesnReferencePage> createState() =>
+      _BiographiesnReferencePageState();
 }
 
 class _BiographiesnReferencePageState extends State<BiographiesnReferencePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(actions: [],),);
+    // variable to make it compatible with devices
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    return Scaffold(
+      appBar: AppBar(
+        actions: [],
+      ),
+    );
   }
 }
