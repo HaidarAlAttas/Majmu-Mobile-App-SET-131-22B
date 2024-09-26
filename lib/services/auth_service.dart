@@ -19,9 +19,13 @@ class AuthService {
       String message = '';
 
       if (e.code == 'weak-password') {
-        message = 'the password is too weak';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('the password is too weak')),
+        );
       } else if (e.code == 'email-already-in-use') {
-        message = 'the email has been taken';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('the email has been taken')),
+        );
       }
     } catch (e) {}
   }
@@ -43,9 +47,13 @@ class AuthService {
       String message = '';
 
       if (e.code == 'user-not-found') {
-        message = 'no user found for that email';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('no user found for that email')),
+        );
       } else if (e.code == 'wrong password') {
-        message = 'wrong password provided ';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('wrong password provided')),
+        );
       }
     } catch (e) {}
   }

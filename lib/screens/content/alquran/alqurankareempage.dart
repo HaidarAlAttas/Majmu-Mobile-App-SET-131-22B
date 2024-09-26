@@ -21,133 +21,124 @@ class AlquranKareemPage extends StatefulWidget {
 class _AlquranKareemPageState extends State<AlquranKareemPage> {
   @override
   Widget build(BuildContext context) {
-    // variable to make it compatible with devices
+    // Variable to make it compatible with devices
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    // create method to apply a blueprint for the contents
+    // Method to create the Surah content button
     Widget AlquranSurahContent() {
       return GestureDetector(
-        // detect input
+        // Detect input
         onTap: () {
           setState(() {
             Navigator.pushNamed(context, "/alquransurahp");
           });
         },
-        child: Padding(
-          padding: EdgeInsets.only(
-              top: screenHeight * 0.03,
-              right: screenWidth * 0.03,
-              left: screenWidth * 0.03,
-              bottom: screenHeight * 0.01),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            height: screenHeight * 0.073,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Color.fromARGB(255, 255, 244, 179),
-              border: Border.all(color: Colors.black, width: 2),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // demo content name
-                Text(
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 255, 255, 255),
+            borderRadius: BorderRadius.circular(8.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: Offset(0, 3), // Changes position of shadow
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Surah content name
+              Expanded(
+                child: Text(
                   "Al-Quran arranged by Surah",
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    // conditional statement for the text in the button color
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: screenWidth * 0.04,
                   ),
                 ),
-
-                // icon to go to the content file (>)
-                Container(
-                  alignment: Alignment.centerRight,
-                  child: Icon(
-                    Icons.navigate_next_rounded,
-                    color: Colors.black,
-                    size: screenWidth * 0.089,
-                  ),
-                )
-              ],
-            ),
+              ),
+              // Icon to go to the content file (>)
+              Icon(
+                Icons.navigate_next_rounded,
+                color: Colors.black,
+                size: screenWidth * 0.089,
+              ),
+            ],
           ),
         ),
       );
     }
 
-    // create method to apply a blueprint for the contents
+    // Method to create the Juz content button
     Widget AlquranJuzContent() {
       return GestureDetector(
-        // detect input
+        // Detect input
         onTap: () {
           setState(() {
             Navigator.pushNamed(context, "/alquranjuzp");
           });
         },
-        child: Padding(
-          padding: EdgeInsets.only(
-              right: screenWidth * 0.03,
-              left: screenWidth * 0.03,
-              bottom: screenHeight * 0.01),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            height: screenHeight * 0.073,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Color.fromARGB(255, 255, 244, 179),
-              border: Border.all(color: Colors.black, width: 2),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // demo content name
-                Text(
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 255, 255, 255),
+            borderRadius: BorderRadius.circular(8.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: Offset(0, 3), // Changes position of shadow
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Juz content name
+              Expanded(
+                child: Text(
                   "Al-Quran arranged by Juz",
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    // conditional statement for the text in the button color
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: screenWidth * 0.04,
                   ),
                 ),
-
-                // icon to go to the content file (>)
-                Container(
-                  alignment: Alignment.centerRight,
-                  child: Icon(
-                    Icons.navigate_next_rounded,
-                    color: Colors.black,
-                    size: screenWidth * 0.089,
-                  ),
-                )
-              ],
-            ),
+              ),
+              // Icon to go to the content file (>)
+              Icon(
+                Icons.navigate_next_rounded,
+                color: Colors.black,
+                size: screenWidth * 0.089,
+              ),
+            ],
           ),
         ),
       );
     }
 
     // WALLPAPER
-    // background wallpaper color
+    // Background wallpaper color
     return Container(
       decoration: BoxDecoration(
         color: Color.fromARGB(255, 245, 241, 222),
       ),
-
       // BODY
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-
-          // back button
+          // Back button
           leading: GestureDetector(
             onTap: () {
               Navigator.pop(context);
@@ -157,8 +148,7 @@ class _AlquranKareemPageState extends State<AlquranKareemPage> {
             ),
           ),
         ),
-
-        // contents
+        // Contents
         body: SingleChildScrollView(
           child: Column(
             children: [

@@ -9,6 +9,7 @@ import 'package:majmu/screens/content/alquran/alqurankareempage.dart';
 import 'package:majmu/screens/content/alquran/juz.dart';
 import 'package:majmu/screens/content/alquran/surah.dart';
 import 'package:majmu/screens/content/biographiesnreferencepage.dart';
+import 'package:majmu/screens/content/contentviewer.dart';
 import 'package:majmu/screens/content/dailyinvocationspage.dart';
 import 'package:majmu/screens/content/fridaysupplicationspage.dart';
 import 'package:majmu/screens/content/islamiceventspage.dart';

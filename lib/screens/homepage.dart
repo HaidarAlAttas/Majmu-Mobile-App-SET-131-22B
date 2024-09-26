@@ -10,6 +10,7 @@ import 'package:majmu/screens/settingpage.dart';
 import 'package:majmu/theme/theme.dart';
 import 'package:majmu/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui'; // Import this for BackdropFilter and ImageFilter
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,7 +20,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //variable for changing pages on bottomnavbar
+  // variable for changing pages on bottomnavbar
   int currentIndex;
 
   // variable for the content buttons
@@ -43,8 +44,6 @@ class _HomePageState extends State<HomePage> {
       decoration: BoxDecoration(
         image: DecorationImage(
           // Change wallpaper based on the setting (lightmode/darkmode)
-          // need to test with xcode
-
           image: AssetImage("assets/Lightwallpaper.png"),
           fit: BoxFit.fill,
         ),
@@ -110,7 +109,6 @@ class _HomePageState extends State<HomePage> {
         // body
         body: Center(
             child:
-
                 // HOME PAGE UI
                 currentIndex == 0
                     ? Container(
@@ -126,45 +124,11 @@ class _HomePageState extends State<HomePage> {
                                         .pushNamed("/alqurankareemp");
                                   });
                                 },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: AssetImage(
-                                          "assets/alqurankareem.jpg"),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.circular(borderRadius),
-                                  ),
-                                  width: screenWidth * 0.93,
-                                  height: screenHeight * 0.1,
-                                  child: Center(
-
-                                      //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                      child: Stack(
-                                    children: <Widget>[
-                                      // Black stroke text
-                                      Text(
-                                        "Al-quran Kareem",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          foreground: Paint()
-                                            ..style = PaintingStyle.stroke
-                                            ..strokeWidth = strokeWidth
-                                            ..color = Colors.black,
-                                        ),
-                                      ),
-                                      // White fill text
-                                      Text(
-                                        "Al-quran Kareem",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          color: Colors
-                                              .white, // This sets the inside color of the text
-                                        ),
-                                      ),
-                                    ],
-                                  )),
+                                child: _buildContentButton(
+                                  screenWidth,
+                                  screenHeight,
+                                  "Al-quran Kareem",
+                                  "assets/alqurankareem.jpg",
                                 ),
                               ),
                             ),
@@ -179,45 +143,11 @@ class _HomePageState extends State<HomePage> {
                                         .pushNamed("/dailyinvocationsp");
                                   });
                                 },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: AssetImage(
-                                          "assets/dailyInvocations.jpg"),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.circular(borderRadius),
-                                  ),
-                                  width: screenWidth * 0.93,
-                                  height: screenHeight * 0.1,
-                                  child: Center(
-
-                                      //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                      child: Stack(
-                                    children: <Widget>[
-                                      // Black stroke text
-                                      Text(
-                                        "Daily Invocations",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          foreground: Paint()
-                                            ..style = PaintingStyle.stroke
-                                            ..strokeWidth = strokeWidth
-                                            ..color = Colors.black,
-                                        ),
-                                      ),
-                                      // White fill text
-                                      Text(
-                                        "Daily Invocations",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          color: Colors
-                                              .white, // This sets the inside color of the text
-                                        ),
-                                      ),
-                                    ],
-                                  )),
+                                child: _buildContentButton(
+                                  screenWidth,
+                                  screenHeight,
+                                  "Daily Invocations",
+                                  "assets/dailyInvocations.jpg",
                                 ),
                               ),
                             ),
@@ -232,45 +162,11 @@ class _HomePageState extends State<HomePage> {
                                         .pushNamed("/fridaysupplicationsp");
                                   });
                                 },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: AssetImage(
-                                          "assets/fridaySupplications.jpg"),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.circular(borderRadius),
-                                  ),
-                                  width: screenWidth * 0.93,
-                                  height: screenHeight * 0.1,
-                                  child: Center(
-
-                                      //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                      child: Stack(
-                                    children: <Widget>[
-                                      // Black stroke text
-                                      Text(
-                                        "Friday Supplications",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          foreground: Paint()
-                                            ..style = PaintingStyle.stroke
-                                            ..strokeWidth = strokeWidth
-                                            ..color = Colors.black,
-                                        ),
-                                      ),
-                                      // White fill text
-                                      Text(
-                                        "Friday Supplications",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          color: Colors
-                                              .white, // This sets the inside color of the text
-                                        ),
-                                      ),
-                                    ],
-                                  )),
+                                child: _buildContentButton(
+                                  screenWidth,
+                                  screenHeight,
+                                  "Friday Supplications",
+                                  "assets/fridaySupplications.jpg",
                                 ),
                               ),
                             ),
@@ -285,50 +181,16 @@ class _HomePageState extends State<HomePage> {
                                         .pushNamed("/islamiceventsp");
                                   });
                                 },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: AssetImage(
-                                          "assets/islamicEvents.jpg"),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.circular(borderRadius),
-                                  ),
-                                  width: screenWidth * 0.93,
-                                  height: screenHeight * 0.1,
-                                  child: Center(
-
-                                      //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                      child: Stack(
-                                    children: <Widget>[
-                                      // Black stroke text
-                                      Text(
-                                        "Islamic Events",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          foreground: Paint()
-                                            ..style = PaintingStyle.stroke
-                                            ..strokeWidth = strokeWidth
-                                            ..color = Colors.black,
-                                        ),
-                                      ),
-                                      // White fill text
-                                      Text(
-                                        "Islamic Events",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          color: Colors
-                                              .white, // This sets the inside color of the text
-                                        ),
-                                      ),
-                                    ],
-                                  )),
+                                child: _buildContentButton(
+                                  screenWidth,
+                                  screenHeight,
+                                  "Islamic Events",
+                                  "assets/islamicEvents.jpg",
                                 ),
                               ),
                             ),
 
-                            // Ziyarah (visits) content button
+                            // Ziyarah content button
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: GestureDetector(
@@ -338,50 +200,16 @@ class _HomePageState extends State<HomePage> {
                                         .pushNamed("/ziyarahp");
                                   });
                                 },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: AssetImage("assets/ziyarah.jpg"),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.circular(borderRadius),
-                                  ),
-                                  width: screenWidth * 0.93,
-                                  height: screenHeight * 0.1,
-                                  child: Center(
-
-                                      //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                      child: Stack(
-                                    children: <Widget>[
-                                      // Black stroke text
-                                      Text(
-                                        "Ziyarah (visits)",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          foreground: Paint()
-                                            ..style = PaintingStyle.stroke
-                                            ..strokeWidth = strokeWidth
-                                            ..color = Colors.black,
-                                        ),
-                                      ),
-                                      // White fill text
-                                      Text(
-                                        "Ziyarah (visits)",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          color: Colors
-                                              .white, // This sets the inside color of the text
-                                        ),
-                                      ),
-                                    ],
-                                  )),
+                                child: _buildContentButton(
+                                  screenWidth,
+                                  screenHeight,
+                                  "Ziyarah (Visits)",
+                                  "assets/ziyarah.jpg",
                                 ),
                               ),
                             ),
 
-                            // mini content buttons
-
+                            // Mini content buttons
                             Row(
                               children: [
                                 // Protection prayers content button
@@ -396,45 +224,12 @@ class _HomePageState extends State<HomePage> {
                                             .pushNamed("/protectionprayersp");
                                       });
                                     },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          fit: BoxFit.fitWidth,
-                                          image: AssetImage(
-                                              "assets/protectionPrayers.jpg"),
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(borderRadius),
-                                      ),
-                                      width: screenWidth * 0.45,
-                                      height: screenHeight * 0.1,
-                                      child: Center(
-
-                                          //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                          child: Stack(
-                                        children: <Widget>[
-                                          // Black stroke text
-                                          Text(
-                                            "Protection Prayers",
-                                            style: TextStyle(
-                                              fontSize: screenWidth * 0.048,
-                                              foreground: Paint()
-                                                ..style = PaintingStyle.stroke
-                                                ..strokeWidth = strokeWidth
-                                                ..color = Colors.black,
-                                            ),
-                                          ),
-                                          // White fill text
-                                          Text(
-                                            "Protection Prayers",
-                                            style: TextStyle(
-                                              fontSize: screenWidth * 0.048,
-                                              color: Colors
-                                                  .white, // This sets the inside color of the text
-                                            ),
-                                          ),
-                                        ],
-                                      )),
+                                    child: _buildContentButton(
+                                      screenWidth,
+                                      screenHeight,
+                                      "Protection Prayers",
+                                      "assets/protectionPrayers.jpg",
+                                      widthFactor: 0.45,
                                     ),
                                   ),
                                 ),
@@ -450,49 +245,12 @@ class _HomePageState extends State<HomePage> {
                                             "/biographiesnreferencep");
                                       });
                                     },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          fit: BoxFit.fitWidth,
-                                          image: AssetImage(
-                                              "assets/biographiesnreference.jpg"),
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(borderRadius),
-                                      ),
-                                      width: screenWidth * 0.45,
-                                      height: screenHeight * 0.1,
-                                      child: Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: screenWidth * 0.06),
-                                          child: Stack(
-                                            children: <Widget>[
-                                              // Black stroke text
-                                              Text(
-                                                "Biographies and References",
-                                                style: TextStyle(
-                                                  fontSize: screenWidth * 0.040,
-                                                  foreground: Paint()
-                                                    ..style =
-                                                        PaintingStyle.stroke
-                                                    ..strokeWidth = strokeWidth
-                                                    ..color = Colors.black,
-                                                ),
-                                              ),
-                                              // White fill text
-                                              Text(
-                                                "Biographies and References",
-                                                style: TextStyle(
-                                                  fontSize: screenWidth * 0.040,
-                                                  color: Colors
-                                                      .white, // This sets the inside color of the text
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
+                                    child: _buildContentButton(
+                                      screenWidth,
+                                      screenHeight,
+                                      "Biographies and References",
+                                      "assets/biographiesnreference.jpg",
+                                      widthFactor: 0.45,
                                     ),
                                   ),
                                 )
@@ -502,26 +260,22 @@ class _HomePageState extends State<HomePage> {
                         ),
                       )
                     :
-
                     // go to public bookmark page
                     currentIndex == 1
                         ? BPublicPage()
                         :
-
                         // go to create post page
                         currentIndex == 2
                             ? CreatePostPage()
                             :
-
                             // go to Ilm Page
                             currentIndex == 3
                                 ? IlmPage()
                                 :
-
                                 // stays at home page
                                 HomePage()),
 
-        // navigationbar
+        // navigation bar
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           backgroundColor: Colors.transparent,
@@ -571,7 +325,6 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.black,
               ),
             ),
-
             // Setting buttons logic
             BottomNavigationBarItem(
               label: "",
@@ -590,6 +343,62 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         extendBody: true,
+      ),
+    );
+  }
+
+  Widget _buildContentButton(
+      double screenWidth, double screenHeight, String title, String imagePath,
+      {double widthFactor = 0.93}) {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.fitWidth,
+          image: AssetImage(imagePath),
+        ),
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 3,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      width: screenWidth * widthFactor,
+      height: screenHeight * 0.1,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5), // Blur effect
+          child: Center(
+            child: Stack(
+              children: <Widget>[
+                // Black stroke text
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.048,
+                    foreground: Paint()
+                      ..style = PaintingStyle.stroke
+                      ..strokeWidth = strokeWidth
+                      ..color = Colors.black,
+                  ),
+                ),
+                // White fill text
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.048,
+                    color:
+                        Colors.white, // This sets the inside color of the text
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
