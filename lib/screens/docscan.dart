@@ -41,7 +41,7 @@ class _DocScanState extends State<DocScan> {
               children: [
                 ElevatedButton(
                   onPressed: onPressed,
-                  child: const Text('Scan Document now'),
+                  child: const Text('Scan Document'),
                 ),
                 ElevatedButton(
                   onPressed: saveAsPDF,
