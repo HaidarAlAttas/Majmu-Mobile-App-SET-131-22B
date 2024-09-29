@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:majmu/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -27,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
     double TextfieldHeight = ScreenHeight * 0.06;
     double TextfieldWidth = ScreenWidth * 0.75;
 
-// UI for login page
+    // UI for login page
     return Container(
       height: ScreenHeight,
       width: ScreenWidth,
@@ -73,7 +72,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
 
               // textfield for email or username and password
-
               Padding(
                 padding: EdgeInsets.only(
                     top: ScreenHeight * 0.06, bottom: ScreenHeight * 0.03),
@@ -104,7 +102,6 @@ class _LoginPageState extends State<LoginPage> {
                           // the color of the cursor
                           cursorColor: Colors.black,
 
-                          //
                           decoration: InputDecoration(
                             // to make the content stays in the middle
                             contentPadding: EdgeInsets.symmetric(
@@ -155,11 +152,9 @@ class _LoginPageState extends State<LoginPage> {
                         // the color of the cursor
                         cursorColor: Colors.black,
 
-                        // to make the input is "*"
-
+                        // to make the input appear as "*"
                         obscureText: !checkedValue,
 
-                        //
                         decoration: InputDecoration(
                           // to make the content stays in the middle
                           contentPadding: EdgeInsets.symmetric(
@@ -229,7 +224,10 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                         ),
-                        Text("Show Password"),
+                        Text(
+                          "Show Password",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ],
                     ),
 
@@ -238,11 +236,24 @@ class _LoginPageState extends State<LoginPage> {
                       // logical implementation here
                       onTap: () async {
                         //
-                        await AuthService().login(
+                        String? result = await AuthService().login(
                           email: _usernameoremail.text,
                           password: _password.text,
                           context: context,
                         );
+
+                        // Check if login returned an error message
+                        if (result != null && mounted) {
+                          // Display error message in a SnackBar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(result),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              duration: Duration(seconds: 3),
+                            ),
+                          );
+                        }
                       },
                       child: Container(
                         height: ScreenHeight * 0.035,
@@ -250,6 +261,14 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 16, 128, 219),
                           borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
                         ),
                         child: Center(
                           child: Text(
@@ -293,7 +312,7 @@ class _LoginPageState extends State<LoginPage> {
                             "Forgot Password?",
                             style: TextStyle(
                               color: Colors.blue,
-                              fontSize: ScreenWidth * 0.033,
+                              fontSize: ScreenWidth * 0.036,
                             ),
                           ),
                         ),
@@ -320,7 +339,7 @@ class _LoginPageState extends State<LoginPage> {
                             "Create an account",
                             style: TextStyle(
                               color: Colors.blue,
-                              fontSize: ScreenWidth * 0.033,
+                              fontSize: ScreenWidth * 0.036,
                             ),
                           ),
                         ),
@@ -328,7 +347,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

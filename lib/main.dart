@@ -32,6 +32,7 @@ import 'package:majmu/screens/settings/customerservicepage.dart';
 import 'package:majmu/screens/settings/storagendatapage.dart';
 import 'package:majmu/screens/settings/themepage.dart';
 import 'package:majmu/screens/splashscreen.dart';
+import 'package:majmu/services/auth_service.dart';
 import 'package:majmu/theme/theme.dart';
 import 'package:majmu/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
       routes: {
         // authentication routes
+        "/staylogged": (context) => const StayLogged(),
         "/registerp": (context) => const RegisterPage(),
         "/loginp": (context) => const LoginPage(),
 

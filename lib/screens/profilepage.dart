@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_import, avoid_unnecessary_containers, sized_box_for_whitespace, dead_code
 import 'package:flutter/material.dart';
+import 'package:majmu/services/auth_service.dart';
 
 // Create a dialog for settings
 Future profileDialog(BuildContext context) {
@@ -201,7 +202,8 @@ Future profileDialog(BuildContext context) {
                     GestureDetector(
                       onTap: () {
                         // Implement your logic here
-                        Navigator.pushNamed(context, "/logoutp");
+                        AuthService().signOut();
+                        Navigator.pop(context);
                       },
                       child: Container(
                         width: screenWidth * 0.7,
@@ -236,7 +238,7 @@ Future profileDialog(BuildContext context) {
                                   Text(
                                     "Logout",
                                     style: TextStyle(
-                                      color: Colors.grey,
+                                      color: Colors.white,
                                     ),
                                   )
                                 ],

@@ -176,7 +176,7 @@ Future settingsDialog(BuildContext context) {
                                   Text(
                                     "Account",
                                     style: TextStyle(
-                                      color: Colors.grey,
+                                      color: Colors.white,
                                     ),
                                   )
                                 ],

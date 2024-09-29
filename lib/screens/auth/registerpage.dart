@@ -76,8 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
 
-              // textfield for email password, and re-enter password
-
+              // textfield for email, password, and re-enter password
               Padding(
                 padding: EdgeInsets.only(
                     top: ScreenHeight * 0.06, bottom: ScreenHeight * 0.03),
@@ -162,7 +161,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           cursorColor: Colors.black,
 
                           // to make the input is "*"
-
                           obscureText: !checkedValue,
 
                           //
@@ -217,7 +215,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         cursorColor: Colors.black,
 
                         // to make the input is "*"
-
                         obscureText: !checkedValue,
 
                         //
@@ -271,6 +268,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 219, 46, 16),
                           borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
                         ),
                         child: Center(
                           child: Text(
@@ -288,12 +293,38 @@ class _RegisterPageState extends State<RegisterPage> {
                     GestureDetector(
                       // logical implementation here
                       onTap: () async {
-                        //
-                        await AuthService().register(
-                          email: _email.text,
-                          password: _password.text,
-                          context: context,
-                        );
+                        if (_password.text != _re_password.text) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  "An error has occured: the password didn't match"),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              duration: Duration(seconds: 3),
+                            ),
+                          );
+                        } else {
+                          // Attempt to register the user
+                          String? result = await AuthService().register(
+                            email: _email.text,
+                            password: _password.text,
+                            repassword: _re_password.text,
+                            context: context,
+                          );
+
+                          // Check if registration returned an error message
+                          if (result != null && mounted) {
+                            // Display error message in a SnackBar
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(result),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
+                          }
+                        }
                       },
                       child: Container(
                         height: ScreenHeight * 0.035,
@@ -301,6 +332,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 16, 128, 219),
                           borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
                         ),
                         child: Center(
                           child: Text(

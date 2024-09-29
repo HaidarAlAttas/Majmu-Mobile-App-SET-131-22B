@@ -12,7 +12,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
 
-// to delay 5 second and then go to the homepage
+// to delay 5 second and then go to loginpage or homepage if already logged on
     with
         SingleTickerProviderStateMixin {
   @override
@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushNamed(context, "/loginp");
+      Navigator.pushNamed(context, "/staylogged");
     });
   }
 

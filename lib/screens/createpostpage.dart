@@ -1,5 +1,7 @@
 // ignore_for_file: unused_import, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/screens/bprivatepage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
@@ -20,14 +22,29 @@ class CreatePostPage extends StatefulWidget {
 }
 
 class _CreatePostPageState extends State<CreatePostPage> {
+  // post input
+  final _post = TextEditingController();
+  final currentUser = FirebaseAuth.instance.currentUser!;
+
+  void postMessage() {
+    // only posts if there is something in the textfield
+    if (_post.text.isNotEmpty) {
+      FirebaseFirestore.instance.collection("user-posts").add({
+        "UserEmail": currentUser.email,
+        "post": _post.text,
+        "Timestamp": Timestamp.now(),
+        "Likes": [],
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // post input
-    TextEditingController _post = TextEditingController();
-
     // variable to make it compatible with devices
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
+    final currentUser = FirebaseAuth.instance.currentUser!;
 
     return SafeArea(
       child: Column(
@@ -44,6 +61,14 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 width: 2,
                 color: Colors.black,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 6,
+                  offset: Offset(0, 2.5),
+                ),
+              ],
             ),
 
             // functions inside the create content button
@@ -82,14 +107,23 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       // Post button
                       GestureDetector(
                         // if clicked
-                        onTap: () async {
-                          setState(() {});
+                        onTap: () {
+                          postMessage();
+                          _post.clear();
                         },
                         child: Container(
                           width: screenWidth * 0.16,
                           decoration: BoxDecoration(
                             color: Colors.green,
                             borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 6,
+                                offset: Offset(0, 2.5),
+                              ),
+                            ],
                           ),
                           child: Center(
                             child: Text(
