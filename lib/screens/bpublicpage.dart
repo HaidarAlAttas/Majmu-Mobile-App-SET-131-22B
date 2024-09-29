@@ -113,6 +113,14 @@ class _BPublicPageState extends State<BPublicPage> {
                       borderRadius: BorderRadius.circular(8),
                       color: Colors.white,
                       border: Border.all(color: Colors.black, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 6,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
 
                     // button for public and private bookmark

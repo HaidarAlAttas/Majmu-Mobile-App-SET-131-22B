@@ -34,6 +34,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
         "post": _post.text,
         "Timestamp": Timestamp.now(),
         "Likes": [],
+        "isApproved": false,
       });
     }
   }

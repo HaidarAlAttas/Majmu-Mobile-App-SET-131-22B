@@ -62,6 +62,7 @@ class _IlmPageState extends State<IlmPage> {
                           likes: List<String>.from(
                             post["Likes"] ?? [],
                           ),
+                          isApproved: post["isApproved"],
                         );
                       },
                     );
