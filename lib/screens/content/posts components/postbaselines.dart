@@ -1,8 +1,8 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors
 
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:majmu/screens/content/posts%20components/like_button.dart';
 
 class PostBaseline extends StatefulWidget {
@@ -11,6 +11,7 @@ class PostBaseline extends StatefulWidget {
   final String postId;
   final List<String> likes;
   final bool isApproved;
+  final List<String> images; // Added to hold image URLs
 
   const PostBaseline({
     super.key,
@@ -19,6 +20,7 @@ class PostBaseline extends StatefulWidget {
     required this.postId,
     required this.likes,
     required this.isApproved,
+    required this.images, // New parameter for images
   });
 
   @override
@@ -26,37 +28,37 @@ class PostBaseline extends StatefulWidget {
 }
 
 class _PostBaselineState extends State<PostBaseline> {
-  // user
   final currentUser = FirebaseAuth.instance.currentUser!;
 
-  // bool fo like button
+  // bool for like button
   bool isLiked = false;
 
   @override
   void initState() {
     super.initState();
+    // Check if the post is liked by the current user
     isLiked = widget.likes.contains(currentUser.email);
   }
 
-  // toggle like button
+  // Toggle like status for the post
   void ToggleLike() {
     setState(() {
-      isLiked = !isLiked;
+      isLiked = !isLiked; // Toggle the like status
     });
 
-    // access the document
+    // Access the document in Firestore
     DocumentReference postRef =
         FirebaseFirestore.instance.collection("user-posts").doc(widget.postId);
 
     if (isLiked) {
-      // if the post is liked, add into likes[]
+      // If the post is liked, add the current user's email to likes[]
       postRef.update({
         "Likes": FieldValue.arrayUnion(
           [currentUser.email],
         )
       });
     } else {
-      // if it's unliked, remove from the likes[]
+      // If it's unliked, remove the current user's email from likes[]
       postRef.update({
         "Likes": FieldValue.arrayRemove(
           [currentUser.email],
@@ -67,157 +69,138 @@ class _PostBaselineState extends State<PostBaseline> {
 
   @override
   Widget build(BuildContext context) {
-    // variable to make it compatible with devices
+    // Get screen dimensions for responsive design
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    // method fot posts baseline
-
-    // check if the post has been approved or not
+    // Check if the post has been approved or not
     if (widget.isApproved == true) {
       return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              // post baselines (post base size)
-              Container(
-                width: screenWidth * 0.97,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    width: 2,
-                    color: Colors.black,
+        padding: EdgeInsets.all(screenHeight * 0.01), // Uniform padding
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Container to hold the post content
+            Container(
+              width: screenWidth * 0.97,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10), // Fixed border radius
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black
+                        .withOpacity(0.1), // Subtle shadow for depth
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 2.5),
                   ),
-                  borderRadius: BorderRadius.circular(7),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 6,
-                      offset: Offset(0, 2.5),
-                    ),
-                  ],
-                ),
-
-                // Partitioning for the User part
-                //pfp and username,
-                //Content's Text,
-                //Image
-                //like and comment button
-
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // pfp and username
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: screenWidth * 0.02,
-                        top: screenWidth * 0.02,
-                        bottom: screenHeight * 0.02,
-                      ),
-                      child: Row(
-                        children: [
-                          // profile picture
-                          Container(
-                            width: screenWidth * 0.08,
-                            height: screenHeight * 0.04,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                width: 1,
-                                color: Colors.black,
-                              ),
-
-                              // demo image
-                              image: DecorationImage(
-                                image: AssetImage(
-                                  "assets/ziyarah.jpg",
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-
-                          // username
-                          Padding(
-                            padding: EdgeInsets.only(left: screenWidth * 0.02),
-                            child: Text(
-                              // demo username
-                              widget.user,
-                              style: TextStyle(
-                                color: Colors.grey[800],
-                                fontSize: screenWidth * 0.03,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // text baseline
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: screenHeight * 0.02,
-                          left: screenWidth * 0.02,
-                          right: screenWidth * 0.02),
-                      child: Text(
-                        widget.post.toString(),
-                        style: TextStyle(
-                            color: Colors.black, fontSize: screenWidth * 0.036),
-                      ),
-                    ),
-
-                    // Image baseline
-
-                    // likes and comments
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: screenWidth * 0.02,
-                          right: screenWidth * 0.02,
-                          bottom: screenHeight * 0.02),
-                      child: GestureDetector(
-                        // demo- need to change bila dah siap post-id so that bila like, bukan semua post akan di like
-                        // if clicked
-                        onTap: () {},
-
-                        child: Row(
-                          children: [
-                            // like button and like count
-
-                            Column(
-                              children: [
-                                // like button
-                                LikeButton(
-                                  isLiked: isLiked,
-                                  onTap: () {
-                                    ToggleLike();
-                                  },
-                                ),
-
-                                // like count
-                                Text(
-                                  widget.likes.length.toString(),
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            )
-
-                            // comment button
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
-            ],
-          ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile picture and username
+                  Padding(
+                    padding: EdgeInsets.all(screenHeight * 0.01),
+                    child: Row(
+                      children: [
+                        // Profile picture with fixed size for consistency
+                        CircleAvatar(
+                          backgroundImage: AssetImage("assets/ziyarah.jpg"),
+                          radius: screenHeight * 0.024, // Dynamic radius
+                        ),
+                        SizedBox(
+                            width: screenWidth *
+                                0.017), // Spacing between picture and text
+                        Text(
+                          widget.user,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold, // Bold username
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Post text
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                    child: Text(
+                      widget.post,
+                      style: TextStyle(
+                          fontSize: screenWidth * 0.04), // Dynamic font size
+                    ),
+                  ),
+
+                  // Image display section
+                  if (widget.images.isNotEmpty) ...[
+                    SizedBox(
+                        height: screenHeight *
+                            0.01), // Spacing before the image section
+                    // Display images in a grid style
+                    GridView.builder(
+                      physics:
+                          NeverScrollableScrollPhysics(), // Disable scrolling
+                      shrinkWrap: true, // Fit to the content
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: (widget.images.length == 1)
+                            ? 1
+                            : 2, // 1 or 2 images
+                        childAspectRatio: (widget.images.length == 1)
+                            ? (16 / 9)
+                            : 1, // Adjust aspect ratio for images
+                      ),
+                      itemCount: widget.images.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.all(screenHeight *
+                              0.005), // Added padding around each image
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                10), // Fixed border radius for images
+                            child: Image.network(
+                              widget.images[index],
+                              fit: BoxFit.cover, // Cover the entire container
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+
+                  // Likes and comments section
+                  Padding(
+                    padding: EdgeInsets.all(screenHeight * 0.01),
+                    child: Row(
+                      children: [
+                        // Like button component
+                        LikeButton(
+                          isLiked: isLiked,
+                          onTap: () {
+                            ToggleLike(); // Call toggle like method
+                          },
+                        ),
+                        SizedBox(
+                            width: screenWidth *
+                                0.02), // Spacing between like button and count
+                        Text(
+                          widget.likes.length.toString(),
+                          style: TextStyle(
+                              color: Colors.grey), // Style for like count
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: screenHeight * 0.01), // Space between posts
+          ],
         ),
       );
     } else {
-      return Container(); // if the post is not approved, it wont appear
+      return Container(); // If the post is not approved, it won't appear
     }
   }
 }

@@ -2,24 +2,10 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:majmu/screens/bprivatepage.dart';
-import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/content/posts%20components/postbaselines.dart';
-import 'package:majmu/screens/createpostpage.dart';
-import 'package:majmu/screens/homepage.dart';
-import 'package:majmu/screens/ilmpage.dart';
-import 'package:majmu/screens/settingpage.dart';
-import 'package:majmu/theme/theme.dart';
-import 'package:majmu/theme/theme_provider.dart';
-import 'package:provider/provider.dart';
 
-// features not added yet:
-// - hashtag
-// - multi-picture
-// - likes and comments
-
+// The main page to display all user posts
 class IlmPage extends StatefulWidget {
   const IlmPage({super.key});
 
@@ -28,15 +14,9 @@ class IlmPage extends StatefulWidget {
 }
 
 class _IlmPageState extends State<IlmPage> {
-  // constructor
-  bool likecolor = false;
-
   @override
   Widget build(BuildContext context) {
-    // variable to make it compatible with devices
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
+    // Get current user
     final currentUser = FirebaseAuth.instance.currentUser!;
 
     return SafeArea(
@@ -45,37 +25,41 @@ class _IlmPageState extends State<IlmPage> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection("user-posts")
-                    .orderBy("Timestamp", descending: true)
-                    .snapshots(),
-                builder: (context, snapshots) {
-                  if (snapshots.hasData) {
-                    return ListView.builder(
-                      itemCount: snapshots.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        final post = snapshots.data!.docs[index];
-                        return PostBaseline(
-                          post: post["post"],
-                          user: post["UserEmail"],
-                          postId: post.id,
-                          likes: List<String>.from(
-                            post["Likes"] ?? [],
-                          ),
-                          isApproved: post["isApproved"],
-                        );
-                      },
-                    );
-                  } else if (snapshots.hasError) {
-                    return Center(
-                      child: Text("error: " + snapshots.error.toString()),
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                }),
+              // Listen to Firestore collection for real-time updates
+              stream: FirebaseFirestore.instance
+                  .collection("user-posts")
+                  .orderBy("Timestamp", descending: true)
+                  .snapshots(),
+              builder: (context, snapshots) {
+                if (snapshots.hasData) {
+                  return ListView.builder(
+                    itemCount: snapshots.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      final post = snapshots.data!.docs[index];
+                      return PostBaseline(
+                        post: post["post"], // The content of the post
+                        user: post["UserEmail"], // The user who posted
+                        postId: post.id, // Unique ID of the post
+                        likes: List<String>.from(
+                            post["Likes"] ?? []), // List of likes
+                        isApproved:
+                            post["isApproved"], // Approval status of the post
+                        images: List<String>.from(
+                            post["Images"] ?? []), // List of image URLs
+                      );
+                    },
+                  );
+                } else if (snapshots.hasError) {
+                  return Center(
+                    child: Text("Error: " + snapshots.error.toString()),
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(), // Loading indicator
+                  );
+                }
+              },
+            ),
           )
         ],
       ),

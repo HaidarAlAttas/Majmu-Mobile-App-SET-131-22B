@@ -17,7 +17,7 @@ import 'package:majmu/screens/content/protectionprayerspage.dart';
 import 'package:majmu/screens/content/ziyarahpage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
-import 'package:majmu/screens/camerascan.dart';
+import 'package:majmu/screens/content/posts%20components/camerascan.dart';
 import 'package:majmu/screens/docscan.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/screens/ilmpage.dart';
@@ -80,7 +80,6 @@ class MyApp extends StatelessWidget {
 
         // camera routes
         "/docscan": (context) => const DocScan(),
-        "/camerascan": (context) => const CameraScan(),
 
         // settings route
         "/storagep": (context) => const StorageAndDataPage(),
