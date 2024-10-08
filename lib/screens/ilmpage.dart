@@ -55,7 +55,9 @@ class _IlmPageState extends State<IlmPage> {
                   );
                 } else {
                   return Center(
-                    child: CircularProgressIndicator(), // Loading indicator
+                    child: CircularProgressIndicator(
+                      color: Colors.green,
+                    ), // Loading indicator
                   );
                 }
               },

@@ -181,7 +181,7 @@ Future profileDialog(BuildContext context) {
                                   Text(
                                     "Your posts",
                                     style: TextStyle(
-                                      color: Colors.grey,
+                                      color: Colors.white,
                                     ),
                                   )
                                 ],
@@ -202,8 +202,9 @@ Future profileDialog(BuildContext context) {
                     GestureDetector(
                       onTap: () {
                         // Implement your logic here
+
                         AuthService().signOut();
-                        Navigator.pop(context);
+                        Navigator.popAndPushNamed(context, "/staylogged");
                       },
                       child: Container(
                         width: screenWidth * 0.7,

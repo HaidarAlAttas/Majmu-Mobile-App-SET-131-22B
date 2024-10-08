@@ -323,6 +323,17 @@ class _RegisterPageState extends State<RegisterPage> {
                                 duration: Duration(seconds: 3),
                               ),
                             );
+                          } else {
+                            // Display welcome message in a SnackBar
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "Account registered: Welcome to Majmu x PAID app, feel free to explore more in the application ;)"),
+                                backgroundColor: Colors.green,
+                                behavior: SnackBarBehavior.floating,
+                                duration: Duration(seconds: 10),
+                              ),
+                            );
                           }
                         }
                       },

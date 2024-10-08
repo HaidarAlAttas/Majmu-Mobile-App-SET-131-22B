@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  currentIndex = 0;
+                  currentIndex == 3 ? currentIndex = 3 : currentIndex = 0;
                 });
               },
               child: Image(
@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                                 child: _buildContentButton(
                                   screenWidth,
                                   screenHeight,
-                                  "Daily Invocations",
+                                  "Zikir Harian",
                                   "assets/dailyInvocations.jpg",
                                 ),
                               ),
@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                                 child: _buildContentButton(
                                   screenWidth,
                                   screenHeight,
-                                  "Friday Supplications",
+                                  "Amalan Jumaat",
                                   "assets/fridaySupplications.jpg",
                                 ),
                               ),
@@ -184,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                                 child: _buildContentButton(
                                   screenWidth,
                                   screenHeight,
-                                  "Islamic Events",
+                                  "Peristiwa Islam",
                                   "assets/islamicEvents.jpg",
                                 ),
                               ),
@@ -203,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                                 child: _buildContentButton(
                                   screenWidth,
                                   screenHeight,
-                                  "Ziyarah (Visits)",
+                                  "Ziyarah (Lawatan)",
                                   "assets/ziyarah.jpg",
                                 ),
                               ),
@@ -227,9 +227,10 @@ class _HomePageState extends State<HomePage> {
                                     child: _buildContentButton(
                                       screenWidth,
                                       screenHeight,
-                                      "Protection Prayers",
+                                      "Doa Pelindung Diri",
                                       "assets/protectionPrayers.jpg",
                                       widthFactor: 0.45,
+                                      textSize: 0.04,
                                     ),
                                   ),
                                 ),
@@ -248,9 +249,10 @@ class _HomePageState extends State<HomePage> {
                                     child: _buildContentButton(
                                       screenWidth,
                                       screenHeight,
-                                      "Biographies and References",
+                                      "Biografi dan Rujukan",
                                       "assets/biographiesnreference.jpg",
                                       widthFactor: 0.45,
+                                      textSize: 0.04,
                                     ),
                                   ),
                                 )
@@ -349,7 +351,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildContentButton(
       double screenWidth, double screenHeight, String title, String imagePath,
-      {double widthFactor = 0.93}) {
+      {double widthFactor = 0.93, double textSize = 0.048}) {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -372,31 +374,36 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(borderRadius),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5), // Blur effect
-          child: Center(
-            child: Stack(
-              children: <Widget>[
-                // Black stroke text
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.048,
-                    foreground: Paint()
-                      ..style = PaintingStyle.stroke
-                      ..strokeWidth = strokeWidth
-                      ..color = Colors.black,
-                  ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Stack(
+                  children: <Widget>[
+                    // Black stroke text
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: screenWidth * textSize,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = strokeWidth
+                          ..color = Colors.black,
+                      ),
+                    ),
+                    // White fill text
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: screenWidth * textSize,
+                        color: Colors
+                            .white, // This sets the inside color of the text
+                      ),
+                    ),
+                  ],
                 ),
-                // White fill text
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.048,
-                    color:
-                        Colors.white, // This sets the inside color of the text
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

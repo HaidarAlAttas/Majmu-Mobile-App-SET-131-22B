@@ -1,8 +1,10 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:majmu/screens/content/posts%20components/bookmark_button.dart';
 import 'package:majmu/screens/content/posts%20components/like_button.dart';
 
 class PostBaseline extends StatefulWidget {
@@ -32,6 +34,12 @@ class _PostBaselineState extends State<PostBaseline> {
 
   // bool for like button
   bool isLiked = false;
+
+  // bool for bookmark button
+  bool isBookmarked = false;
+
+  // bool for image
+  bool imageTapped = false;
 
   @override
   void initState() {
@@ -65,6 +73,14 @@ class _PostBaselineState extends State<PostBaseline> {
         )
       });
     }
+  }
+
+  // method when toggling bookmark in post
+  // will be implemented after this
+  void ToggleBookmarked() {
+    setState(() {
+      isBookmarked = !isBookmarked;
+    });
   }
 
   @override
@@ -149,19 +165,22 @@ class _PostBaselineState extends State<PostBaseline> {
                             : 2, // 1 or 2 images
                         childAspectRatio: (widget.images.length == 1)
                             ? (16 / 9)
-                            : 1, // Adjust aspect ratio for images
+                            : 1.5, // Adjust aspect ratio for images
                       ),
                       itemCount: widget.images.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: EdgeInsets.all(screenHeight *
                               0.005), // Added padding around each image
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                                10), // Fixed border radius for images
-                            child: Image.network(
-                              widget.images[index],
-                              fit: BoxFit.cover, // Cover the entire container
+                          child: InstaImageViewer(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              // Fixed border radius for images
+                              child: Image.network(
+                                widget.images[index],
+                                fit: BoxFit.fitWidth,
+                                // Cover the entire container
+                              ),
                             ),
                           ),
                         );
@@ -173,22 +192,41 @@ class _PostBaselineState extends State<PostBaseline> {
                   Padding(
                     padding: EdgeInsets.all(screenHeight * 0.01),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Like button component
-                        LikeButton(
-                          isLiked: isLiked,
-                          onTap: () {
-                            ToggleLike(); // Call toggle like method
-                          },
+                        Column(
+                          children: [
+                            // Like button component
+                            LikeButton(
+                              isLiked: isLiked,
+                              onTap: () {
+                                ToggleLike(); // Call toggle like method
+                              },
+                            ),
+
+                            Text(
+                              widget.likes.length.toString(),
+                              style: TextStyle(
+                                  color: Colors.grey), // Style for like count
+                            ),
+                          ],
                         ),
+
                         SizedBox(
-                            width: screenWidth *
-                                0.02), // Spacing between like button and count
-                        Text(
-                          widget.likes.length.toString(),
-                          style: TextStyle(
-                              color: Colors.grey), // Style for like count
+                          width: screenHeight * 0.02,
                         ),
+
+                        // add to bookmark button
+                        Column(
+                          children: [
+                            BookmarkButton(
+                                isBookmarked: isBookmarked,
+                                onTap: () {
+                                  ToggleBookmarked();
+                                })
+                          ],
+                        )
                       ],
                     ),
                   ),

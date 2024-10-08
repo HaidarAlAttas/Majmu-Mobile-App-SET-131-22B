@@ -139,6 +139,7 @@ Future settingsDialog(BuildContext context) {
                     GestureDetector(
                       onTap: () {
                         // Implement your logic here
+                        Navigator.pop(context);
                         profileDialog(context);
                       },
                       child: Container(

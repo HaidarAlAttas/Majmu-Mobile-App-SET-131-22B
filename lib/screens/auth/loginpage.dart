@@ -253,7 +253,7 @@ class _LoginPageState extends State<LoginPage> {
                               duration: Duration(seconds: 3),
                             ),
                           );
-                        }
+                        } else {}
                       },
                       child: Container(
                         height: ScreenHeight * 0.035,

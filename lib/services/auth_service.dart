@@ -1,9 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:majmu/screens/auth/loginpage.dart';
 import 'package:majmu/screens/homepage.dart';
 
 class AuthService {
+  // google login variable
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
   // Register method
   Future<String?> register({
     required String email,
@@ -80,7 +85,10 @@ class AuthService {
       await Future.delayed(const Duration(seconds: 1));
 
       // Navigate to home page on success
-      Navigator.pushNamed(context, "/home");
+      Navigator.pushNamed(
+        context,
+        "/home",
+      );
 
       return null; // No error
     } on FirebaseAuthException catch (e) {
@@ -102,6 +110,33 @@ class AuthService {
   // Logout method
   void signOut() {
     FirebaseAuth.instance.signOut();
+  }
+
+  // method to sign in with google
+  Future<User?> signInWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        return null; // The user canceled the sign-in
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Once signed in, return the UserCredential
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+
+      return userCredential.user;
+    } catch (e) {
+      print("Error during Google Sign-In: $e");
+      return null;
+    }
   }
 }
 
