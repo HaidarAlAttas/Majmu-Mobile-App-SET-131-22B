@@ -91,7 +91,7 @@ class _PostBaselineState extends State<PostBaseline> {
   }
 
   // method to delete post
-  Future<void> deleteDocument(String documentId) async {
+  Future<void> deletePost(String documentId) async {
     // Reference the collection and the document
     CollectionReference posts =
         FirebaseFirestore.instance.collection('user-posts');
@@ -167,111 +167,124 @@ class _PostBaselineState extends State<PostBaseline> {
                         settingButton
                             ? GestureDetector(
                                 onTap: () => showPopover(
-                                    context: context,
-                                    width: screenWidth * 0.5,
-                                    height: screenHeight * 0.12,
-                                    backgroundColor: Color(0xFFE8F5E9),
-                                    direction: PopoverDirection.bottom,
-                                    bodyBuilder: (context) => Column(
-                                          children: [
-                                            Container(
-                                              height: screenHeight * 0.06,
-                                              decoration: BoxDecoration(
-                                                color: Colors.green[100],
-                                              ),
-                                              child: GestureDetector(
-                                                onTap: () async {
-                                                  bool shouldDelete =
-                                                      await showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return AlertDialog(
-                                                        backgroundColor:
-                                                            Colors.green[50],
-                                                        title: Text(
-                                                          "Delete Post",
-                                                          style: TextStyle(
-                                                            color: Colors.black,
-                                                          ),
-                                                        ),
-                                                        content: Text(
-                                                          "Are you sure you want to delete this post?",
-                                                          style: TextStyle(
-                                                            color: Colors.black,
-                                                          ),
-                                                        ),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    context,
-                                                                    false),
-                                                            child: Text(
-                                                              "Cancel",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    context,
-                                                                    true),
-                                                            child: Text(
-                                                              "Delete",
-                                                              style: TextStyle(
-                                                                color:
-                                                                    Colors.red,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
+                                  context: context,
+                                  width: screenWidth * 0.5,
+                                  height: screenHeight * 0.12,
 
-                                                  if (shouldDelete) {
-                                                    await deleteDocument(
-                                                        widget.postId);
-                                                  }
-                                                },
-                                                child: Center(
-                                                    child: Text(
-                                                  "Delete Post",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
+                                  // color of thew popup background
+                                  backgroundColor: Color(0xFFE8F5E9),
+
+                                  // the popup will pop on the bottom
+                                  direction: PopoverDirection.bottom,
+                                  bodyBuilder: (context) => Column(
+                                    children: [
+                                      // delete post button
+                                      Container(
+                                        height: screenHeight * 0.06,
+                                        decoration: BoxDecoration(
+                                          color: Colors.green[100],
+                                        ),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            bool shouldDelete =
+                                                await showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  // alert dialog to reconfirm post deletion
+                                                  backgroundColor:
+                                                      Colors.green[50],
+                                                  title: Text(
+                                                    "Delete Post",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                    ),
                                                   ),
-                                                )),
+                                                  content: Text(
+                                                    "Are you sure you want to delete this post?",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context, false),
+                                                      child: Text(
+                                                        "Cancel",
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context, true),
+                                                      child: Text(
+                                                        "Delete",
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+
+                                            // call delete post method
+                                            if (shouldDelete) {
+                                              await deletePost(widget.postId);
+                                              Navigator.pop(context, true);
+                                            }
+                                          },
+
+                                          // delete post text design
+                                          child: Center(
+                                              child: Text(
+                                            "Delete Post",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )),
+                                        ),
+                                      ),
+
+                                      // share post button
+                                      Container(
+                                        height: screenHeight * 0.06,
+                                        decoration: BoxDecoration(
+                                          color: Colors.green[50],
+                                        ),
+
+                                        // logic will be implemented here
+                                        child: GestureDetector(
+                                          onTap: () async {},
+                                          child: Center(
+                                            child: Text(
+                                              "Share Post",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
 
-                                            // share button
-                                            Container(
-                                              height: screenHeight * 0.06,
-                                              decoration: BoxDecoration(
-                                                color: Colors.green[50],
-                                              ),
-                                              child: GestureDetector(
-                                                onTap: () async {},
-                                                child: Center(
-                                                    child: Text(
-                                                  "Share Post",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                )),
-                                              ),
-                                            )
-                                          ],
-                                        )),
+                                // setting icon that will only pop up in your posts
                                 child: Icon(
                                   Icons.more_vert_rounded,
                                 ),
                               )
+
+                            // if not on your posts, it wont appear
                             : Container(),
                       ],
                     ),

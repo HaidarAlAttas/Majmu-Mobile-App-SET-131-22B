@@ -8,6 +8,7 @@ class AuthService {
   // google login variable
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  bool _isSigningIn = false; // Flag to track the sign-in process
 
   // Register method
   Future<String?> register({
@@ -100,7 +101,7 @@ class AuthService {
       } else if (e.code == 'wrong-password') {
         return 'Wrong password provided';
       } else {
-        return 'An error occurred: wrong email or password inserted';
+        return 'An error occurred: please log in with gmail if you previously has registered with it';
       }
     } catch (e) {
       return 'An unexpected error occurred: wrong email or password inserted';
@@ -110,6 +111,7 @@ class AuthService {
   // Logout method
   void signOut() {
     FirebaseAuth.instance.signOut();
+    _googleSignIn.signOut();
   }
 
   // method to sign in with google
@@ -132,10 +134,74 @@ class AuthService {
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
 
+      if (context.mounted) Navigator.pop(context);
+
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Navigate to home page on success
+      Navigator.pushNamed(
+        context,
+        "/home",
+      );
+
       return userCredential.user;
     } catch (e) {
       print("Error during Google Sign-In: $e");
       return null;
+    }
+  }
+
+  // Check if current user signed in with Google
+  bool isSignedInWithGoogle() {
+    final user = _auth.currentUser;
+    if (user != null) {
+      // Loop through the provider data and check if it's 'google.com'
+      for (final provider in user.providerData) {
+        if (provider.providerId == 'google.com') {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  // forgot password method
+  Future<String?> forgotPassword({
+    required String email,
+    required BuildContext context,
+  }) async {
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(
+            color: Colors.green,
+          ),
+        ),
+      );
+
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+
+      if (context.mounted) Navigator.pop(context);
+      Navigator.pop(context);
+
+      // Show success message
+      return 'Password reset email sent. Check your inbox.';
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+
+      // Handle specific Firebase exceptions
+      if (e.code == 'invalid-email') {
+        return 'Invalid email address';
+      } else if (e.code == 'user-not-found') {
+        return 'No user found for that email';
+      } else {
+        return 'An error occurred. Please try again.';
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      return 'An unexpected error occurred. Please try again.';
     }
   }
 }

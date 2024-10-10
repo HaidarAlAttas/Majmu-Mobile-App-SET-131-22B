@@ -1,15 +1,15 @@
-// ignore_for_file: unused_import, prefer_const_constructors
+// ignore_for_file: prefer_const_constructors
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/firebase_options.dart';
+import 'package:majmu/screens/auth/forgotpassword.dart';
 import 'package:majmu/screens/auth/registerpage.dart';
 import 'package:majmu/screens/auth/loginpage.dart';
 import 'package:majmu/screens/content/alquran/alqurankareempage.dart';
 import 'package:majmu/screens/content/alquran/juz.dart';
 import 'package:majmu/screens/content/alquran/surah.dart';
 import 'package:majmu/screens/content/biografi_dan_rujukanpage.dart';
-import 'package:majmu/screens/content/contentviewer.dart';
 import 'package:majmu/screens/content/zikir_harianpage.dart';
 import 'package:majmu/screens/content/amalan_jumaatpage.dart';
 import 'package:majmu/screens/content/peristiwa_islampage.dart';
@@ -17,25 +17,19 @@ import 'package:majmu/screens/content/doa_pelindung_diripage.dart';
 import 'package:majmu/screens/content/lawatan_ziyarahpage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
-import 'package:majmu/screens/content/posts%20components/camerascan.dart';
 import 'package:majmu/screens/docscan.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/screens/ilmpage.dart';
 import 'package:majmu/screens/profile/editprofilepage.dart';
 import 'package:majmu/screens/profile/logoutpage.dart';
-import 'package:majmu/screens/profile/yourpostspage.dart';
-import 'package:majmu/screens/profilepage.dart';
+import 'package:majmu/screens/profile/yourprofile/yourpostspage.dart';
 import 'package:majmu/screens/searchpage.dart';
-import 'package:majmu/screens/settingpage.dart';
 import 'package:majmu/screens/settings/accountpage.dart';
 import 'package:majmu/screens/settings/customerservicepage.dart';
 import 'package:majmu/screens/settings/storagendatapage.dart';
 import 'package:majmu/screens/settings/themepage.dart';
 import 'package:majmu/screens/splashscreen.dart';
 import 'package:majmu/services/auth_service.dart';
-import 'package:majmu/theme/theme.dart';
-import 'package:majmu/theme/theme_provider.dart';
-import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +53,7 @@ class MyApp extends StatelessWidget {
         "/staylogged": (context) => const StayLogged(),
         "/registerp": (context) => const RegisterPage(),
         "/loginp": (context) => const LoginPage(),
+        "/forgotpasswordp": (context) => ForgotPasswordPage(),
 
         // main app routes
         "/splash": (context) => const SplashScreen(),

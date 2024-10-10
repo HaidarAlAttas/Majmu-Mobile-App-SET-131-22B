@@ -221,7 +221,7 @@ class _BPublicPageState extends State<BPublicPage> {
                       ? Container(
                           child: SingleChildScrollView(
                             child: Column(
-                              children: List.generate(14, (index) {
+                              children: List.generate(1, (index) {
                                 return PublicBContent();
                               }),
                             ),

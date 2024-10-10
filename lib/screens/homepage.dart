@@ -359,6 +359,9 @@ class _HomePageState extends State<HomePage> {
           image: AssetImage(imagePath),
         ),
         borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(
+          color: Colors.black,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
@@ -373,31 +376,46 @@ class _HomePageState extends State<HomePage> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5), // Blur effect
+          filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Center(
                 child: Stack(
                   children: <Widget>[
-                    // Black stroke text
+                    // Black stroke text with shadow
                     Text(
                       title,
                       style: TextStyle(
-                        fontSize: screenWidth * textSize,
+                        fontSize: screenWidth * textSize * 0.9,
                         foreground: Paint()
                           ..style = PaintingStyle.stroke
                           ..strokeWidth = strokeWidth
-                          ..color = Colors.black,
+                          ..color = Colors.black.withOpacity(0.7),
+                        fontWeight: FontWeight.bold, // Bold text
+                        shadows: [
+                          Shadow(
+                            blurRadius: 2.0,
+                            color: Colors.black.withOpacity(0.5),
+                            offset: Offset(1.0, 1.0),
+                          ),
+                        ],
                       ),
                     ),
-                    // White fill text
+                    // White fill text with shadow
                     Text(
                       title,
                       style: TextStyle(
-                        fontSize: screenWidth * textSize,
-                        color: Colors
-                            .white, // This sets the inside color of the text
+                        fontSize: screenWidth * textSize * 0.9,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold, // Bold text
+                        shadows: [
+                          Shadow(
+                            blurRadius: 2.0,
+                            color: Colors.black.withOpacity(0.5),
+                            offset: Offset(1.0, 1.0),
+                          ),
+                        ],
                       ),
                     ),
                   ],

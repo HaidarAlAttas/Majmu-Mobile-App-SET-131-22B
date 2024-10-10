@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:majmu/screens/homepage.dart';
+import 'package:majmu/services/auth_service.dart';
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});
@@ -22,6 +23,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
   List<File> _images = []; // Store selected images here
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false; // Track loading state
+
+  // check if the user is logged with a valid Gmail account
+  final AuthService _authService = AuthService();
 
   // Function to compress image
   Future<File?> compressImage(File imageFile) async {
@@ -64,7 +68,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
     }
   }
 
-  // Function to upload post with images to Firebase Storage and Firestore
   // Function to upload post with images to Firebase Storage and Firestore
   Future<void> postMessage() async {
     if (_post.text.isNotEmpty || _images.isNotEmpty) {
@@ -133,252 +136,327 @@ class _CreatePostPageState extends State<CreatePostPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    return SafeArea(
-      child:
-          // Loading indicator
-          _isLoading == true
-              ? Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.green,
-                  ),
-                )
-              : SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        // Design of the baseline for the create content
-                        width: screenWidth * 0.96,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(9),
-                          border: Border.all(
-                            width: 2,
-                            color: Colors.black,
+    // if the user is logged on with a valid Gmail account
+    if (_authService.isSignedInWithGoogle()) {
+      return SafeArea(
+        child:
+            // Loading indicator
+            _isLoading == true
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.green,
+                    ),
+                  )
+                : SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          // Design of the baseline for the create content
+                          width: screenWidth * 0.96,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(9),
+                            border: Border.all(
+                              width: 2,
+                              color: Colors.black,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 6,
+                                offset: Offset(0, 2.5),
+                              ),
+                            ],
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 6,
-                              offset: Offset(0, 2.5),
-                            ),
-                          ],
-                        ),
 
-                        // Functions inside the create content button
-                        child: Column(
-                          children: [
-                            // Cancel and post button
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: screenHeight * 0.01,
-                                bottom: screenHeight * 0.02,
-                                left: screenWidth * 0.02,
-                                right: screenWidth * 0.02,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  // Cancel button
-                                  GestureDetector(
-                                    // If clicked
-                                    onTap: () {
-                                      setState(() {
-                                        _post.clear();
-                                        _images.clear();
-                                      });
-                                    },
-                                    child: Text(
-                                      "Cancel",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.red,
-                                        fontSize: screenWidth * 0.035,
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Post button
-                                  GestureDetector(
-                                    // If clicked
-                                    onTap: postMessage,
-                                    child: Container(
-                                      width: screenWidth * 0.16,
-                                      decoration: BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.5),
-                                            spreadRadius: 1,
-                                            blurRadius: 6,
-                                            offset: Offset(0, 2.5),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Post",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: screenWidth * 0.037,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Row for profile image and textfield
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8, right: 8),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Profile image
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8),
-                                    child: Container(
-                                      width: screenWidth * 0.09,
-                                      height: screenHeight * 0.04,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                          // Demo image
-                                          image: AssetImage(
-                                              "assets/islamicEvents.jpg"),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-
-                                  // TextField to insert content
-                                  Container(
-                                    height: _images.isNotEmpty
-                                        ? screenHeight * 0.3
-                                        : screenHeight * 0.45,
-                                    width: screenWidth * 0.8,
-                                    child: TextField(
-                                      controller: _post,
-                                      cursorColor: Colors.black,
-                                      maxLines:
-                                          null, // Allows the TextField to have unlimited lines
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
-                                          vertical: screenHeight * 0.015,
-                                          horizontal: screenWidth * 0.02,
-                                        ),
-                                        hintText: "What's on your mind?",
-                                        hintStyle: TextStyle(
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                        border: InputBorder.none,
-                                      ),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      keyboardType: TextInputType
-                                          .multiline, // Allows multiline input
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Display selected images in a column
-                            if (_images.isNotEmpty)
+                          // Functions inside the create content button
+                          child: Column(
+                            children: [
+                              // Cancel and post button
                               Padding(
-                                padding: EdgeInsets.all(screenHeight *
-                                    0.01), // Added padding for better layout
-                                child: Column(
+                                padding: EdgeInsets.only(
+                                  top: screenHeight * 0.01,
+                                  bottom: screenHeight * 0.02,
+                                  left: screenWidth * 0.02,
+                                  right: screenWidth * 0.02,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    for (int i = 0; i < _images.length; i++)
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            bottom:
-                                                8.0), // Add spacing between images
-                                        child: Stack(
-                                          alignment: Alignment.topRight,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(
-                                                  8), // Maintain rounded corners
-                                              child: Image.file(
-                                                _images[i],
-                                                width: screenWidth *
-                                                    0.9, // Ensure images are not wider than container
-                                                fit: BoxFit
-                                                    .cover, // Maintain aspect ratio and cover the container
-                                              ),
-                                            ),
-                                            IconButton(
-                                              icon: Container(
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors
-                                                      .black, // Set the background color here
-                                                  // Optional: Add a border
-                                                ),
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(
-                                                      screenWidth *
-                                                          0.015), // Adjust padding as needed
-                                                  child: Icon(
-                                                    Icons.delete,
-                                                    color: Colors.white,
-                                                    size: screenWidth * 0.07,
-                                                  ),
-                                                ),
-                                              ),
-                                              onPressed: () => removeImage(i),
+                                    // Cancel button
+                                    GestureDetector(
+                                      // If clicked
+                                      onTap: () {
+                                        setState(() {
+                                          _post.clear();
+                                          _images.clear();
+                                        });
+                                      },
+                                      child: Text(
+                                        "Cancel",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.red,
+                                          fontSize: screenWidth * 0.035,
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Post button
+                                    GestureDetector(
+                                      // If clicked
+                                      onTap: postMessage,
+                                      child: Container(
+                                        width: screenWidth * 0.16,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 98, 147, 101),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.5),
+                                              spreadRadius: 1,
+                                              blurRadius: 6,
+                                              offset: Offset(0, 2.5),
                                             ),
                                           ],
                                         ),
+                                        child: Center(
+                                          child: Text(
+                                            "Post",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: screenWidth * 0.037,
+                                            ),
+                                          ),
+                                        ),
                                       ),
+                                    ),
                                   ],
                                 ),
                               ),
 
-                            // Divider for picture
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Divider(
-                                thickness: 1.5,
-                                color: Colors.black,
-                              ),
-                            ),
+                              // Row for profile image and textfield
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 8, right: 8),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Profile image
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8),
+                                      child: Container(
+                                        width: screenWidth * 0.09,
+                                        height: screenHeight * 0.04,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                            // Demo image
+                                            image: AssetImage(
+                                                "assets/islamicEvents.jpg"),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
 
-                            // Row for adding pictures
-                            Row(
-                              children: [
+                                    // TextField to insert content
+                                    Container(
+                                      height: _images.isNotEmpty
+                                          ? screenHeight * 0.3
+                                          : screenHeight * 0.45,
+                                      width: screenWidth * 0.8,
+                                      child: TextField(
+                                        controller: _post,
+                                        cursorColor: Colors.black,
+                                        maxLines:
+                                            null, // Allows the TextField to have unlimited lines
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.symmetric(
+                                            vertical: screenHeight * 0.015,
+                                            horizontal: screenWidth * 0.02,
+                                          ),
+                                          hintText: "What's on your mind?",
+                                          hintStyle: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                          border: InputBorder.none,
+                                        ),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        keyboardType: TextInputType
+                                            .multiline, // Allows multiline input
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Display selected images in a column
+                              if (_images.isNotEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, bottom: 15),
-                                  child: GestureDetector(
-                                    onTap: addImage,
-                                    child: Icon(
-                                      Icons.camera_alt_rounded,
-                                      color: Colors.black,
-                                      size: screenWidth * 0.08,
+                                  padding: EdgeInsets.all(screenHeight *
+                                      0.01), // Added padding for better layout
+                                  child: Column(
+                                    children: [
+                                      for (int i = 0; i < _images.length; i++)
+                                        Stack(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(bottom: 10),
+                                              child: Image.file(
+                                                _images[i],
+                                                height: screenHeight * 0.25,
+                                                width: screenWidth,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            Positioned(
+                                              top: 5,
+                                              right: 5,
+                                              child: GestureDetector(
+                                                onTap: () => removeImage(i),
+                                                child: Container(
+                                                  color: Colors.black
+                                                      .withOpacity(0.6),
+                                                  child: Icon(
+                                                    Icons.close,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
+                                ),
+
+                              // Add photo button
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: screenWidth * 0.02,
+                                    vertical: screenHeight * 0.01),
+                                child: GestureDetector(
+                                  onTap: addImage,
+                                  child: Container(
+                                    height: screenHeight * 0.055,
+                                    decoration: BoxDecoration(
+                                        color: const Color.fromARGB(
+                                            255, 98, 147, 101),
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              spreadRadius: 3,
+                                              blurRadius: 7,
+                                              color:
+                                                  Colors.grey.withOpacity(0.5),
+                                              offset: Offset(0, 2))
+                                        ]),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.photo_library,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(width: screenWidth * 0.02),
+                                        Text(
+                                          "Add photo",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+      );
+    } else {
+      return SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Please sign in with Google to create a post",
+                style: TextStyle(
+                  fontSize: screenWidth * 0.04,
+                  fontWeight: FontWeight.w700,
                 ),
-    );
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    // logic implementation
+                    onTap: () {
+                      AuthService().signInWithGoogle(context);
+                    },
+
+                    // base for the google sign in button
+                    child: Container(
+                      height: screenHeight * 0.04,
+                      width: screenWidth * 0.5,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            spreadRadius: 3,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          // google image
+                          Image(
+                            image: AssetImage(
+                              "assets/google_logo-google_icongoogle-512.webp",
+                            ),
+                            height: screenHeight * 0.03,
+                            width: screenWidth * 0.1,
+                          ),
+
+                          // sign in with google text
+                          Padding(
+                            padding: EdgeInsets.only(left: screenWidth * 0.03),
+                            child: Text(
+                              "Sign in with Google",
+                              style: TextStyle(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }

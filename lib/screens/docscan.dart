@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, prefer_const_constructors
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -33,7 +33,12 @@ class _DocScanState extends State<DocScan> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          actions: [],
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(Icons.arrow_back_ios_new_rounded),
+          ),
         ),
         body: Center(
           child: SingleChildScrollView(

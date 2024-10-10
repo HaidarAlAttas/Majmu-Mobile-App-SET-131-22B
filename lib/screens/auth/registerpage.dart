@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:majmu/services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -23,7 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    // wallpaper size
+    // screen size
     double ScreenWidth = MediaQuery.of(context).size.width;
     double ScreenHeight = MediaQuery.of(context).size.height;
 
@@ -328,7 +327,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                    "Account registered: Welcome to Majmu x PAID app, feel free to explore more in the application ;)"),
+                                    "Account registered: Welcome to Majmu x PAID app, to unlock the full feature, please link your account with a gmail account;)"),
                                 backgroundColor: Colors.green,
                                 behavior: SnackBarBehavior.floating,
                                 duration: Duration(seconds: 10),
