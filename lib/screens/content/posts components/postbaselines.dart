@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:majmu/screens/content/posts%20components/bookmark_button.dart';
 import 'package:majmu/screens/content/posts%20components/like_button.dart';
+import 'package:popover/popover.dart';
 
 class PostBaseline extends StatefulWidget {
   final String post;
@@ -14,6 +15,7 @@ class PostBaseline extends StatefulWidget {
   final List<String> likes;
   final bool isApproved;
   final List<String> images; // Added to hold image URLs
+  final bool settingButton;
 
   const PostBaseline({
     super.key,
@@ -22,7 +24,8 @@ class PostBaseline extends StatefulWidget {
     required this.postId,
     required this.likes,
     required this.isApproved,
-    required this.images, // New parameter for images
+    required this.images,
+    required this.settingButton,
   });
 
   @override
@@ -41,11 +44,15 @@ class _PostBaselineState extends State<PostBaseline> {
   // bool for image
   bool imageTapped = false;
 
+  // bool for settingbutton
+  late bool settingButton;
+
   @override
   void initState() {
     super.initState();
     // Check if the post is liked by the current user
     isLiked = widget.likes.contains(currentUser.email);
+    settingButton = widget.settingButton;
   }
 
   // Toggle like status for the post
@@ -81,6 +88,21 @@ class _PostBaselineState extends State<PostBaseline> {
     setState(() {
       isBookmarked = !isBookmarked;
     });
+  }
+
+  // method to delete post
+  Future<void> deleteDocument(String documentId) async {
+    // Reference the collection and the document
+    CollectionReference posts =
+        FirebaseFirestore.instance.collection('user-posts');
+
+    try {
+      // Delete the document by its ID
+      await posts.doc(documentId).delete();
+      print("Document successfully deleted!");
+    } catch (e) {
+      print("Error deleting document: $e");
+    }
   }
 
   @override
@@ -119,21 +141,138 @@ class _PostBaselineState extends State<PostBaseline> {
                   Padding(
                     padding: EdgeInsets.all(screenHeight * 0.01),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Profile picture with fixed size for consistency
-                        CircleAvatar(
-                          backgroundImage: AssetImage("assets/ziyarah.jpg"),
-                          radius: screenHeight * 0.024, // Dynamic radius
+                        Row(
+                          children: [
+                            // Profile picture with fixed size for consistency
+                            CircleAvatar(
+                              backgroundImage: AssetImage("assets/ziyarah.jpg"),
+                              radius: screenHeight * 0.024, // Dynamic radius
+                            ),
+                            SizedBox(
+                                width: screenWidth *
+                                    0.017), // Spacing between picture and text
+                            Text(
+                              widget.user,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold, // Bold username
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                            width: screenWidth *
-                                0.017), // Spacing between picture and text
-                        Text(
-                          widget.user,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold, // Bold username
-                          ),
-                        ),
+
+                        // if on ilmpage, this button wont appear
+                        // button to delete post
+                        settingButton
+                            ? GestureDetector(
+                                onTap: () => showPopover(
+                                    context: context,
+                                    width: screenWidth * 0.5,
+                                    height: screenHeight * 0.12,
+                                    backgroundColor: Color(0xFFE8F5E9),
+                                    direction: PopoverDirection.bottom,
+                                    bodyBuilder: (context) => Column(
+                                          children: [
+                                            Container(
+                                              height: screenHeight * 0.06,
+                                              decoration: BoxDecoration(
+                                                color: Colors.green[100],
+                                              ),
+                                              child: GestureDetector(
+                                                onTap: () async {
+                                                  bool shouldDelete =
+                                                      await showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return AlertDialog(
+                                                        backgroundColor:
+                                                            Colors.green[50],
+                                                        title: Text(
+                                                          "Delete Post",
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                        content: Text(
+                                                          "Are you sure you want to delete this post?",
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    false),
+                                                            child: Text(
+                                                              "Cancel",
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    true),
+                                                            child: Text(
+                                                              "Delete",
+                                                              style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+
+                                                  if (shouldDelete) {
+                                                    await deleteDocument(
+                                                        widget.postId);
+                                                  }
+                                                },
+                                                child: Center(
+                                                    child: Text(
+                                                  "Delete Post",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                )),
+                                              ),
+                                            ),
+
+                                            // share button
+                                            Container(
+                                              height: screenHeight * 0.06,
+                                              decoration: BoxDecoration(
+                                                color: Colors.green[50],
+                                              ),
+                                              child: GestureDetector(
+                                                onTap: () async {},
+                                                child: Center(
+                                                    child: Text(
+                                                  "Share Post",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                )),
+                                              ),
+                                            )
+                                          ],
+                                        )),
+                                child: Icon(
+                                  Icons.more_vert_rounded,
+                                ),
+                              )
+                            : Container(),
                       ],
                     ),
                   ),

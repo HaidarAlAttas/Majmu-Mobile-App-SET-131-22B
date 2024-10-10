@@ -95,6 +95,7 @@ class _YourPostsPageState extends State<YourPostsPage> {
                             likes: likes, // List of likes
                             isApproved: isApproved, // Approval status
                             images: images, // List of image URLs
+                            settingButton: true,
                           );
                         },
                       );

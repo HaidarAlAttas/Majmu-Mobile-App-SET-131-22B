@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/testing.dart';
 import 'package:majmu/screens/content/posts%20components/postbaselines.dart';
 
 // The main page to display all user posts
@@ -46,6 +47,7 @@ class _IlmPageState extends State<IlmPage> {
                             post["isApproved"], // Approval status of the post
                         images: List<String>.from(
                             post["Images"] ?? []), // List of image URLs
+                        settingButton: false,
                       );
                     },
                   );
