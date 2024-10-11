@@ -98,6 +98,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
       // Save post data to Firestore
       await FirebaseFirestore.instance.collection("user-posts").add({
         "UserEmail": currentUser.email,
+        "username": currentUser.email!.split("@")[0],
         "post": _post.text,
         "Timestamp": Timestamp.now(),
         "Likes": [],

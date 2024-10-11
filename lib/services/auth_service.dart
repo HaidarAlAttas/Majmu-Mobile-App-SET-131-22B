@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -29,10 +30,20 @@ class AuthService {
 
     try {
       // Try to create a new user
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      // after creating the user, create new documents in firestore database
+      FirebaseFirestore.instance
+          .collection("user-cred")
+          .doc(userCredential.user!.email)
+          .set({
+        "username": email.split("@")[0],
+        "profilepicture": "",
+      });
 
       await Future.delayed(const Duration(seconds: 1));
 
@@ -134,9 +145,7 @@ class AuthService {
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
 
-      if (context.mounted) Navigator.pop(context);
-
-      await Future.delayed(const Duration(seconds: 1));
+      if (context.mounted) await Future.delayed(const Duration(seconds: 1));
 
       // Navigate to home page on success
       Navigator.pushNamed(
