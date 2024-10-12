@@ -1,7 +1,12 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables
 
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:majmu/services/auth_service.dart';
+import 'package:path_provider/path_provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -19,6 +24,26 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // checkbox input
   bool checkedValue = false;
+
+  // Convert an asset image to a File
+  Future<File> assetImageToFile(String assetPath) async {
+    // Load the image as ByteData
+    ByteData byteData = await rootBundle.load(assetPath);
+
+    // Convert ByteData to Uint8List
+    Uint8List uint8List = byteData.buffer.asUint8List();
+
+    // Get the temporary directory
+    Directory tempDir = await getTemporaryDirectory();
+
+    // Create a file in the temporary directory
+    File tempFile = File('${tempDir.path}/temp_profile_picture.jpg');
+
+    // Write the Uint8List data to the file
+    await tempFile.writeAsBytes(uint8List);
+
+    return tempFile; // Return the file
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -292,48 +317,89 @@ class _RegisterPageState extends State<RegisterPage> {
                     GestureDetector(
                       // logical implementation here
                       onTap: () async {
-                        if (_password.text != _re_password.text) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  "An error has occured: the password didn't match"),
-                              backgroundColor: Colors.red,
-                              behavior: SnackBarBehavior.floating,
-                              duration: Duration(seconds: 3),
-                            ),
-                          );
-                        } else {
-                          // Attempt to register the user
-                          String? result = await AuthService().register(
-                            email: _email.text,
-                            password: _password.text,
-                            repassword: _re_password.text,
-                            context: context,
-                          );
+                        // Convert the asset image to a file
+                        File profilePictureFile = await assetImageToFile(
+                            'assets/baseProfilePicture.png');
 
-                          // Check if registration returned an error message
-                          if (result != null && mounted) {
+                        // check if the registration textfields is empty or not
+                        if (_email.text.isNotEmpty) {
+                          if (_password.text.isNotEmpty) {
+                            if (_password.text != _re_password.text) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      "An error has occured: the password didn't match"),
+                                  backgroundColor: Colors.red,
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                            } else {
+                              // Attempt to register the user
+                              String? result = await AuthService().register(
+                                email: _email.text,
+                                password: _password.text,
+                                repassword: _re_password.text,
+                                context: context,
+                                profilePictureFile: profilePictureFile,
+                              );
+
+                              // Check if registration returned an error message
+                              if (result != null && mounted) {
+                                // Display error message in a SnackBar
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(result),
+                                    backgroundColor: Colors.red,
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: Duration(seconds: 3),
+                                  ),
+                                );
+                              } else {
+                                // Display welcome message in a SnackBar
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        "Account registered: Welcome to Majmu x PAID app, to unlock the full feature, please link your account with a gmail account;)"),
+                                    backgroundColor: Colors.green,
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: Duration(seconds: 10),
+                                  ),
+                                );
+                              }
+                            }
+                          } else {
+                            setState(() {
+                              _email.clear();
+                              _password.clear();
+                              _re_password.clear();
+                            });
                             // Display error message in a SnackBar
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(result),
+                                content: Text("Please insert password"),
                                 backgroundColor: Colors.red,
                                 behavior: SnackBarBehavior.floating,
                                 duration: Duration(seconds: 3),
                               ),
                             );
-                          } else {
-                            // Display welcome message in a SnackBar
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    "Account registered: Welcome to Majmu x PAID app, to unlock the full feature, please link your account with a gmail account;)"),
-                                backgroundColor: Colors.green,
-                                behavior: SnackBarBehavior.floating,
-                                duration: Duration(seconds: 10),
-                              ),
-                            );
                           }
+                        } else {
+                          setState(() {
+                            _email.clear();
+                            _password.clear();
+                            _re_password.clear();
+                          });
+                          // Display error message in a SnackBar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text("Please insert a valid Email address"),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              duration: Duration(seconds: 3),
+                            ),
+                          );
                         }
                       },
                       child: Container(

@@ -33,6 +33,13 @@ class _IlmPageState extends State<IlmPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            Center(
+              child: Text(
+                "Ilm Page",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: screenWidth * 0.07),
+              ),
+            ),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 // Listen to Firestore collection for real-time updates
@@ -52,8 +59,8 @@ class _IlmPageState extends State<IlmPage> {
                           postId: post.id, // Unique ID of the post
                           likes: List<String>.from(
                               post["Likes"] ?? []), // List of likes
-                          isApproved:
-                              post["isApproved"], // Approval status of the post
+                          isChecked:
+                              post["isChecked"], // Approval status of the post
                           images: List<String>.from(
                               post["Images"] ?? []), // List of image URLs
                           settingButton: false,
@@ -73,7 +80,7 @@ class _IlmPageState extends State<IlmPage> {
                   }
                 },
               ),
-            )
+            ),
           ],
         ),
       );
@@ -83,11 +90,14 @@ class _IlmPageState extends State<IlmPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Please sign in to use the Ilm page feature",
-                style: TextStyle(
-                  fontSize: screenWidth * 0.04,
-                  fontWeight: FontWeight.w700,
+              Padding(
+                padding: EdgeInsets.all(screenWidth * 0.03),
+                child: Text(
+                  "Verify your account to use the Ilm feature",
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               SizedBox(height: 20),
@@ -129,9 +139,12 @@ class _IlmPageState extends State<IlmPage> {
 
                           // sign in with google text
                           Padding(
-                            padding: EdgeInsets.only(left: screenWidth * 0.03),
+                            padding: EdgeInsets.only(
+                              left: screenWidth * 0.02,
+                              right: screenWidth * 0.02,
+                            ),
                             child: Text(
-                              "Sign in with Google",
+                              "Verify with Google",
                               style: TextStyle(),
                             ),
                           ),

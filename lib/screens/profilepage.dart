@@ -119,7 +119,7 @@ Future profileDialog(BuildContext context) {
                                   Text(
                                     "edit profile",
                                     style: TextStyle(
-                                      color: Colors.grey,
+                                      color: Colors.white,
                                     ),
                                   )
                                 ],

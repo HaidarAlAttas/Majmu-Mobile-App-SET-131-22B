@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:majmu/screens/auth/loginpage.dart';
@@ -17,6 +20,7 @@ class AuthService {
     required String password,
     required String repassword,
     required BuildContext context,
+    required File profilePictureFile, // Add the profile picture file
   }) async {
     // Show loading dialog
     showDialog(
@@ -36,13 +40,20 @@ class AuthService {
         password: password,
       );
 
-      // after creating the user, create new documents in firestore database
+      // Upload the profile picture file to Firebase Storage
+      String profilePictureUrl =
+          await uploadFileToNestedFolder(profilePictureFile, email);
+
+      // After creating the user, create new documents in Firestore
       FirebaseFirestore.instance
           .collection("user-cred")
           .doc(userCredential.user!.email)
           .set({
         "username": email.split("@")[0],
-        "profilepicture": "",
+        "email": email,
+        "profilePicture": profilePictureUrl, // Store the uploaded picture URL
+        "publicBookmarks": [],
+        "privateBookmarks": [],
       });
 
       await Future.delayed(const Duration(seconds: 1));
@@ -67,6 +78,27 @@ class AuthService {
     } catch (e) {
       return 'An unexpected error occurred: email has been used, or weak password';
     }
+  }
+
+// Function to upload the profile picture to Firebase Storage
+  Future<String> uploadFileToNestedFolder(File file, String email) async {
+    // Create a reference to the root folder
+    Reference userpfp = FirebaseStorage.instance.ref().child('userpfp');
+
+    // Create a reference to a subfolder inside the root folder with the user's email
+    Reference userUIDpfp = userpfp.child(email);
+
+    // Upload the file to the nested folder
+    UploadTask uploadTask =
+        userUIDpfp.child('profilePicture.jpg').putFile(file);
+
+    // Wait for the upload to complete
+    TaskSnapshot taskSnapshot = await uploadTask;
+
+    // Get the download URL of the uploaded file
+    String downloadURL = await taskSnapshot.ref.getDownloadURL();
+
+    return downloadURL; // Return the download URL
   }
 
   // Login method

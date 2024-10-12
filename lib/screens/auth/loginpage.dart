@@ -397,8 +397,9 @@ class _LoginPageState extends State<LoginPage> {
 
                             // sign in with google text
                             Padding(
-                              padding:
-                                  EdgeInsets.only(left: ScreenWidth * 0.03),
+                              padding: EdgeInsets.only(
+                                  left: ScreenWidth * 0.02,
+                                  right: ScreenWidth * 0.02),
                               child: Text(
                                 "Sign in with Google",
                                 style: TextStyle(),
@@ -410,7 +411,7 @@ class _LoginPageState extends State<LoginPage> {
                     )
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

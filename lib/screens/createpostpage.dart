@@ -102,7 +102,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
         "post": _post.text,
         "Timestamp": Timestamp.now(),
         "Likes": [],
-        "isApproved": false,
+        "isChecked": false,
         "Images": imageUrls,
       });
 
@@ -396,11 +396,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Please sign in with Google to create a post",
-                style: TextStyle(
-                  fontSize: screenWidth * 0.04,
-                  fontWeight: FontWeight.w700,
+              Padding(
+                padding: EdgeInsets.all(screenWidth * 0.03),
+                child: Text(
+                  "Verify your account to create a post",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               SizedBox(height: 20),
@@ -442,9 +446,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
                           // sign in with google text
                           Padding(
-                            padding: EdgeInsets.only(left: screenWidth * 0.03),
+                            padding: EdgeInsets.only(
+                              left: screenWidth * 0.02,
+                              right: screenWidth * 0.02,
+                            ),
                             child: Text(
-                              "Sign in with Google",
+                              "Verify with Google",
                               style: TextStyle(),
                             ),
                           ),

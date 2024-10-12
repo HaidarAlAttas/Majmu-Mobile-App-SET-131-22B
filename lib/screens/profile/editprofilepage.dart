@@ -1,15 +1,25 @@
-// ignore_for_file: unused_import, prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: unused_import, prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
 
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:majmu/screens/bprivatepage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/screens/ilmpage.dart';
+import 'package:majmu/screens/profile/edit%20profile%20components/text_box.dart';
+import 'package:majmu/screens/profile/edit%20profile%20components/userpfp.dart';
 import 'package:majmu/screens/settingpage.dart';
 import 'package:majmu/theme/theme.dart';
 import 'package:majmu/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:image/image.dart' as img; // Add this import
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -19,11 +29,349 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  // user
+  final currentUser = FirebaseAuth.instance.currentUser!;
+
+  List<File> _images = []; // Store selected images here
+  final ImagePicker _picker = ImagePicker();
+
+  // collect all user
+  final usersCollection = FirebaseFirestore.instance.collection("user-cred");
+
+  // Pick image from gallery
+  Future<void> addImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+
+      // Compress the image before uploading
+      img.Image? originalImage = img.decodeImage(imageFile.readAsBytesSync());
+
+      if (originalImage != null) {
+        // Resize and compress the image (reduce quality to 85%)
+        img.Image compressedImage =
+            img.copyResize(originalImage, width: 800); // Adjust width as needed
+        File compressedFile =
+            File(pickedFile.path.replaceFirst('.jpg', '_compressed.jpg'))
+              ..writeAsBytesSync(img.encodeJpg(compressedImage, quality: 60));
+
+        // Show loading indicator (optional)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Uploading new profile picture...'),
+            duration:
+                Duration(days: 1), // Keep it active until manually dismissed
+          ),
+        );
+
+        try {
+          // Get the user's email and encode it to avoid issues with special characters
+          String userEmail = currentUser.email!
+                  .split('@')[0]
+                  .replaceAll(RegExp(r'[^\w.-]+'), '_') +
+              '@' +
+              currentUser.email!.split('@')[1];
+
+          // Fetch existing profile picture URL from Firestore
+          DocumentSnapshot userDoc = await FirebaseFirestore.instance
+              .collection("user-cred")
+              .doc(currentUser.email!)
+              .get();
+
+          // Fetch existing profile picture URL from Firestore
+          var userDocData = userDoc.data() as Map<String, dynamic>?;
+
+          String oldImageUrl = userDocData?["profilePicture"] ?? "";
+
+          // Check if the old image URL contains "userpfp/"
+          if (oldImageUrl.isNotEmpty && oldImageUrl.contains("userpfp/")) {
+            String oldImagePath =
+                oldImageUrl.substring(oldImageUrl.indexOf("userpfp/"));
+            Reference oldImageRef =
+                FirebaseStorage.instance.ref().child(oldImagePath);
+            await oldImageRef.delete();
+          }
+
+          // Create a unique filename for the new image
+          String newFileName =
+              DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
+          Reference storageRef = FirebaseStorage.instance
+              .ref()
+              .child("userpfp/$userEmail/$newFileName");
+
+          // Upload the new compressed image
+          await storageRef.putFile(compressedFile);
+
+          // Get the download URL for the new image
+          String newDownloadUrl = await storageRef.getDownloadURL();
+
+          // Update Firestore with the new profile picture URL
+          await FirebaseFirestore.instance
+              .collection("user-cred")
+              .doc(currentUser.email!)
+              .update({
+            "profilePicture": newDownloadUrl,
+          });
+
+          // Hide loading indicator and show success message
+          ScaffoldMessenger.of(context)
+              .hideCurrentSnackBar(); // Dismiss the loading Snackbar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Profile picture updated successfully!'),
+              duration:
+                  Duration(seconds: 3), // Show success message for 3 seconds
+            ),
+          );
+        } catch (e) {
+          print("Error uploading image: $e");
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to update profile picture.'),
+              duration:
+                  Duration(seconds: 3), // Show error message for 3 seconds
+            ),
+          );
+        }
+      }
+    } else {
+      print("No image selected.");
+    }
+  }
+
+  Future<void> editField(String field) async {
+    String newValue = "";
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        title: Text(
+          "Edit" + field,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        content: TextField(
+          autofocus: true,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+          decoration: InputDecoration(
+              hintText: "Enter new" + field,
+              hintStyle: TextStyle(
+                color: Colors.grey,
+              )),
+          onChanged: (value) {
+            newValue = value;
+          },
+        ),
+        actions: [
+          // cancel button
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              "cancel",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+          // save button
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(newValue);
+            },
+            child: Text(
+              "save",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // update in firestore
+    if (newValue.trim().isNotEmpty) {
+      // Check if the username is already taken
+      final existingUsers =
+          await usersCollection.where("username", isEqualTo: newValue).get();
+
+      if (existingUsers.docs.isNotEmpty && newValue != currentUser.email) {
+        // Show error snackbar if the username is already in use
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Username has been used!",
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        // Proceed with updating Firestore if the username is unique
+        await usersCollection
+            .doc(currentUser.email)
+            .update(({field: newValue}));
+
+        // Show success snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "$field updated successfully!",
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // variable to make it compatible with devices
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        actions: [],
+        backgroundColor: Colors.grey[200],
+      ),
+
+      // fetch the data from firebase firestore "user-cred" collection
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("user-cred")
+            .doc(currentUser.email!)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final userData = snapshot.data!.data() as Map<String, dynamic>;
+            return ListView(
+              children: [
+                SizedBox(height: screenHeight * 0.07),
+
+                // profile picture
+                UserPfp(
+                  image: userData["profilePicture"] ??
+                      'default_image_url', // Handle empty profile picture case
+                  height: screenHeight * 0.2,
+                  width: screenWidth * 0.2,
+
+                  // if profile picture is clicked
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                GestureDetector(
+                                  // close the snack bar
+                                  onTap: () {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                  },
+                                  child: Text(
+                                    "Done",
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: screenHeight * 0.02),
+
+                            // view profile picture
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    content: InstaImageViewer(
+                                      child: Image.network(
+                                          userData["profilePicture"]),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                height: screenHeight * 0.05,
+                                child: Text(
+                                  'View Profile Picture',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // change profile picture
+                            GestureDetector(
+                              onTap: addImage,
+                              child: Container(
+                                width: double.infinity,
+                                height: screenHeight * 0.05,
+                                child: Text(
+                                  'Change Profile Picture',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        duration: Duration(seconds: 8),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                ),
+
+                SizedBox(height: screenHeight * 0.04),
+
+                // username
+                MyTextBox(
+                  text: userData["username"],
+                  sectionName: "Username",
+                  onTap: () => editField('username'),
+                ),
+
+                SizedBox(height: screenHeight * 0.04),
+
+                // email
+                MyTextBox(
+                  text: currentUser.email!,
+                  sectionName: "Email",
+                  onTap: () => editField('email'),
+                ),
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Container(
+              child: Center(
+                child: Text("An error occurred: ${snapshot.error}"),
+              ),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(
+                color: Colors.green,
+              ),
+            );
+          }
+        },
       ),
     );
   }

@@ -13,7 +13,7 @@ class PostBaseline extends StatefulWidget {
   final String user;
   final String postId;
   final List<String> likes;
-  final bool isApproved;
+  final bool isChecked;
   final List<String> images; // Added to hold image URLs
   final bool settingButton;
 
@@ -23,7 +23,7 @@ class PostBaseline extends StatefulWidget {
     required this.user,
     required this.postId,
     required this.likes,
-    required this.isApproved,
+    required this.isChecked,
     required this.images,
     required this.settingButton,
   });
@@ -112,7 +112,7 @@ class _PostBaselineState extends State<PostBaseline> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     // Check if the post has been approved or not
-    if (widget.isApproved == true) {
+    if (widget.isChecked == true) {
       return Padding(
         padding: EdgeInsets.all(screenHeight * 0.01), // Uniform padding
         child: Column(
@@ -340,7 +340,7 @@ class _PostBaselineState extends State<PostBaseline> {
                     ),
                   ],
 
-                  // Likes and comments section
+                  // Likes and bookmark section
                   Padding(
                     padding: EdgeInsets.all(screenHeight * 0.01),
                     child: Row(
@@ -373,10 +373,11 @@ class _PostBaselineState extends State<PostBaseline> {
                         Column(
                           children: [
                             BookmarkButton(
-                                isBookmarked: isBookmarked,
-                                onTap: () {
-                                  ToggleBookmarked();
-                                })
+                              isBookmarked: isBookmarked,
+                              onTap: () {
+                                ToggleBookmarked();
+                              },
+                            )
                           ],
                         )
                       ],
