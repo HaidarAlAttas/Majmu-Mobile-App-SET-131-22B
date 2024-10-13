@@ -315,43 +315,43 @@ class _HomePageState extends State<HomePage> {
                 label: "",
                 icon: Icon(
                   Icons.home_rounded,
-                  color: Colors.black,
+                  color: currentIndex == 0 ? Colors.white : Colors.black,
                 ),
               ),
               BottomNavigationBarItem(
                 label: "",
                 icon: Icon(
                   Icons.menu_book_rounded,
-                  color: Colors.black,
+                  color: currentIndex == 1 ? Colors.white : Colors.black,
                 ),
               ),
               BottomNavigationBarItem(
                 label: "",
                 icon: Icon(
                   Icons.add_circle_rounded,
-                  color: Colors.black,
+                  color: currentIndex == 2 ? Colors.white : Colors.black,
                 ),
               ),
               BottomNavigationBarItem(
                 label: "",
                 icon: Icon(
                   Icons.newspaper,
-                  color: Colors.black,
+                  color: currentIndex == 3 ? Colors.white : Colors.black,
                 ),
               ),
               // Setting buttons logic
               BottomNavigationBarItem(
                 label: "",
                 icon: GestureDetector(
+                  child: Icon(
+                    Icons.settings,
+                    color: currentIndex == 4 ? Colors.white : Colors.black,
+                  ),
                   // if clicked
                   onTap: () {
                     // go to the setting page
                     settingsDialog(context);
                   },
-                  child: Icon(
-                    Icons.settings,
-                    color: Colors.black,
-                  ),
                 ),
               ),
             ],

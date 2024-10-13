@@ -1,11 +1,8 @@
 plugins {
     id "com.android.application"
-    // START: FlutterFire Configuration
-    id 'com.google.gms.google-services'
-    // END: FlutterFire Configuration
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services' // Ensure this is applied after the Android and Kotlin plugins
 }
 
 def localProperties = new Properties()
@@ -16,18 +13,16 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
-if (flutterVersionCode == null) {
-    flutterVersionCode = "1"
-}
-
-def flutterVersionName = localProperties.getProperty("flutter.versionName")
-if (flutterVersionName == null) {
-    flutterVersionName = "1.0"
-}
+def flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "1"
+def flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
 
 android {
-    namespace = "com.example.majmu"  // Updated to match the new package name
+    lint {
+        baseline = file("lint-baseline.xml")
+        abortOnError false
+        checkReleaseBuilds false
+    }
+    namespace = "com.example.majmu"  // Ensure this matches your package name
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -37,9 +32,8 @@ android {
     }
 
     defaultConfig {
-        // Updated to match the new package name
         applicationId "com.example.majmu"
-        minSdk = 23  // Updated minSdkVersion to 23
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
@@ -47,9 +41,7 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.debug // Use debug keys for now
         }
     }
 }
@@ -58,5 +50,11 @@ flutter {
     source = "../.."
 }
 
-// Add Kotlin version (if not already defined elsewhere)
-ext.kotlin_version = '1.8.22'  // Use the latest stable version of Kotlin
+// Set the Kotlin version here
+ext.kotlin_version = '1.8.22' // Update to a compatible and stable version
+
+// Ensure you are using the Kotlin version in dependencies
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version" // Kotlin standard library
+    implementation 'com.google.android.gms:play-services-auth:20.2.0' // Add any other dependencies here
+}

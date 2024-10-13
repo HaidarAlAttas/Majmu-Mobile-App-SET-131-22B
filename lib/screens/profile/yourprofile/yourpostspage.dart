@@ -220,8 +220,10 @@ class _YourPostsPageState extends State<YourPostsPage> {
                                   // Extracting post fields safely
                                   String postContent =
                                       postData["post"] ?? "No content";
-                                  String postUserEmail =
-                                      postData["UserEmail"] ?? "No user";
+                                  String postUsername =
+                                      postData["username"] ?? "No user";
+                                  String postProfilePicture =
+                                      postData["pfp"] ?? "";
                                   String postId = postDocs[index].id;
                                   List<String> likes = List<String>.from(
                                       postData["Likes"] ?? []);
@@ -232,7 +234,9 @@ class _YourPostsPageState extends State<YourPostsPage> {
 
                                   return PostBaseline(
                                     post: postContent, // Post content
-                                    user: postUserEmail, // The user who posted
+                                    pfp:
+                                        postProfilePicture, // post profile picture
+                                    user: postUsername, // The user who posted
                                     postId: postId, // Post ID
                                     likes: likes, // List of likes
                                     isChecked: isApproved, // Approval status
@@ -288,8 +292,10 @@ class _YourPostsPageState extends State<YourPostsPage> {
                                   // Extracting post fields safely
                                   String postContent =
                                       postData["post"] ?? "No content";
-                                  String postUserEmail =
-                                      postData["UserEmail"] ?? "No user";
+                                  String postProfilePicture =
+                                      postData["pfp"] ?? "";
+                                  String postUsername =
+                                      postData["username"] ?? "No user";
                                   String postId = postDocs[index].id;
                                   List<String> likes = List<String>.from(
                                       postData["Likes"] ?? []);
@@ -300,7 +306,9 @@ class _YourPostsPageState extends State<YourPostsPage> {
 
                                   return PostBaseline(
                                     post: postContent, // Post content
-                                    user: postUserEmail, // The user who posted
+                                    pfp:
+                                        postProfilePicture, // post profile picture
+                                    user: postUsername, // The user who posted
                                     postId: postId, // Post ID
                                     likes: likes, // List of likes
                                     isChecked: isApproved, // Approval status

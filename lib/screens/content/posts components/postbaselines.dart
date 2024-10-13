@@ -10,6 +10,7 @@ import 'package:popover/popover.dart';
 
 class PostBaseline extends StatefulWidget {
   final String post;
+  final String pfp;
   final String user;
   final String postId;
   final List<String> likes;
@@ -20,6 +21,7 @@ class PostBaseline extends StatefulWidget {
   const PostBaseline({
     super.key,
     required this.post,
+    required this.pfp,
     required this.user,
     required this.postId,
     required this.likes,
@@ -147,7 +149,7 @@ class _PostBaselineState extends State<PostBaseline> {
                           children: [
                             // Profile picture with fixed size for consistency
                             CircleAvatar(
-                              backgroundImage: AssetImage("assets/ziyarah.jpg"),
+                              backgroundImage: NetworkImage(widget.pfp),
                               radius: screenHeight * 0.024, // Dynamic radius
                             ),
                             SizedBox(

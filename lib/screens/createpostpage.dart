@@ -7,6 +7,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/services/auth_service.dart';
 
@@ -23,6 +24,29 @@ class _CreatePostPageState extends State<CreatePostPage> {
   List<File> _images = []; // Store selected images here
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false; // Track loading state
+  String? profilePictureUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProfilePicture(); // Call this function to fetch the profile picture
+  }
+
+  // Function to fetch user profile picture from Firestore
+  Future<void> fetchProfilePicture() async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection("user-cred")
+        .doc(currentUser.email)
+        .get();
+
+    if (userDoc.exists) {
+      var userData = userDoc.data() as Map<String, dynamic>;
+      setState(() {
+        profilePictureUrl = userData[
+            "profilePicture"]; // Assign the fetched profile picture URL
+      });
+    }
+  }
 
   // check if the user is logged with a valid Gmail account
   final AuthService _authService = AuthService();
@@ -92,13 +116,19 @@ class _CreatePostPageState extends State<CreatePostPage> {
         }
       }
 
+      DocumentSnapshot userCred = await FirebaseFirestore.instance
+          .collection("user-cred")
+          .doc(currentUser.email!)
+          .get();
+
       // Optional: Add a delay to see the loading indicator
       await Future.delayed(Duration(seconds: 2));
 
       // Save post data to Firestore
       await FirebaseFirestore.instance.collection("user-posts").add({
         "UserEmail": currentUser.email,
-        "username": currentUser.email!.split("@")[0],
+        "pfp": profilePictureUrl,
+        "username": userCred["username"],
         "post": _post.text,
         "Timestamp": Timestamp.now(),
         "Likes": [],
@@ -139,6 +169,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
     // if the user is logged on with a valid Gmail account
     if (_authService.isSignedInWithGoogle()) {
+      var userData;
       return SafeArea(
         child:
             // Loading indicator
@@ -253,16 +284,36 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                     // Profile image
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8),
-                                      child: Container(
-                                        width: screenWidth * 0.09,
-                                        height: screenHeight * 0.04,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                            // Demo image
-                                            image: AssetImage(
-                                                "assets/islamicEvents.jpg"),
-                                            fit: BoxFit.cover,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          // Open the image in a full-screen viewer
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  InstaImageViewer(
+                                                child: Image(
+                                                    image: NetworkImage(
+                                                        profilePictureUrl!)),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          width: screenWidth * 0.09,
+                                          height: screenHeight * 0.04,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                              // Demo image
+                                              image: profilePictureUrl != null
+                                                  ? NetworkImage(
+                                                      profilePictureUrl!) // Use the fetched profile picture URL
+                                                  : AssetImage(
+                                                          'assets/baseProfilePicture.png')
+                                                      as ImageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
                                       ),

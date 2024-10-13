@@ -55,7 +55,8 @@ class _IlmPageState extends State<IlmPage> {
                         final post = snapshots.data!.docs[index];
                         return PostBaseline(
                           post: post["post"], // The content of the post
-                          user: post["UserEmail"], // The user who posted
+                          pfp: post["pfp"],
+                          user: post["username"], // The user who posted
                           postId: post.id, // Unique ID of the post
                           likes: List<String>.from(
                               post["Likes"] ?? []), // List of likes

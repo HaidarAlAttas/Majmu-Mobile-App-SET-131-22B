@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import, prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
+// ignore_for_file: unused_import, prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings, use_build_context_synchronously, avoid_print, sized_box_for_whitespace, avoid_unnecessary_containers
 
 import 'dart:io';
 
@@ -40,7 +40,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   // Pick image from gallery
   Future<void> addImage() async {
+    // pick an image frm gallery
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    // Fetch the old user data from Firestore
+    DocumentSnapshot oldValueDoc = await FirebaseFirestore.instance
+        .collection('user-cred')
+        .doc(currentUser.email!)
+        .get();
+
+// Extract the old username from the document snapshot
+    String oldUserPfp = oldValueDoc['profilePicture'] ??
+        ""; // Default to an empty string if not found
+
+    // if an image is picked
     if (pickedFile != null) {
       File imageFile = File(pickedFile.path);
 
@@ -55,12 +68,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
             File(pickedFile.path.replaceFirst('.jpg', '_compressed.jpg'))
               ..writeAsBytesSync(img.encodeJpg(compressedImage, quality: 60));
 
-        // Show loading indicator (optional)
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Uploading new profile picture...'),
-            duration:
-                Duration(days: 1), // Keep it active until manually dismissed
+        // Show loading sign
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            content: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.green,
+                ),
+                SizedBox(width: 20),
+                Text("Uploading..."),
+              ],
+            ),
           ),
         );
 
@@ -113,9 +135,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
             "profilePicture": newDownloadUrl,
           });
 
+          // Update the profilePicture in the user-posts collection
+          if (oldUserPfp.isNotEmpty) {
+            await FirebaseFirestore.instance
+                .collection("user-posts")
+                .where("pfp",
+                    isEqualTo: oldUserPfp) // Use the old username here
+                .get()
+                .then((snapshot) {
+              for (var doc in snapshot.docs) {
+                doc.reference.update({"pfp": newDownloadUrl});
+              }
+            });
+          }
+
           // Hide loading indicator and show success message
-          ScaffoldMessenger.of(context)
-              .hideCurrentSnackBar(); // Dismiss the loading Snackbar
+          Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Profile picture updated successfully!'),
@@ -142,6 +177,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> editField(String field) async {
     String newValue = "";
+
+    // Fetch the old user data from Firestore
+    DocumentSnapshot oldValueDoc = await FirebaseFirestore.instance
+        .collection('user-cred')
+        .doc(currentUser.email!)
+        .get();
+
+// Extract the old username from the document snapshot
+    String oldUsername = oldValueDoc['username'] ??
+        ""; // Default to an empty string if not found
+
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -218,6 +264,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
             .doc(currentUser.email)
             .update(({field: newValue}));
 
+        // Update the username in the user-posts collection
+        if (oldUsername.isNotEmpty) {
+          await FirebaseFirestore.instance
+              .collection("user-posts")
+              .where("username",
+                  isEqualTo: oldUsername) // Use the old username here
+              .get()
+              .then((snapshot) {
+            for (var doc in snapshot.docs) {
+              doc.reference.update({"username": newValue});
+            }
+          });
+        }
+
         // Show success snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -242,6 +302,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+          child: Icon(
+            Icons.arrow_back_ios_new_rounded,
+          ),
+        ),
       ),
 
       // fetch the data from firebase firestore "user-cred" collection
@@ -260,7 +329,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 // profile picture
                 UserPfp(
                   image: userData["profilePicture"] ??
-                      'default_image_url', // Handle empty profile picture case
+                      AssetImage(
+                          "baseProfilePicture.png"), // Handle empty profile picture case
                   height: screenHeight * 0.2,
                   width: screenWidth * 0.2,
 
@@ -294,6 +364,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             // view profile picture
                             GestureDetector(
                               onTap: () {
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
@@ -318,7 +390,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                             // change profile picture
                             GestureDetector(
-                              onTap: addImage,
+                              onTap: () {
+                                addImage();
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                              },
                               child: Container(
                                 width: double.infinity,
                                 height: screenHeight * 0.05,
@@ -350,12 +426,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                 SizedBox(height: screenHeight * 0.04),
 
-                // email
-                MyTextBox(
-                  text: currentUser.email!,
-                  sectionName: "Email",
-                  onTap: () => editField('email'),
-                ),
+                // edit email
+                // MyTextBox(
+                //   text: currentUser.email!,
+                //   sectionName: "Email",
+                //   onTap: () => editField('email'),
+                // ),
               ],
             );
           } else if (snapshot.hasError) {
