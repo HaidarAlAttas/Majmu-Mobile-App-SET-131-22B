@@ -167,41 +167,82 @@ class _SurahPageState extends State<SurahPage> {
 
   // Method to open folder and handle automatic PDF opening
   Future<void> openFolder(BuildContext context, Reference folder) async {
-    final files = await folder.listAll();
-    final pdfFiles =
-        files.items.where((file) => file.name.endsWith('.pdf')).toList();
-    String surahName = getSurahName(folder.name);
+    // Show loading indicator while the files are being fetched
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissal while loading
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(), // Loading spinner
+        );
+      },
+    );
 
-    if (pdfFiles.length == 1) {
-      await openPDF(context, pdfFiles[0], surahName);
-    } else if (pdfFiles.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Scaffold(
-            appBar: AppBar(title: Text(getSurahName(folder.name))),
-            body: ListView.builder(
-              itemCount: pdfFiles.length,
-              itemBuilder: (context, index) {
-                final file = pdfFiles[index];
-                return GestureDetector(
-                  onTap: () async {
-                    await openPDF(context, file, surahName);
-                  },
-                  child: ListTile(
-                    title: Text(file.name),
-                    trailing: Icon(Icons.navigate_next_rounded),
-                  ),
-                );
-              },
+    try {
+      // Fetch the list of files in the folder
+      final files = await folder.listAll();
+      final pdfFiles =
+          files.items.where((file) => file.name.endsWith('.pdf')).toList();
+      String folderName = folder.name;
+
+      // Close the loading dialog once files are fetched
+      Navigator.of(context, rootNavigator: true).pop();
+
+      if (pdfFiles.length == 1) {
+        // Open the single PDF file directly
+        await openPDF(context, pdfFiles[0], folderName);
+      } else if (pdfFiles.isNotEmpty) {
+        // Navigate to a new screen with a list of PDF files if more than one is found
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Scaffold(
+              appBar: AppBar(title: Text(folderName)),
+              body: ListView.builder(
+                itemCount: pdfFiles.length,
+                itemBuilder: (context, index) {
+                  final file = pdfFiles[index];
+                  return GestureDetector(
+                    onTap: () async {
+                      // Show loading indicator when opening PDF
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      );
+                      await openPDF(context, file, folderName);
+                      // Close the loading dialog after opening PDF
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: ListTile(
+                      title: Text(file.name),
+                      trailing: Icon(Icons.navigate_next_rounded),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
-        ),
-      );
-    } else {
+        );
+      } else {
+        // Show a message if no PDF files are found
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No PDF files found in this folder.'),
+          ),
+        );
+      }
+    } catch (e) {
+      // Close the loading dialog in case of an error
+      Navigator.of(context, rootNavigator: true).pop();
+      // Show an error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('No PDF files found in this folder.'),
+          content: Text('Failed to load files: $e'),
         ),
       );
     }

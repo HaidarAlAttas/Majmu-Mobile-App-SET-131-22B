@@ -108,6 +108,15 @@ class _LoginPageState extends State<LoginPage> {
                               vertical: TextfieldWidth * 0.050,
                               horizontal: 10.0,
                             ),
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                _usernameoremail.clear();
+                              },
+                              child: Icon(
+                                Icons.highlight_remove_rounded,
+                                color: Colors.black,
+                              ),
+                            ),
 
                             // hint text configuration
                             hintText: "Email or Username",
@@ -162,6 +171,16 @@ class _LoginPageState extends State<LoginPage> {
                             horizontal: 10.0,
                           ),
 
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              _password.clear();
+                            },
+                            child: Icon(
+                              Icons.highlight_remove_rounded,
+                              color: Colors.black,
+                            ),
+                          ),
+
                           // hint text configuration
                           hintText: "Password",
                           hintStyle: TextStyle(
@@ -184,51 +203,46 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              // show password checkbox and surf in button
+              // back and surf in button
               Container(
                 width: ScreenWidth * 0.73,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // checkbox
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: ScreenWidth * 0.08,
-                          child: Checkbox(
-                            // checkbox box color
-                            fillColor:
-                                WidgetStateProperty.resolveWith((states) {
-                              // Set the checkbox fill color to white when unchecked
-                              if (checkedValue == false) {
-                                return Colors.white;
-                              }
-                              // Otherwise, keep the default active color
-                              return Colors.blue;
-                            }),
-
-                            // the right icon color
-                            checkColor: Colors.white,
-
-                            // value of the checkbox
-                            value: checkedValue,
-
-                            // logical implementation of the checkbox
-                            onChanged: (newValue) {
-                              setState(
-                                () {
-                                  checkedValue = newValue!;
-                                },
-                              );
-                            },
+                    // back button
+                    GestureDetector(
+                      // logical implementation here
+                      onTap: () {
+                        setState(() {
+                          Navigator.pop(context);
+                        });
+                      },
+                      child: Container(
+                        height: ScreenHeight * 0.035,
+                        width: ScreenWidth * 0.30,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 219, 46, 16),
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Back",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                            ),
                           ),
                         ),
-                        Text(
-                          "Show Password",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
+                      ),
                     ),
 
                     // surf in button
@@ -262,7 +276,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: Container(
                         height: ScreenHeight * 0.035,
-                        width: ScreenWidth * 0.17,
+                        width: ScreenWidth * 0.30,
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 16, 128, 219),
                           borderRadius: BorderRadius.circular(5),
@@ -292,12 +306,20 @@ class _LoginPageState extends State<LoginPage> {
 
               // Forgot password and create account URL link button
               Padding(
-                padding: EdgeInsets.only(top: ScreenHeight * 0.02),
+                padding: EdgeInsets.only(top: ScreenHeight * 0.04),
                 child: Container(
-                  width: ScreenWidth * 0.9,
+                  width: ScreenWidth * 0.73,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Text(
+                        "Forgot your password?  ",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: ScreenWidth * 0.036,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       // Forgot Password URL link button
                       GestureDetector(
                         // logical implementation for forgot password
@@ -306,51 +328,15 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.pushNamed(context, "/forgotpasswordp");
                           });
                         },
-                        child: Container(
-                          // to create blue underline color
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.blue,
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            "Forgot Password?",
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: ScreenWidth * 0.036,
-                            ),
+                        child: Text(
+                          "Click here",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: ScreenWidth * 0.036,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-
-                      // Create and account URL link button
-                      GestureDetector(
-                        // logical implementation
-                        onTap: () {
-                          setState(() {
-                            Navigator.pushNamed(context, "/registerp");
-                          });
-                        },
-                        child: Container(
-                          // to create blue underline color
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.blue,
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            "Create an account",
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: ScreenWidth * 0.036,
-                            ),
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ),

@@ -1,12 +1,17 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:majmu/screens/auth/loginpage.dart';
+import 'package:image/image.dart' as img;
+import 'package:majmu/screens/auth/registerpage.dart';
 import 'package:majmu/screens/homepage.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AuthService {
   // google login variable
@@ -20,11 +25,12 @@ class AuthService {
     required String password,
     required String repassword,
     required BuildContext context,
-    required File profilePictureFile, // Add the profile picture file
+    required File profilePictureFile,
   }) async {
     // Show loading dialog
     showDialog(
       context: context,
+      barrierDismissible: false, // Prevent dismissal of the dialog
       builder: (context) => const Center(
         child: CircularProgressIndicator(
           color: Colors.green,
@@ -33,41 +39,24 @@ class AuthService {
     );
 
     try {
-      // Try to create a new user
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      // Create user with email and password
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
 
-      // Upload the profile picture file to Firebase Storage
-      String profilePictureUrl =
-          await uploadFileToNestedFolder(profilePictureFile, email);
+      String uid = userCredential.user!.uid;
 
-      // After creating the user, create new documents in Firestore
-      FirebaseFirestore.instance
-          .collection("user-cred")
-          .doc(userCredential.user!.email)
-          .set({
-        "username": email.split("@")[0],
-        "email": email,
-        "profilePicture": profilePictureUrl, // Store the uploaded picture URL
-        "publicBookmarks": [],
-        "privateBookmarks": [],
-      });
-
-      await Future.delayed(const Duration(seconds: 1));
-
+      // Close the loading dialog after the user is registered
       if (context.mounted) Navigator.pop(context);
 
-      // Navigate to home page on success
+      // Navigate to the homepage right after user registration
       Navigator.pushNamed(context, "/home");
 
-      return null; // No error
+      // Start uploading the profile picture and saving user info in Firestore in the background
+      _saveUserProfile(profilePictureFile, uid, email);
+
+      return null;
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-
-      // Handle specific Firebase exceptions
       if (e.code == 'weak-password') {
         return 'The password is too weak';
       } else if (e.code == 'email-already-in-use') {
@@ -76,29 +65,70 @@ class AuthService {
         return 'An error occurred: email has been used, or weak password';
       }
     } catch (e) {
+      Navigator.pop(context);
       return 'An unexpected error occurred: email has been used, or weak password';
     }
   }
 
-// Function to upload the profile picture to Firebase Storage
-  Future<String> uploadFileToNestedFolder(File file, String email) async {
-    // Create a reference to the root folder
+  Future<void> _saveUserProfile(
+    File profilePictureFile,
+    String uid,
+    String email,
+  ) async {
+    try {
+      // Compress and upload the profile picture
+      String profilePictureUrl =
+          await uploadFileToNestedFolder(profilePictureFile, uid);
+
+      // Save user information in Firestore
+      await FirebaseFirestore.instance.collection("user-cred").doc(uid).set({
+        "username": email.split("@")[0],
+        "email": email,
+        "profilePicture": profilePictureUrl,
+        "isBanned": false,
+      });
+
+      DocumentReference userDocRef =
+          FirebaseFirestore.instance.collection('user-cred').doc(uid);
+
+      // Add empty sub-collections for bookmarks
+      await userDocRef
+          .collection("contentsPublicBookmark")
+          .doc("initialList")
+          .set({});
+      await userDocRef
+          .collection("postPublicBookmark")
+          .doc("initialList")
+          .set({});
+      await userDocRef
+          .collection("privateBookmarks")
+          .doc("initialList")
+          .set({});
+    } catch (e) {
+      print("Error saving user profile: $e");
+    }
+  }
+
+  // Upload profile picture from registration email or google
+  Future<String> uploadFileToNestedFolder(File file, String uid) async {
+    // instance of userpfp/ storage folder
     Reference userpfp = FirebaseStorage.instance.ref().child('userpfp');
 
-    // Create a reference to a subfolder inside the root folder with the user's email
-    Reference userUIDpfp = userpfp.child(email);
+    // fetch the current user email
+    final currentUser = FirebaseAuth.instance.currentUser!.email;
 
-    // Upload the file to the nested folder
+    // create a new sub-folder under userpfp/ folder in firebase storage
+    Reference userUIDpfp = userpfp.child(uid);
+
+    // upload the default image to firebase storage
     UploadTask uploadTask =
-        userUIDpfp.child('profilePicture.jpg').putFile(file);
+        userUIDpfp.child('${currentUser}.jpg').putFile(file);
 
-    // Wait for the upload to complete
+    // fetch the upload task
     TaskSnapshot taskSnapshot = await uploadTask;
 
-    // Get the download URL of the uploaded file
-    String downloadURL = await taskSnapshot.ref.getDownloadURL();
-
-    return downloadURL; // Return the download URL
+    // change the upload task to URL
+    return await taskSnapshot.ref.getDownloadURL();
   }
 
   // Login method
@@ -107,7 +137,6 @@ class AuthService {
     required String password,
     required BuildContext context,
   }) async {
-    // Show loading dialog
     showDialog(
       context: context,
       builder: (context) => const Center(
@@ -118,7 +147,6 @@ class AuthService {
     );
 
     try {
-      // Try to sign in
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -128,23 +156,17 @@ class AuthService {
 
       await Future.delayed(const Duration(seconds: 1));
 
-      // Navigate to home page on success
-      Navigator.pushNamed(
-        context,
-        "/home",
-      );
+      Navigator.pushNamed(context, "/home");
 
-      return null; // No error
+      return null;
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-
-      // Handle specific Firebase exceptions
       if (e.code == 'user-not-found') {
         return 'No user found for that email';
       } else if (e.code == 'wrong-password') {
         return 'Wrong password provided';
       } else {
-        return 'An error occurred: please log in with gmail if you previously has registered with it';
+        return 'An error occurred: please log in with Gmail if you previously registered with it';
       }
     } catch (e) {
       return 'An unexpected error occurred: wrong email or password inserted';
@@ -157,12 +179,22 @@ class AuthService {
     _googleSignIn.signOut();
   }
 
-  // method to sign in with google
+  // Google Sign-In method
   Future<User?> signInWithGoogle(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(
+          color: Colors.green,
+        ),
+      ),
+    );
+
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        return null; // The user canceled the sign-in
+        Navigator.pop(context);
+        return null;
       }
 
       final GoogleSignInAuthentication googleAuth =
@@ -173,30 +205,81 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      // Once signed in, return the UserCredential
+      // to fetch user credentials from firebase auth
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
+      User? user = userCredential.user;
 
-      if (context.mounted) await Future.delayed(const Duration(seconds: 1));
+      //
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('user-cred')
+            .doc(user.uid)
+            .get();
 
-      // Navigate to home page on success
-      Navigator.pushNamed(
-        context,
-        "/home",
-      );
+        Future<File> assetImageToFile(String assetPath) async {
+          ByteData byteData = await rootBundle.load(assetPath);
+          Uint8List uint8List = byteData.buffer.asUint8List();
+          Directory tempDir = await getTemporaryDirectory();
+          File tempFile = File('${tempDir.path}/temp_profile_picture.jpg');
+          await tempFile.writeAsBytes(uint8List);
+          return tempFile;
+        }
 
-      return userCredential.user;
+        File profilePictureFile =
+            await assetImageToFile('assets/baseProfilePicture.png');
+
+        String profilePictureUrl =
+            await uploadFileToNestedFolder(profilePictureFile, user.uid);
+
+        if (!userDoc.exists) {
+          // Reference to the user's document
+          DocumentReference userDocRef =
+              FirebaseFirestore.instance.collection('user-cred').doc(user.uid);
+
+          // Create the user document with basic fields
+          await userDocRef.set({
+            "username": user.email!.split("@")[0],
+            "email": user.email!,
+            "profilePicture": profilePictureUrl,
+            "isBanned": false,
+          });
+
+          // Add empty sub-collections for bookmarks
+          await userDocRef
+              .collection("contentsPublicBookmark")
+              .doc("initialList")
+              .set({});
+          await userDocRef
+              .collection("postPublicBookmark")
+              .doc("initialList")
+              .set({});
+          await userDocRef
+              .collection("privateBookmarks")
+              .doc("initialList")
+              .set({});
+        }
+
+        if (context.mounted) await Future.delayed(const Duration(seconds: 1));
+        Navigator.pop(context);
+        Navigator.pushNamed(context, "/home");
+
+        return user;
+      } else {
+        Navigator.pop(context);
+        return null;
+      }
     } catch (e) {
+      Navigator.pop(context);
       print("Error during Google Sign-In: $e");
       return null;
     }
   }
 
-  // Check if current user signed in with Google
+  // Check if the current user signed in with Google
   bool isSignedInWithGoogle() {
     final user = _auth.currentUser;
     if (user != null) {
-      // Loop through the provider data and check if it's 'google.com'
       for (final provider in user.providerData) {
         if (provider.providerId == 'google.com') {
           return true;
@@ -206,33 +289,29 @@ class AuthService {
     return false;
   }
 
-  // forgot password method
+  // Forgot password method
   Future<String?> forgotPassword({
     required String email,
     required BuildContext context,
   }) async {
-    try {
-      // Show loading dialog
-      showDialog(
-        context: context,
-        builder: (context) => const Center(
-          child: CircularProgressIndicator(
-            color: Colors.green,
-          ),
+    showDialog(
+      context: context,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(
+          color: Colors.green,
         ),
-      );
+      ),
+    );
 
+    try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
 
       if (context.mounted) Navigator.pop(context);
       Navigator.pop(context);
 
-      // Show success message
       return 'Password reset email sent. Check your inbox.';
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-
-      // Handle specific Firebase exceptions
       if (e.code == 'invalid-email') {
         return 'Invalid email address';
       } else if (e.code == 'user-not-found') {
@@ -254,15 +333,15 @@ class StayLogged extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshots) {
-            // if user is logged in
-            if (snapshots.hasData) {
-              return const HomePage();
-            } else {
-              return const LoginPage();
-            }
-          }),
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshots) {
+          if (snapshots.hasData) {
+            return const HomePage();
+          } else {
+            return const RegisterPage();
+          }
+        },
+      ),
     );
   }
 }

@@ -16,6 +16,7 @@ import 'package:majmu/screens/ilmpage.dart';
 import 'package:majmu/screens/profile/edit%20profile%20components/text_box.dart';
 import 'package:majmu/screens/profile/edit%20profile%20components/userpfp.dart';
 import 'package:majmu/screens/settingpage.dart';
+import 'package:majmu/services/auth_service.dart';
 import 'package:majmu/theme/theme.dart';
 import 'package:majmu/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -46,7 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     // Fetch the old user data from Firestore
     DocumentSnapshot oldValueDoc = await FirebaseFirestore.instance
         .collection('user-cred')
-        .doc(currentUser.email!)
+        .doc(currentUser.uid)
         .get();
 
 // Extract the old username from the document snapshot
@@ -88,16 +89,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
         try {
           // Get the user's email and encode it to avoid issues with special characters
-          String userEmail = currentUser.email!
-                  .split('@')[0]
-                  .replaceAll(RegExp(r'[^\w.-]+'), '_') +
-              '@' +
-              currentUser.email!.split('@')[1];
+          String userUID = currentUser.uid!;
 
           // Fetch existing profile picture URL from Firestore
           DocumentSnapshot userDoc = await FirebaseFirestore.instance
               .collection("user-cred")
-              .doc(currentUser.email!)
+              .doc(currentUser.uid!)
               .get();
 
           // Fetch existing profile picture URL from Firestore
@@ -119,7 +116,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
           Reference storageRef = FirebaseStorage.instance
               .ref()
-              .child("userpfp/$userEmail/$newFileName");
+              .child("userpfp/$userUID/$newFileName");
 
           // Upload the new compressed image
           await storageRef.putFile(compressedFile);
@@ -130,7 +127,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           // Update Firestore with the new profile picture URL
           await FirebaseFirestore.instance
               .collection("user-cred")
-              .doc(currentUser.email!)
+              .doc(currentUser.uid)
               .update({
             "profilePicture": newDownloadUrl,
           });
@@ -153,9 +150,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Profile picture updated successfully!'),
+              content: Text(
+                'Profile picture updated successfully!',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
               duration:
                   Duration(seconds: 3), // Show success message for 3 seconds
+              backgroundColor: Colors.green,
             ),
           );
         } catch (e) {
@@ -181,7 +184,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     // Fetch the old user data from Firestore
     DocumentSnapshot oldValueDoc = await FirebaseFirestore.instance
         .collection('user-cred')
-        .doc(currentUser.email!)
+        .doc(currentUser.uid)
         .get();
 
 // Extract the old username from the document snapshot
@@ -247,7 +250,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final existingUsers =
           await usersCollection.where("username", isEqualTo: newValue).get();
 
-      if (existingUsers.docs.isNotEmpty && newValue != currentUser.email) {
+      if (existingUsers.docs.isNotEmpty && newValue != currentUser.uid) {
         // Show error snackbar if the username is already in use
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -260,9 +263,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         );
       } else {
         // Proceed with updating Firestore if the username is unique
-        await usersCollection
-            .doc(currentUser.email)
-            .update(({field: newValue}));
+        await usersCollection.doc(currentUser.uid).update(({field: newValue}));
 
         // Update the username in the user-posts collection
         if (oldUsername.isNotEmpty) {
@@ -298,6 +299,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
+    // check if the user is logged with a valid Gmail account
+    final AuthService _authService = AuthService();
+
+    bool isLogged = _authService.isSignedInWithGoogle();
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -317,7 +323,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("user-cred")
-            .doc(currentUser.email!)
+            .doc(currentUser.uid)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -328,89 +334,95 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                 // profile picture
                 UserPfp(
+                  // component
                   image: userData["profilePicture"] ??
                       AssetImage(
                           "baseProfilePicture.png"), // Handle empty profile picture case
                   height: screenHeight * 0.2,
                   width: screenWidth * 0.2,
 
-                  // if profile picture is clicked
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                GestureDetector(
-                                  // close the snack bar
-                                  onTap: () {
-                                    ScaffoldMessenger.of(context)
-                                        .hideCurrentSnackBar();
-                                  },
-                                  child: Text(
-                                    "Done",
-                                    style: TextStyle(color: Colors.blue),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            SizedBox(height: screenHeight * 0.02),
-
-                            // view profile picture
-                            GestureDetector(
-                              onTap: () {
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    content: InstaImageViewer(
-                                      child: Image.network(
-                                          userData["profilePicture"]),
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          contentPadding: EdgeInsets.all(16),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Close the dialog
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .pop(); // Close the AlertDialog
+                                    },
+                                    child: Text(
+                                      "Done",
+                                      style: TextStyle(color: Colors.blue),
                                     ),
                                   ),
-                                );
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                height: screenHeight * 0.05,
-                                child: Text(
-                                  'View Profile Picture',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                ],
                               ),
-                            ),
+                              SizedBox(height: 16),
 
-                            // change profile picture
-                            GestureDetector(
-                              onTap: () {
-                                addImage();
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                height: screenHeight * 0.05,
-                                child: Text(
-                                  'Change Profile Picture',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                              // View profile picture
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pop(); // Close the AlertDialog
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      content: InstaImageViewer(
+                                        child: Image.network(
+                                          userData["profilePicture"],
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  height: screenHeight *
+                                      0.03, // Adjust this as per your layout
+                                  child: Text(
+                                    'View Profile Picture',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        duration: Duration(seconds: 8),
-                        behavior: SnackBarBehavior.floating,
-                      ),
+                              SizedBox(height: 16),
+
+                              // Change profile picture
+                              GestureDetector(
+                                onTap: () {
+                                  addImage();
+                                  Navigator.of(context)
+                                      .pop(); // Close the AlertDialog
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  height: screenHeight *
+                                      0.03, // Adjust this as per your layout
+                                  child: Text(
+                                    'Change Profile Picture',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
@@ -424,14 +436,64 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   onTap: () => editField('username'),
                 ),
 
-                SizedBox(height: screenHeight * 0.04),
+                // google sign in button
+                isLogged == false
+                    ? Padding(
+                        padding: EdgeInsets.only(top: screenHeight * 0.07),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              // logic implementation
+                              onTap: () {
+                                AuthService().signInWithGoogle(context);
+                              },
 
-                // edit email
-                // MyTextBox(
-                //   text: currentUser.email!,
-                //   sectionName: "Email",
-                //   onTap: () => editField('email'),
-                // ),
+                              // base for the google sign in button
+                              child: Container(
+                                height: screenHeight * 0.04,
+                                width: screenWidth * 0.5,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      spreadRadius: 3,
+                                      blurRadius: 7,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    // google image
+                                    Image(
+                                      image: AssetImage(
+                                        "assets/google_logo-google_icongoogle-512.webp",
+                                      ),
+                                      height: screenHeight * 0.03,
+                                      width: screenWidth * 0.1,
+                                    ),
+
+                                    // sign in with google text
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: screenWidth * 0.02,
+                                          right: screenWidth * 0.02),
+                                      child: Text(
+                                        "Sign in with Google",
+                                        style: TextStyle(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    : Container(),
               ],
             );
           } else if (snapshot.hasError) {

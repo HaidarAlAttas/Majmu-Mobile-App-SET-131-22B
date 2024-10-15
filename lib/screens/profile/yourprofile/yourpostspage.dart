@@ -280,7 +280,7 @@ class _YourPostsPageState extends State<YourPostsPage> {
                               if (postDocs.isEmpty) {
                                 return Center(
                                     child: Text(
-                                        "You haven't posted anything yet, start now :)"));
+                                        "You're lucky nothing is rejected yet -__-"));
                               }
 
                               return ListView.builder(

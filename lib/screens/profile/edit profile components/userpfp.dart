@@ -34,6 +34,7 @@ class _UserPfpState extends State<UserPfp> {
           color: Colors.white,
           image: DecorationImage(
             image: NetworkImage(widget.image),
+            fit: BoxFit.cover,
           ),
         ),
       ),

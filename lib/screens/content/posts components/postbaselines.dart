@@ -148,9 +148,11 @@ class _PostBaselineState extends State<PostBaseline> {
                         Row(
                           children: [
                             // Profile picture with fixed size for consistency
-                            CircleAvatar(
-                              backgroundImage: NetworkImage(widget.pfp),
-                              radius: screenHeight * 0.024, // Dynamic radius
+                            InstaImageViewer(
+                              child: CircleAvatar(
+                                backgroundImage: NetworkImage(widget.pfp),
+                                radius: screenHeight * 0.024, // Dynamic radius
+                              ),
                             ),
                             SizedBox(
                                 width: screenWidth *
@@ -177,7 +179,7 @@ class _PostBaselineState extends State<PostBaseline> {
                                   backgroundColor: Color(0xFFE8F5E9),
 
                                   // the popup will pop on the bottom
-                                  direction: PopoverDirection.bottom,
+                                  direction: PopoverDirection.top,
                                   bodyBuilder: (context) => Column(
                                     children: [
                                       // delete post button
@@ -295,7 +297,7 @@ class _PostBaselineState extends State<PostBaseline> {
                   // Post text
                   Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
                     child: Text(
                       widget.post,
                       style: TextStyle(

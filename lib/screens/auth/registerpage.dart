@@ -25,7 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   // checkbox input
   bool checkedValue = false;
 
-  // Convert an asset image to a File
+  // method to convert an asset image to a File for the pfp
   Future<File> assetImageToFile(String assetPath) async {
     // Load the image as ByteData
     ByteData byteData = await rootBundle.load(assetPath);
@@ -83,10 +83,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // Sign In Text UI
               Text(
-                "Create a Majmu' account",
+                "Majmu'",
                 style: TextStyle(
                   letterSpacing: 0.09,
-                  fontSize: ScreenWidth * 0.058,
+                  fontSize: ScreenWidth * 0.09,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
                   shadows: <Shadow>[
@@ -100,10 +100,31 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
 
+              Padding(
+                padding: EdgeInsets.only(top: ScreenHeight * 0.02),
+                child: Text(
+                  "Register your account now!",
+                  style: TextStyle(
+                    letterSpacing: 0.09,
+                    fontSize: ScreenWidth * 0.047,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    shadows: <Shadow>[
+                      Shadow(
+                        // (x,y)
+                        offset: Offset(-3.0, 3.5),
+                        blurRadius: 3.0,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
               // textfield for email, password, and re-enter password
               Padding(
                 padding: EdgeInsets.only(
-                    top: ScreenHeight * 0.06, bottom: ScreenHeight * 0.03),
+                    top: ScreenHeight * 0.04, bottom: ScreenHeight * 0.03),
                 child: Column(
                   children: [
                     // email textfield
@@ -137,6 +158,16 @@ class _RegisterPageState extends State<RegisterPage> {
                             contentPadding: EdgeInsets.symmetric(
                               vertical: TextfieldWidth * 0.050,
                               horizontal: 10.0,
+                            ),
+
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                _email.clear();
+                              },
+                              child: Icon(
+                                Icons.highlight_remove_rounded,
+                                color: Colors.black,
+                              ),
                             ),
 
                             // hint text configuration
@@ -195,6 +226,16 @@ class _RegisterPageState extends State<RegisterPage> {
                               horizontal: 10.0,
                             ),
 
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                _password.clear();
+                              },
+                              child: Icon(
+                                Icons.highlight_remove_rounded,
+                                color: Colors.black,
+                              ),
+                            ),
+
                             // hint text configuration
                             hintText: "Password",
                             hintStyle: TextStyle(
@@ -249,6 +290,16 @@ class _RegisterPageState extends State<RegisterPage> {
                             horizontal: 10.0,
                           ),
 
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              _re_password.clear();
+                            },
+                            child: Icon(
+                              Icons.highlight_remove_rounded,
+                              color: Colors.black,
+                            ),
+                          ),
+
                           // hint text configuration
                           hintText: "Re-enter Password",
                           hintStyle: TextStyle(
@@ -271,53 +322,58 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
 
-              // back and get started button
+              // show password and get started button
               Container(
                 width: ScreenWidth * 0.73,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // back button
-                    GestureDetector(
-                      // logical implementation here
-                      onTap: () {
-                        setState(() {
-                          Navigator.pop(context);
-                        });
-                      },
-                      child: Container(
-                        height: ScreenHeight * 0.035,
-                        width: ScreenWidth * 0.17,
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 219, 46, 16),
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Back",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
+                    // checkbox show password
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: ScreenWidth * 0.08,
+                          child: Checkbox(
+                            // checkbox box color
+                            fillColor:
+                                WidgetStateProperty.resolveWith((states) {
+                              // Set the checkbox fill color to white when unchecked
+                              if (checkedValue == false) {
+                                return Colors.white;
+                              }
+                              // Otherwise, keep the default active color
+                              return Colors.blue;
+                            }),
+
+                            // the right icon color
+                            checkColor: Colors.white,
+
+                            // value of the checkbox
+                            value: checkedValue,
+
+                            // logical implementation of the checkbox
+                            onChanged: (newValue) {
+                              setState(
+                                () {
+                                  checkedValue = newValue!;
+                                },
+                              );
+                            },
                           ),
                         ),
-                      ),
+                        Text(
+                          "Show Password",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
                     ),
 
                     // Get started button
                     GestureDetector(
                       // logical implementation here
                       onTap: () async {
-                        // Convert the asset image to a file
+                        // Convert the asset image to a file for pfp
                         File profilePictureFile = await assetImageToFile(
                             'assets/baseProfilePicture.png');
 
@@ -355,7 +411,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     duration: Duration(seconds: 3),
                                   ),
                                 );
-                              } else {
+                              } else if (mounted) {
                                 // Display welcome message in a SnackBar
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -431,6 +487,34 @@ class _RegisterPageState extends State<RegisterPage> {
                   ],
                 ),
               ),
+
+              Padding(
+                padding: EdgeInsets.only(top: ScreenHeight * 0.03),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Already have an account?  ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, "/loginp");
+                      },
+                      child: Text(
+                        "Login now",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              )
             ],
           ),
         ),

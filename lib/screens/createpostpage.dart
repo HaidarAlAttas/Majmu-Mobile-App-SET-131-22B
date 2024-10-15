@@ -36,7 +36,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   Future<void> fetchProfilePicture() async {
     DocumentSnapshot userDoc = await FirebaseFirestore.instance
         .collection("user-cred")
-        .doc(currentUser.email)
+        .doc(currentUser.uid)
         .get();
 
     if (userDoc.exists) {
@@ -118,7 +118,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
       DocumentSnapshot userCred = await FirebaseFirestore.instance
           .collection("user-cred")
-          .doc(currentUser.email!)
+          .doc(currentUser.uid!)
           .get();
 
       // Optional: Add a delay to see the loading indicator
@@ -134,6 +134,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
         "Likes": [],
         "isChecked": false,
         "Images": imageUrls,
+        "checkedBy": "",
       });
 
       // Clear after post
@@ -284,21 +285,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                     // Profile image
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          // Open the image in a full-screen viewer
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  InstaImageViewer(
-                                                child: Image(
-                                                    image: NetworkImage(
-                                                        profilePictureUrl!)),
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                      child: InstaImageViewer(
                                         child: Container(
                                           width: screenWidth * 0.09,
                                           height: screenHeight * 0.04,
