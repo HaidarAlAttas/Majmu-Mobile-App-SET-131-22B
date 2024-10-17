@@ -34,8 +34,8 @@ class _IslamicEventsPageState extends State<IslamicEventsPage> {
   // Method to open PDF
   Future<void> openPDF(
       BuildContext context, Reference ref, String folderName) async {
-    final dir = await getTemporaryDirectory();
-    final filePath = '${dir.path}/${ref.name}';
+    final dir = await getDownloadsDirectory();
+    final filePath = '${dir!.path}/${ref.name}';
 
     try {
       final downloadURL = await ref.getDownloadURL();
@@ -47,6 +47,7 @@ class _IslamicEventsPageState extends State<IslamicEventsPage> {
           builder: (context) => ContentViewer(
             path: filePath,
             name: folderName, // Pass the folder name to ContentViewer
+            fileReference: ref, // Pass the file reference
           ),
         ),
       );

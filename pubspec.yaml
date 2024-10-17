@@ -60,6 +60,7 @@ dependencies:
   rxdart: ^0.28.0
   image: ^4.2.0
   device_info_plus: ^9.1.2
+  open_file: ^3.5.9
 
 dev_dependencies:
   flutter_test:

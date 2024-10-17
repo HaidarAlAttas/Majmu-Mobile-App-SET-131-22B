@@ -31,9 +31,9 @@ class _JuzPageState extends State<JuzPage> {
 
   // Method to open PDF
   Future<void> openPDF(
-      BuildContext context, Reference ref, String surahName) async {
-    final dir = await getTemporaryDirectory();
-    final filePath = '${dir.path}/${ref.name}';
+      BuildContext context, Reference ref, String folderName) async {
+    final dir = await getDownloadsDirectory();
+    final filePath = '${dir!.path}/${ref.name}';
 
     try {
       final downloadURL = await ref.getDownloadURL();
@@ -44,7 +44,8 @@ class _JuzPageState extends State<JuzPage> {
         MaterialPageRoute(
           builder: (context) => ContentViewer(
             path: filePath,
-            name: surahName,
+            name: folderName, // Pass the folder name to ContentViewer
+            fileReference: ref, // Pass the file reference
           ),
         ),
       );

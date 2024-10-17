@@ -14,6 +14,7 @@ import firebase_storage
 import flutter_image_compress_macos
 import gal
 import google_sign_in_ios
+import open_file_mac
 import path_provider_foundation
 import video_player_avfoundation
 
@@ -27,6 +28,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FlutterImageCompressMacosPlugin.register(with: registry.registrar(forPlugin: "FlutterImageCompressMacosPlugin"))
   GalPlugin.register(with: registry.registrar(forPlugin: "GalPlugin"))
   FLTGoogleSignInPlugin.register(with: registry.registrar(forPlugin: "FLTGoogleSignInPlugin"))
+  OpenFilePlugin.register(with: registry.registrar(forPlugin: "OpenFilePlugin"))
   PathProviderPlugin.register(with: registry.registrar(forPlugin: "PathProviderPlugin"))
   FVPVideoPlayerPlugin.register(with: registry.registrar(forPlugin: "FVPVideoPlayerPlugin"))
 }

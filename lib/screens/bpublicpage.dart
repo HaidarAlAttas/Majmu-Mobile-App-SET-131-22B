@@ -1,15 +1,13 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, avoid_unnecessary_containers, non_constant_identifier_names, body_might_complete_normally_nullable, unused_element
+// ignore_for_file: prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/screens/bprivatepage.dart';
-import 'package:majmu/screens/bpublicpage.dart';
-import 'package:majmu/screens/createpostpage.dart';
-import 'package:majmu/screens/homepage.dart';
-import 'package:majmu/screens/ilmpage.dart';
-import 'package:majmu/screens/settingpage.dart';
-import 'package:majmu/theme/theme.dart';
-import 'package:majmu/theme/theme_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:majmu/screens/content/contentviewer.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BPublicPage extends StatefulWidget {
   const BPublicPage({super.key});
@@ -19,223 +17,266 @@ class BPublicPage extends StatefulWidget {
 }
 
 class _BPublicPageState extends State<BPublicPage> {
-  // variable for the public and private button
-  final Color whiteColor;
-  final Color blackColor;
+  // Variable for public/private button state
   bool publicChoice = true;
-  bool privateChoice = true;
-  int i = 0;
+  int puborpriv = 0; // State to determine if public or private content is shown
 
-  // state to change page from public to private
-  int puborpriv = 0;
+  // Fetch current user ID
+  final String currentUser = FirebaseAuth.instance.currentUser!.uid;
 
-  _BPublicPageState({
-    this.whiteColor = Colors.white,
-    this.blackColor = Colors.black,
-  });
+  // Variable for bookmarks
+  late Future<List<Map<String, dynamic>>> futureBookmarks;
 
   @override
-  Widget build(BuildContext context) {
-    // variable to make it compatible with devices
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+  void initState() {
+    super.initState();
+    futureBookmarks = fetchBookmarks(); // Initialize future bookmarks on start
+  }
 
-    // create method to apply a blueprint for the bookmarks (public)
-    Widget PublicBContent() {
-      return GestureDetector(
-        // detect input
-        onTap: () {
-          setState(() {});
-        },
-        child: Padding(
-          padding: EdgeInsets.only(
-              right: screenWidth * 0.03,
-              left: screenWidth * 0.03,
-              bottom: screenHeight * 0.01),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            height: screenHeight * 0.073,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Color.fromARGB(255, 201, 218, 162),
-              border: Border.all(color: Colors.black, width: 2),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // demo content name
-                Text(
-                  "Surah Ad-Dhuha",
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    // conditional statement for the text in the button color
-                    color: blackColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: screenWidth * 0.04,
-                  ),
-                ),
+  // Fetch bookmarks from Firestore
+  Future<List<Map<String, dynamic>>> fetchBookmarks() async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection("user-cred")
+        .doc(currentUser)
+        .collection("contentsPublicBookmark")
+        .orderBy(
+          "Timestamp",
+          descending: true,
+        )
+        .get();
 
-                // icon to go to the content file (>)
-                Container(
-                  alignment: Alignment.centerRight,
-                  child: Icon(
-                    Icons.navigate_next_rounded,
-                    color: Colors.black,
-                    size: screenWidth * 0.089,
-                  ),
-                )
-              ],
-            ),
+    return snapshot.docs
+        .map((doc) => {"name": doc.id, "path": doc["filePath"]})
+        .toList();
+  }
+
+  // Method to open PDF
+  Future<void> openPDF(
+      BuildContext context, String filePath, String fileName) async {
+    final Reference ref = FirebaseStorage.instance
+        .refFromURL(filePath); // Create Reference from URL
+    final dir = await getDownloadsDirectory();
+    final localFilePath =
+        '${dir!.path}/$fileName.pdf'; // Local file path for download
+
+    try {
+      final downloadURL = await ref.getDownloadURL(); // Get the download URL
+      await Dio().download(downloadURL, localFilePath); // Download the PDF
+
+      // Navigate to content viewer after download
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ContentViewer(
+            path: localFilePath,
+            name: fileName,
+            fileReference: ref,
           ),
         ),
       );
+    } catch (e) {
+      print("Error while downloading the PDF: $e"); // Handle download error
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      // body of the page
       body: SafeArea(
         child: Center(
-          child: Container(
-            child: Column(
-              children: [
-                // container for public and private bookmark navigator
-                Padding(
-                  padding: EdgeInsets.only(
-                      right: screenWidth * 0.03,
-                      left: screenWidth * 0.03,
-                      bottom: screenHeight * 0.03),
-                  child: Container(
-                    height: screenHeight * 0.047,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.5),
-                          spreadRadius: 1,
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-
-                    // button for public and private bookmark
-                    child: Row(
-                      children: [
-                        // public button
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              // to change the color of the button when clicked
-                              publicChoice = true;
-                              privateChoice = true;
-                              puborpriv = 0;
-                              // get the public bookmark
-                            });
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: screenWidth * 0.02,
-                                right: screenWidth * 0.01),
-                            child: Container(
-                              height: screenHeight * 0.035,
-                              width: screenWidth * 0.43,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-
-                                // conditional statement for the button color
-                                color: publicChoice == true
-                                    ? blackColor
-                                    : whiteColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Public",
-                                  style: TextStyle(
-
-                                      // conditional statement for the text in the button color
-                                      color: publicChoice == false
-                                          ? blackColor
-                                          : whiteColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
+          child: Column(
+            children: [
+              // Container for public and private bookmark navigator
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.03,
+                  vertical: screenHeight * 0.03,
+                ),
+                child: Container(
+                  height: screenHeight * 0.047,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: screenWidth * 0.032),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 6,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      // Public button
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            publicChoice = true; // Set public choice
+                            puborpriv = 0; // Set state to public
+                          });
+                        },
+                        child: Container(
+                          height: screenHeight * 0.035,
+                          width: screenWidth * 0.43,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: publicChoice
+                                ? Colors.black
+                                : Colors
+                                    .white, // Change color based on selection
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Public",
+                              style: TextStyle(
+                                color: publicChoice
+                                    ? Colors.white
+                                    : Colors
+                                        .black, // Change text color based on selection
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ),
-
-                        // private button
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              publicChoice = false;
-                              privateChoice = false;
-                              puborpriv = 1;
-                            });
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: screenWidth * 0.02,
-                                right: screenWidth * 0.01),
-                            child: Container(
-                              height: screenHeight * 0.035,
-                              width: screenWidth * 0.43,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-
-                                // conditional statement for the button color
-                                color: publicChoice == false
-                                    ? blackColor
-                                    : whiteColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Private",
-                                  style: TextStyle(
-
-                                      // conditional statement for the text in the button color
-                                      color: publicChoice == true
-                                          ? blackColor
-                                          : whiteColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                      ),
+                      // Private button
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            publicChoice = false; // Set private choice
+                            puborpriv = 1; // Set state to private
+                          });
+                        },
+                        child: Container(
+                          height: screenHeight * 0.035,
+                          width: screenWidth * 0.43,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: publicChoice
+                                ? Colors.white
+                                : Colors
+                                    .black, // Change color based on selection
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Private",
+                              style: TextStyle(
+                                color: publicChoice
+                                    ? Colors.black
+                                    : Colors
+                                        .white, // Change text color based on selection
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
+              ),
 
-                // conditional statement to change from public to private bookmark
-                // if public clicked
-                Expanded(
-                  child: puborpriv == 0
+              // Conditional display of bookmarks or private page
+              Expanded(
+                child: puborpriv == 0
+                    ? SingleChildScrollView(
+                        child: FutureBuilder<List<Map<String, dynamic>>>(
+                          future: futureBookmarks,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                  child:
+                                      CircularProgressIndicator()); // Loading state
+                            }
 
-                      // bila dah dapat all content, buat ListView widget kat sini
-                      ? Container(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: List.generate(1, (index) {
-                                return PublicBContent();
-                              }),
-                            ),
-                          ),
-                        )
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(
+                                      'Error: ${snapshot.error}')); // Error handling
+                            }
 
-                      // if private clicked
-                      : BPrivatePage(),
-                ),
-              ],
-            ),
+                            final bookmarks = snapshot.data;
+
+                            if (bookmarks == null || bookmarks.isEmpty) {
+                              return Center(
+                                  child: Text(
+                                      'No bookmarks yet, add them now!')); // No bookmarks message
+                            }
+
+                            return ListView.builder(
+                              shrinkWrap:
+                                  true, // ListView takes only needed space
+                              itemCount: bookmarks.length,
+                              itemBuilder: (context, index) {
+                                final bookmark = bookmarks[index];
+                                return GestureDetector(
+                                  onTap: () async {
+                                    openPDF(context, bookmark["path"],
+                                        bookmark["name"]);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(16.0),
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 16.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 3,
+                                          blurRadius: 7,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            bookmark[
+                                                "name"], // Display the folder name
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon:
+                                              Icon(Icons.navigate_next_rounded),
+                                          onPressed: () async {
+                                            await openPDF(
+                                                context,
+                                                bookmark["path"],
+                                                bookmark["name"]);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      )
+                    : BPrivatePage(), // Render private page if selected
+              ),
+            ],
           ),
-
-          // home page
         ),
       ),
     );

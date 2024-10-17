@@ -32,20 +32,27 @@ class _LoginPageState extends State<LoginPage> {
       width: ScreenWidth,
       decoration: BoxDecoration(
         image: DecorationImage(
-            image: AssetImage("assets/loginbackground.png"), fit: BoxFit.fill),
+          image: AssetImage("assets/loginbackground.png"),
+          fit: BoxFit.fill,
+        ),
       ),
       child: Scaffold(
         // to view wallpaper on the back
         backgroundColor: Colors.transparent,
 
+        resizeToAvoidBottomInset: false, // make the widgets wont go up
+
         // content inside login page
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               // majmu' Icon UI
               Padding(
-                padding: EdgeInsets.only(bottom: ScreenHeight * 0.02),
+                padding: EdgeInsets.only(
+                  bottom: ScreenHeight * 0.02,
+                  top: ScreenHeight * 0.2,
+                ),
                 child: Image(
                   image: AssetImage("assets/Majmu'.png"),
                   width: ScreenWidth * 0.3,
@@ -74,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
               // textfield for email or username and password
               Padding(
                 padding: EdgeInsets.only(
-                    top: ScreenHeight * 0.06, bottom: ScreenHeight * 0.03),
+                    top: ScreenHeight * 0.04, bottom: ScreenHeight * 0.03),
                 child: Column(
                   children: [
                     // email and username textfield
@@ -123,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                             hintStyle: TextStyle(
                               fontWeight: FontWeight.w900,
                               color: Colors.grey,
-                              fontSize: 13,
+                              fontSize: ScreenWidth * 0.032,
                             ),
 
                             // to remove the underline
@@ -133,6 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                           // input configuration
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
+                            fontSize: ScreenWidth * 0.032,
                           ),
                         ),
                       ),
@@ -186,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                           hintStyle: TextStyle(
                             fontWeight: FontWeight.w900,
                             color: Colors.grey,
-                            fontSize: 13,
+                            fontSize: ScreenWidth * 0.032,
                           ),
 
                           // to remove the underline
@@ -196,6 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                         // input configuration
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
+                          fontSize: ScreenWidth * 0.032,
                         ),
                       ),
                     ),
