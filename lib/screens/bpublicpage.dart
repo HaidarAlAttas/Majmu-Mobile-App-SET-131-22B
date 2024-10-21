@@ -126,228 +126,194 @@ class _BPublicPageState extends State<BPublicPage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
-        child: Center(
-          child: Column(
-            children: [
-              // Container for public and private bookmark navigator
-              NavigatorBookmark(
-                onUpdate: (bool newChoice, int newPubOrPriv) {
-                  setState(() {
-                    publicChoice = newChoice;
-                    puborpriv = newPubOrPriv;
-                  });
-                },
-                publicChoice: publicChoice,
-                puborpriv: puborpriv,
-              ),
+        child: Column(
+          children: [
+            // Container for public and private bookmark navigator
+            NavigatorBookmark(
+              onUpdate: (bool newChoice, int newPubOrPriv) {
+                setState(() {
+                  publicChoice = newChoice;
+                  puborpriv = newPubOrPriv;
+                });
+              },
+              publicChoice: publicChoice,
+              puborpriv: puborpriv,
+            ),
 
-              // Conditional display of bookmarks or private page
-              Expanded(
-                child: puborpriv == 0
-                    ? SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Navigator2Bookmark(
-                              contentChoice: contentChoice,
-                              contentOrPost: contentOrPost,
-                              onUpdate: (bool newContentChoice,
-                                  int newContentOrPost) {
-                                setState(() {
-                                  contentChoice = newContentChoice;
-                                  contentOrPost = newContentOrPost;
-                                });
-                              },
-                            ),
+            // Conditional display of bookmarks or private page
+            Expanded(
+              child: puborpriv == 0
+                  ? Column(
+                      children: [
+                        Navigator2Bookmark(
+                          contentChoice: contentChoice,
+                          contentOrPost: contentOrPost,
+                          onUpdate:
+                              (bool newContentChoice, int newContentOrPost) {
+                            setState(() {
+                              contentChoice = newContentChoice;
+                              contentOrPost = newContentOrPost;
+                            });
+                          },
+                        ),
+                        // Use Expanded to allow proper scrolling
+                        Expanded(
+                          child: contentOrPost == 0
+                              ? FutureBuilder<List<Map<String, dynamic>>>(
+                                  future: futureContentBookmarks,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      ); // Loading state
+                                    }
 
-                            // content bookmark page
-                            contentOrPost == 0
-                                ? FutureBuilder<List<Map<String, dynamic>>>(
-                                    future: futureContentBookmarks,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        ); // Loading state
-                                      }
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                        child: Text('Error: ${snapshot.error}'),
+                                      ); // Error handling
+                                    }
 
-                                      if (snapshot.hasError) {
-                                        return Center(
-                                          child:
-                                              Text('Error: ${snapshot.error}'),
-                                        ); // Error handling
-                                      }
+                                    final bookmarks = snapshot.data;
 
-                                      final bookmarks = snapshot.data;
+                                    if (bookmarks == null ||
+                                        bookmarks.isEmpty) {
+                                      return Center(
+                                        child: Text(
+                                            'No bookmarks yet, add them now!'),
+                                      ); // No bookmarks message
+                                    }
 
-                                      if (bookmarks == null ||
-                                          bookmarks.isEmpty) {
-                                        return Center(
-                                          child: Text(
-                                              'No bookmarks yet, add them now!'),
-                                        ); // No bookmarks message
-                                      }
-
-                                      return ListView.builder(
-                                        shrinkWrap:
-                                            true, // ListView takes only needed space
-                                        itemCount: bookmarks.length,
-                                        itemBuilder: (context, index) {
-                                          final bookmark = bookmarks[index];
-                                          return GestureDetector(
-                                            onTap: () async {
-                                              openPDF(
-                                                context,
-                                                bookmark["path"],
-                                                bookmark["name"],
-                                              );
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.all(16.0),
-                                              margin: EdgeInsets.symmetric(
-                                                vertical: 8.0,
-                                                horizontal: 16.0,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.5),
-                                                    spreadRadius: 3,
-                                                    blurRadius: 7,
-                                                    offset: Offset(0, 3),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      getName(bookmark[
-                                                          "name"]), // Display the folder name
-                                                      style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  IconButton(
-                                                    icon: Icon(Icons
-                                                        .navigate_next_rounded),
-                                                    onPressed: () async {
-                                                      await openPDF(
-                                                          context,
-                                                          bookmark["path"],
-                                                          bookmark["name"]);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  )
-
-                                // posts bookmark
-                                : // posts bookmark
-                                SingleChildScrollView(
-                                    child: StreamBuilder<QuerySnapshot>(
-                                      stream: FirebaseFirestore.instance
-                                          .collection('user-posts')
-                                          .where('bookmarkedBy',
-                                              arrayContains: currentUserUid)
-                                          .orderBy("Timestamp",
-                                              descending: true)
-                                          .snapshots(), // Listen for real-time updates
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return Center(
-                                            child: CircularProgressIndicator(),
-                                          ); // Loading state
-                                        }
-
-                                        if (snapshot.hasError) {
-                                          return Center(
-                                            child: Text(
-                                                'Error: ${snapshot.error}'),
-                                          ); // Error handling
-                                        }
-
-                                        final postBookmarks =
-                                            snapshot.data?.docs ?? [];
-
-                                        if (postBookmarks.isEmpty) {
-                                          return Center(
-                                            child: Text(
-                                                'No bookmarks yet, add them now!'),
-                                          ); // No bookmarks message
-                                        }
-
-                                        return ListView.builder(
-                                          shrinkWrap:
-                                              true, // ListView takes only needed space
-                                          itemCount: postBookmarks.length,
-                                          itemBuilder: (context, index) {
-                                            final post = postBookmarks[index];
-                                            // Extracting post fields safely
-                                            String postContent =
-                                                post["post"] ?? "No content";
-                                            String postUsername =
-                                                post["username"] ?? "No user";
-                                            String postProfilePicture =
-                                                post["pfp"] ?? "";
-                                            String postId = post
-                                                .id; // Use post.id to get the document ID
-                                            List<String> likes =
-                                                List<String>.from(
-                                                    post["Likes"] ?? []);
-                                            List<String> bookmarked =
-                                                List<String>.from(
-                                                    post["bookmarkedBy"] ?? []);
-                                            bool isApproved =
-                                                post["isChecked"] ?? false;
-                                            List<String> images =
-                                                List<String>.from(
-                                                    post["Images"] ?? []);
-
-                                            return PostBaseline(
-                                              post: postContent, // Post content
-                                              pfp:
-                                                  postProfilePicture, // Post profile picture
-                                              user:
-                                                  postUsername, // The user who posted
-                                              postId:
-                                                  postId, // Post ID (from Firestore document)
-                                              likes: likes, // List of likes
-                                              bookmarkedBy: bookmarked,
-                                              isChecked:
-                                                  isApproved, // Approval status
-                                              images:
-                                                  images, // List of image URLs
-                                              settingButton: false,
+                                    return ListView.builder(
+                                      itemCount: bookmarks.length,
+                                      itemBuilder: (context, index) {
+                                        final bookmark = bookmarks[index];
+                                        return GestureDetector(
+                                          onTap: () async {
+                                            openPDF(
+                                              context,
+                                              bookmark["path"],
+                                              bookmark["name"],
                                             );
                                           },
+                                          child: Container(
+                                            padding: EdgeInsets.all(16.0),
+                                            margin: EdgeInsets.symmetric(
+                                              vertical: 8.0,
+                                              horizontal: 16.0,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  spreadRadius: 3,
+                                                  blurRadius: 7,
+                                                  offset: Offset(0, 3),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    getName(bookmark["name"]),
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  icon: Icon(Icons
+                                                      .navigate_next_rounded),
+                                                  onPressed: () async {
+                                                    await openPDF(
+                                                        context,
+                                                        bookmark["path"],
+                                                        bookmark["name"]);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         );
                                       },
-                                    ),
-                                  ),
-                          ],
+                                    );
+                                  },
+                                )
+                              : StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('user-posts')
+                                      .where('bookmarkedBy',
+                                          arrayContains: currentUserUid)
+                                      .orderBy("Timestamp", descending: true)
+                                      .snapshots(), // Listen for real-time updates
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      ); // Loading state
+                                    }
+
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                        child: Text('Error: ${snapshot.error}'),
+                                      ); // Error handling
+                                    }
+
+                                    final postBookmarks =
+                                        snapshot.data?.docs ?? [];
+
+                                    if (postBookmarks.isEmpty) {
+                                      return Center(
+                                        child: Text(
+                                            'No bookmarks yet, add them now!'),
+                                      ); // No bookmarks message
+                                    }
+
+                                    return ListView.builder(
+                                      itemCount: postBookmarks.length,
+                                      itemBuilder: (context, index) {
+                                        final post = postBookmarks[index];
+
+                                        return KeyedSubtree(
+                                          key: Key(post
+                                              .id), // Assign a unique key to each post
+                                          child: PostBaseline(
+                                            post: post["post"],
+                                            pfp: post["pfp"],
+                                            user: post["username"],
+                                            postId: post.id,
+                                            likes: List<String>.from(
+                                                post["Likes"] ?? []),
+                                            bookmarkedBy: List<String>.from(
+                                                post["bookmarkedBy"] ?? []),
+                                            isChecked: post["isChecked"],
+                                            images: List<String>.from(
+                                                post["Images"] ?? []),
+                                            settingButton: false,
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
                         ),
-                      )
-                    : BPrivatePage(), // Render private page if selected
-              ),
-            ],
-          ),
+                      ],
+                    )
+                  : BPrivatePage(), // Render private page if selected
+            ),
+          ],
         ),
       ),
     );

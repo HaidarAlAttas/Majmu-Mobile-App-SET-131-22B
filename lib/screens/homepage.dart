@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    currentIndex == 3 ? currentIndex = 3 : currentIndex = 0;
+                    currentIndex == 1 ? currentIndex = 1 : currentIndex = 0;
                   });
                 },
                 child: Image(

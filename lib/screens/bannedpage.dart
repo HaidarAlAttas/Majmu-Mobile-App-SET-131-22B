@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class BannedPage extends StatefulWidget {
   const BannedPage({super.key});
@@ -14,47 +15,49 @@ class BannedPage extends StatefulWidget {
 
 class _BannedPageState extends State<BannedPage> {
   void _sendEmail() async {
-    // fetch the Admin that banned the user
-
-    // fetch the currentuser email and username
     final currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser != null) {
-      //
       DocumentSnapshot docField = await FirebaseFirestore.instance
           .collection("user-cred")
           .doc(currentUser.uid)
           .get();
 
       if (docField.exists) {
-        // fetch the fields
-        String adminEmail = docField.get('adminEmail') ??
-            'admin@example.com'; // Admin's email who banned the user
-        String username =
-            docField.get('username') ?? 'Unknown User'; // User's username
+        String adminEmail = docField.get('bannedBy') ?? 'admin@example.com';
+        String username = docField.get('username') ?? 'Unknown User';
 
-        final Uri emailLaunchUri = Uri(
-          scheme: 'mailto',
-          path: '${adminEmail}', // admin email address
-          queryParameters: {
-            'subject':
-                'Account Ban Appeal for account id: ${currentUser.uid}, with username: ${username}'
-          },
-        );
+        final String emailUri =
+            'mailto:$adminEmail?subject=Account%20Ban%20Appeal%20for%20account%20id:%20${currentUser.uid},%20with%20username:%20$username';
 
-        try {
-          await launchUrl(emailLaunchUri);
-        } catch (e) {
-          print("Could not launch email client: $e");
+        // Check if the email app can be launched
+        if (await canLaunchUrlString(emailUri)) {
+          try {
+            await launchUrlString(emailUri);
+          } catch (e) {
+            print("Could not launch email client: $e");
+          }
+        } else {
+          print("Could not launch email client");
         }
       } else {
-        print('field doesnt exist');
-        return;
+        print('Document does not exist');
       }
     } else {
       print("User is not logged in");
-      return;
     }
+  }
+
+  Future<String> banMessage() async {
+    // fetch the currentuser email and username
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    DocumentSnapshot docField = await FirebaseFirestore.instance
+        .collection("user-cred")
+        .doc(currentUser!.uid)
+        .get();
+
+    return docField["banReason"].toString();
   }
 
   @override

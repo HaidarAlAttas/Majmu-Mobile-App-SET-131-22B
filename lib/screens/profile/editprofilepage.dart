@@ -320,197 +320,208 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
 
       // fetch the data from firebase firestore "user-cred" collection
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection("user-cred")
-            .doc(currentUser.uid)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final userData = snapshot.data!.data() as Map<String, dynamic>;
-            return ListView(
-              children: [
-                SizedBox(height: screenHeight * 0.07),
+      body: isLogged
+          ? StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("user-cred")
+                  .doc(currentUser.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final userData =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  return ListView(
+                    children: [
+                      SizedBox(height: screenHeight * 0.07),
 
-                // profile picture
-                UserPfp(
-                  // component
-                  image: userData["profilePicture"] ??
-                      AssetImage(
-                          "baseProfilePicture.png"), // Handle empty profile picture case
-                  height: screenHeight * 0.2,
-                  width: screenWidth * 0.2,
+                      // profile picture
+                      UserPfp(
+                        // component
+                        image: userData["profilePicture"] ??
+                            AssetImage(
+                                "baseProfilePicture.png"), // Handle empty profile picture case
+                        height: screenHeight * 0.2,
+                        width: screenWidth * 0.2,
 
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          contentPadding: EdgeInsets.all(16),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Close the dialog
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .pop(); // Close the AlertDialog
-                                    },
-                                    child: Text(
-                                      "Done",
-                                      style: TextStyle(color: Colors.blue),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                contentPadding: EdgeInsets.all(16),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Close the dialog
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context)
+                                                .pop(); // Close the AlertDialog
+                                          },
+                                          child: Text(
+                                            "Done",
+                                            style:
+                                                TextStyle(color: Colors.blue),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 16),
+                                    SizedBox(height: 16),
 
-                              // View profile picture
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context)
-                                      .pop(); // Close the AlertDialog
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      content: InstaImageViewer(
-                                        child: Image.network(
-                                          userData["profilePicture"],
-                                          fit: BoxFit.cover,
+                                    // View profile picture
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the AlertDialog
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            content: InstaImageViewer(
+                                              child: Image.network(
+                                                userData["profilePicture"],
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: screenHeight *
+                                            0.03, // Adjust this as per your layout
+                                        child: Text(
+                                          'View Profile Picture',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  );
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  height: screenHeight *
-                                      0.03, // Adjust this as per your layout
-                                  child: Text(
-                                    'View Profile Picture',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 16),
+                                    SizedBox(height: 16),
 
-                              // Change profile picture
-                              GestureDetector(
-                                onTap: () {
-                                  addImage();
-                                  Navigator.of(context)
-                                      .pop(); // Close the AlertDialog
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  height: screenHeight *
-                                      0.03, // Adjust this as per your layout
-                                  child: Text(
-                                    'Change Profile Picture',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                    // Change profile picture
+                                    GestureDetector(
+                                      onTap: () {
+                                        addImage();
+                                        Navigator.of(context)
+                                            .pop(); // Close the AlertDialog
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: screenHeight *
+                                            0.03, // Adjust this as per your layout
+                                        child: Text(
+                                          'Change Profile Picture',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+
+                      SizedBox(height: screenHeight * 0.04),
+
+                      // username
+                      MyTextBox(
+                        text: userData["username"],
+                        sectionName: "Username",
+                        onTap: () => editField('username'),
+                      ),
+
+                      // google sign in button
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return Container(
+                    child: Center(
+                      child: Text("An error occurred: ${snapshot.error}"),
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.green,
+                    ),
+                  );
+                }
+              },
+            )
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(screenWidth * 0.03),
+                    child: Text(
+                      "Verify your account to edit your profile",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.04,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    // logic implementation
+                    onTap: () {
+                      AuthService().signInWithGoogle(context);
+                    },
+
+                    // base for the google sign in button
+                    child: Container(
+                      height: screenHeight * 0.04,
+                      width: screenWidth * 0.5,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            spreadRadius: 3,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
                           ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          // google image
+                          Image(
+                            image: AssetImage(
+                              "assets/google_logo-google_icongoogle-512.webp",
+                            ),
+                            height: screenHeight * 0.03,
+                            width: screenWidth * 0.1,
+                          ),
 
-                SizedBox(height: screenHeight * 0.04),
-
-                // username
-                MyTextBox(
-                  text: userData["username"],
-                  sectionName: "Username",
-                  onTap: () => editField('username'),
-                ),
-
-                // google sign in button
-                isLogged == false
-                    ? Padding(
-                        padding: EdgeInsets.only(top: screenHeight * 0.07),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              // logic implementation
-                              onTap: () {
-                                AuthService().signInWithGoogle(context);
-                              },
-
-                              // base for the google sign in button
-                              child: Container(
-                                height: screenHeight * 0.04,
-                                width: screenWidth * 0.5,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.5),
-                                      spreadRadius: 3,
-                                      blurRadius: 7,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    // google image
-                                    Image(
-                                      image: AssetImage(
-                                        "assets/google_logo-google_icongoogle-512.webp",
-                                      ),
-                                      height: screenHeight * 0.03,
-                                      width: screenWidth * 0.1,
-                                    ),
-
-                                    // sign in with google text
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: screenWidth * 0.02,
-                                          right: screenWidth * 0.02),
-                                      child: Text(
-                                        "Sign in with Google",
-                                        style: TextStyle(),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    : Container(),
-              ],
-            );
-          } else if (snapshot.hasError) {
-            return Container(
-              child: Center(
-                child: Text("An error occurred: ${snapshot.error}"),
+                          // sign in with google text
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: screenWidth * 0.02,
+                                right: screenWidth * 0.02),
+                            child: Text(
+                              "Sign in with Google",
+                              style: TextStyle(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(
-                color: Colors.green,
-              ),
-            );
-          }
-        },
-      ),
+            ),
     );
   }
 }

@@ -19,9 +19,10 @@ class NavigatorBookmark extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: screenWidth * 0.03,
-        vertical: screenHeight * 0.03,
+      padding: EdgeInsets.only(
+        left: screenWidth * 0.03, // Set padding to center the container
+        right: screenWidth * 0.03,
+        bottom: screenHeight * 0.02,
       ),
       child: Container(
         height: screenHeight * 0.047,
