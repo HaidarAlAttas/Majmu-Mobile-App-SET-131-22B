@@ -1,5 +1,4 @@
-# Uncomment this line to define a global platform for your project
-platform :ios, '14.0'
+platform :ios, '14.0' # Uncommented to set the minimum iOS version
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -35,6 +34,13 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  # Add modular headers for Firebase pods to avoid non-modular header issues
+  pod 'Firebase/Core', :modular_headers => true
+  pod 'Firebase/Auth', :modular_headers => true
+  pod 'Firebase/Storage', :modular_headers => true
+  pod 'Firebase/Firestore', :modular_headers => true
+  pod 'Firebase/Messaging', :modular_headers => true
 
   target 'RunnerTests' do
     inherit! :search_paths

@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image/image.dart' as img;
 import 'package:majmu/screens/auth/registerpage.dart';
+import 'package:majmu/screens/bannedpage.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -86,24 +87,32 @@ class AuthService {
         "email": email,
         "profilePicture": profilePictureUrl,
         "isBanned": false,
+        "bannedBy": "",
+        "banReason": "",
+        "postPublicBookmark": [],
       });
 
       DocumentReference userDocRef =
           FirebaseFirestore.instance.collection('user-cred').doc(uid);
 
-      // Add empty sub-collections for bookmarks
+      // Add empty sub-collections for bookmarks and delete the initialList right after
       await userDocRef
           .collection("contentsPublicBookmark")
           .doc("initialList")
           .set({});
       await userDocRef
-          .collection("postPublicBookmark")
+          .collection("contentsPublicBookmark")
+          .doc("initialList")
+          .delete();
+
+      await userDocRef
+          .collection("privateBookmarks")
           .doc("initialList")
           .set({});
       await userDocRef
           .collection("privateBookmarks")
           .doc("initialList")
-          .set({});
+          .delete();
     } catch (e) {
       print("Error saving user profile: $e");
     }
@@ -243,21 +252,29 @@ class AuthService {
             "email": user.email!,
             "profilePicture": profilePictureUrl,
             "isBanned": false,
+            "bannedBy": "",
+            "banReason": "",
+            "postPublicBookmark": [],
           });
 
-          // Add empty sub-collections for bookmarks
+          // Add empty sub-collections for bookmarks and delete the initialList right after
           await userDocRef
               .collection("contentsPublicBookmark")
               .doc("initialList")
               .set({});
           await userDocRef
-              .collection("postPublicBookmark")
+              .collection("contentsPublicBookmark")
+              .doc("initialList")
+              .delete();
+
+          await userDocRef
+              .collection("privateBookmarks")
               .doc("initialList")
               .set({});
           await userDocRef
               .collection("privateBookmarks")
               .doc("initialList")
-              .set({});
+              .delete();
         }
 
         if (context.mounted) await Future.delayed(const Duration(seconds: 1));
@@ -326,8 +343,28 @@ class AuthService {
   }
 }
 
+Future<bool?> checkIfUserIsBanned(String currentUser) async {
+  try {
+    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection("user-cred")
+        .doc(currentUser)
+        .get();
+
+    // Check if the document exists and contains the 'isBanned' field
+    if (documentSnapshot.exists && documentSnapshot.data() != null) {
+      // Assuming the field you're checking is called 'isBanned' and it's a boolean
+      return documentSnapshot.get('isBanned') as bool?;
+    } else {
+      return null; // Document doesn't exist or no data found
+    }
+  } catch (e) {
+    print("Error fetching user data: $e");
+    return null; // Error occurred
+  }
+}
+
 class StayLogged extends StatelessWidget {
-  const StayLogged({super.key});
+  StayLogged({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -336,7 +373,29 @@ class StayLogged extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshots) {
           if (snapshots.hasData) {
-            return const HomePage();
+            // check the current user uid
+            final currentUser = FirebaseAuth.instance.currentUser!.uid;
+
+            // Use FutureBuilder to handle the async call to checkIfUserIsBanned
+            return FutureBuilder<bool?>(
+              future: checkIfUserIsBanned(currentUser),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return const Center(child: Text("Error loading user data"));
+                }
+
+                if (snapshot.hasData && snapshot.data == true) {
+                  return const BannedPage();
+                }
+
+                // User is not banned, proceed to show the app content
+                return HomePage(); // Your main content
+              },
+            );
           } else {
             return const RegisterPage();
           }

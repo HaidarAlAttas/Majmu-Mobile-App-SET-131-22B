@@ -275,7 +275,7 @@ class _HomePageState extends State<HomePage> {
                       :
                       // go to public bookmark page
                       currentIndex == 1
-                          ? BPublicPage()
+                          ? IlmPage()
                           :
                           // go to create post page
                           currentIndex == 2
@@ -283,7 +283,7 @@ class _HomePageState extends State<HomePage> {
                               :
                               // go to Ilm Page
                               currentIndex == 3
-                                  ? IlmPage()
+                                  ? BPublicPage()
                                   :
                                   // stays at home page
                                   HomePage()),
@@ -321,7 +321,7 @@ class _HomePageState extends State<HomePage> {
               BottomNavigationBarItem(
                 label: "",
                 icon: Icon(
-                  Icons.menu_book_rounded,
+                  Icons.newspaper,
                   color: currentIndex == 1 ? Colors.white : Colors.black,
                 ),
               ),
@@ -335,7 +335,7 @@ class _HomePageState extends State<HomePage> {
               BottomNavigationBarItem(
                 label: "",
                 icon: Icon(
-                  Icons.newspaper,
+                  Icons.menu_book_rounded,
                   color: currentIndex == 3 ? Colors.white : Colors.black,
                 ),
               ),

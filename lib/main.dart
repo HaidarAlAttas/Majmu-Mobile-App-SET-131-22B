@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
       routes: {
         // authentication routes
-        "/staylogged": (context) => const StayLogged(),
+        "/staylogged": (context) => StayLogged(),
         "/registerp": (context) => const RegisterPage(),
         "/loginp": (context) => const LoginPage(),
         "/forgotpasswordp": (context) => ForgotPasswordPage(),

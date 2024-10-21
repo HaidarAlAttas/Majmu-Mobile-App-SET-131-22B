@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:majmu/screens/content/content%20components/content_bookmark.dart';
+import 'package:majmu/components/homepage%20components/content_bookmark.dart';
 
 class ContentViewer extends StatefulWidget {
   final String path;

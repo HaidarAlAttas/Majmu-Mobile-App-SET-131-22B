@@ -118,7 +118,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
       DocumentSnapshot userCred = await FirebaseFirestore.instance
           .collection("user-cred")
-          .doc(currentUser.uid!)
+          .doc(currentUser.uid)
           .get();
 
       // Optional: Add a delay to see the loading indicator
@@ -126,12 +126,14 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
       // Save post data to Firestore
       await FirebaseFirestore.instance.collection("user-posts").add({
-        "UserEmail": currentUser.email,
+        "userUid": currentUser.uid,
+        "userEmail": currentUser.email,
         "pfp": profilePictureUrl,
         "username": userCred["username"],
         "post": _post.text,
         "Timestamp": Timestamp.now(),
         "Likes": [],
+        "bookmarkedBy": [],
         "isChecked": false,
         "Images": imageUrls,
         "checkedBy": "",

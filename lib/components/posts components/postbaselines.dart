@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
-import 'package:majmu/screens/content/posts%20components/bookmark_button.dart';
-import 'package:majmu/screens/content/posts%20components/like_button.dart';
+import 'package:majmu/components/posts%20components/bookmark_button.dart';
+import 'package:majmu/components/posts%20components/like_button.dart';
 import 'package:popover/popover.dart';
 
 class PostBaseline extends StatefulWidget {
@@ -14,6 +14,7 @@ class PostBaseline extends StatefulWidget {
   final String user;
   final String postId;
   final List<String> likes;
+  final List<String> bookmarkedBy;
   final bool isChecked;
   final List<String> images; // Added to hold image URLs
   final bool settingButton;
@@ -25,6 +26,7 @@ class PostBaseline extends StatefulWidget {
     required this.user,
     required this.postId,
     required this.likes,
+    required this.bookmarkedBy,
     required this.isChecked,
     required this.images,
     required this.settingButton,
@@ -38,10 +40,10 @@ class _PostBaselineState extends State<PostBaseline> {
   final currentUser = FirebaseAuth.instance.currentUser!;
 
   // bool for like button
-  bool isLiked = false;
+  late bool isLiked = false;
 
   // bool for bookmark button
-  bool isBookmarked = false;
+  late bool isBookmarked = false;
 
   // bool for image
   bool imageTapped = false;
@@ -53,7 +55,10 @@ class _PostBaselineState extends State<PostBaseline> {
   void initState() {
     super.initState();
     // Check if the post is liked by the current user
-    isLiked = widget.likes.contains(currentUser.email);
+    isLiked = widget.likes.contains(currentUser.uid);
+
+    // Check if the post is bookmarked by the user
+    isBookmarked = widget.bookmarkedBy.contains(currentUser.uid);
     settingButton = widget.settingButton;
   }
 
@@ -71,25 +76,44 @@ class _PostBaselineState extends State<PostBaseline> {
       // If the post is liked, add the current user's email to likes[]
       postRef.update({
         "Likes": FieldValue.arrayUnion(
-          [currentUser.email],
+          [currentUser.uid],
         )
       });
     } else {
       // If it's unliked, remove the current user's email from likes[]
       postRef.update({
         "Likes": FieldValue.arrayRemove(
-          [currentUser.email],
+          [currentUser.uid],
         )
       });
     }
   }
 
   // method when toggling bookmark in post
-  // will be implemented after this
   void ToggleBookmarked() {
     setState(() {
       isBookmarked = !isBookmarked;
     });
+
+    // Access the document in Firestore
+    DocumentReference postRef =
+        FirebaseFirestore.instance.collection("user-posts").doc(widget.postId);
+
+    if (isBookmarked) {
+      // If the post is bookmarked, add the current user's email to likes[]
+      postRef.update({
+        "bookmarkedBy": FieldValue.arrayUnion(
+          [currentUser.uid],
+        )
+      });
+    } else {
+      // If it's unbookmarked, remove the current user's email from likes[]
+      postRef.update({
+        "bookmarkedBy": FieldValue.arrayRemove(
+          [currentUser.uid],
+        )
+      });
+    }
   }
 
   // method to delete post
@@ -356,9 +380,7 @@ class _PostBaselineState extends State<PostBaseline> {
                             // Like button component
                             LikeButton(
                               isLiked: isLiked,
-                              onTap: () {
-                                ToggleLike(); // Call toggle like method
-                              },
+                              onTap: ToggleLike,
                             ),
 
                             Text(
@@ -378,10 +400,14 @@ class _PostBaselineState extends State<PostBaseline> {
                           children: [
                             BookmarkButton(
                               isBookmarked: isBookmarked,
-                              onTap: () {
-                                ToggleBookmarked();
-                              },
-                            )
+                              onTap: ToggleBookmarked,
+                            ),
+                            Text(
+                              widget.bookmarkedBy.length.toString(),
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ), // Style for like count
+                            ),
                           ],
                         )
                       ],

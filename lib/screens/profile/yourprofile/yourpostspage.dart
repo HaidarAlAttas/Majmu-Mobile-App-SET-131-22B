@@ -3,7 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:majmu/screens/content/posts%20components/postbaselines.dart';
+import 'package:majmu/components/posts%20components/postbaselines.dart';
 import 'package:majmu/services/auth_service.dart';
 
 class YourPostsPage extends StatefulWidget {
@@ -50,17 +50,18 @@ class _YourPostsPageState extends State<YourPostsPage> {
 
     // Get the user's email
     String userEmail = currentUser.email!;
+    String userUid = currentUser.uid;
 
     // Stream for user posts where UserEmail matches current user's email
     Stream<QuerySnapshot> userPostsStream = FirebaseFirestore.instance
         .collection('user-posts')
-        .where('UserEmail', isEqualTo: userEmail)
+        .where('userUid', isEqualTo: userUid)
         .snapshots();
 
     // Stream for user rejected posts where UserEmail matches current user's email
     Stream<QuerySnapshot> userRejectedPostsStream = FirebaseFirestore.instance
         .collection('rejected-posts')
-        .where('UserEmail', isEqualTo: userEmail)
+        .where('userUid', isEqualTo: userUid)
         .snapshots();
 
     if (_authService.isSignedInWithGoogle()) {
@@ -227,6 +228,8 @@ class _YourPostsPageState extends State<YourPostsPage> {
                                   String postId = postDocs[index].id;
                                   List<String> likes = List<String>.from(
                                       postData["Likes"] ?? []);
+                                  List<String> bookmarked = List<String>.from(
+                                      postData["bookmarkedBy"] ?? []);
                                   bool isApproved =
                                       postData["isChecked"] ?? false;
                                   List<String> images = List<String>.from(
@@ -239,6 +242,7 @@ class _YourPostsPageState extends State<YourPostsPage> {
                                     user: postUsername, // The user who posted
                                     postId: postId, // Post ID
                                     likes: likes, // List of likes
+                                    bookmarkedBy: bookmarked,
                                     isChecked: isApproved, // Approval status
                                     images: images, // List of image URLs
                                     settingButton: true,
@@ -299,6 +303,8 @@ class _YourPostsPageState extends State<YourPostsPage> {
                                   String postId = postDocs[index].id;
                                   List<String> likes = List<String>.from(
                                       postData["Likes"] ?? []);
+                                  List<String> bookmarked = List<String>.from(
+                                      postData["bookmarkedBy"] ?? []);
                                   bool isApproved =
                                       postData["isChecked"] ?? false;
                                   List<String> images = List<String>.from(
@@ -311,6 +317,7 @@ class _YourPostsPageState extends State<YourPostsPage> {
                                     user: postUsername, // The user who posted
                                     postId: postId, // Post ID
                                     likes: likes, // List of likes
+                                    bookmarkedBy: bookmarked,
                                     isChecked: isApproved, // Approval status
                                     images: images, // List of image URLs
                                     settingButton: true,

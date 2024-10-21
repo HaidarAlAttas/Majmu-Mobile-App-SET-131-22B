@@ -153,13 +153,18 @@ class _BPrivatePageState extends State<BPrivatePage> {
     }
 
     // page base
-    return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            PrivateContent(),
-            AddPrivateContent(),
-          ],
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: [
+                PrivateContent(),
+                AddPrivateContent(),
+              ],
+            ),
+          ),
         ),
       ),
     );

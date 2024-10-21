@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/testing.dart';
-import 'package:majmu/screens/content/posts%20components/postbaselines.dart';
+import 'package:majmu/components/posts%20components/postbaselines.dart';
 import 'package:majmu/services/auth_service.dart';
 
 // The main page to display all user posts
@@ -29,60 +29,66 @@ class _IlmPageState extends State<IlmPage> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     if (_authService.isSignedInWithGoogle()) {
-      return SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Center(
-              child: Text(
-                "Ilm Page",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: screenWidth * 0.07),
+      return Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  "Ilm Page",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: screenWidth * 0.07),
+                ),
               ),
-            ),
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                // Listen to Firestore collection for real-time updates
-                stream: FirebaseFirestore.instance
-                    .collection("user-posts")
-                    .orderBy("Timestamp", descending: true)
-                    .snapshots(),
-                builder: (context, snapshots) {
-                  if (snapshots.hasData) {
-                    return ListView.builder(
-                      itemCount: snapshots.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        final post = snapshots.data!.docs[index];
-                        return PostBaseline(
-                          post: post["post"], // The content of the post
-                          pfp: post["pfp"],
-                          user: post["username"], // The user who posted
-                          postId: post.id, // Unique ID of the post
-                          likes: List<String>.from(
-                              post["Likes"] ?? []), // List of likes
-                          isChecked:
-                              post["isChecked"], // Approval status of the post
-                          images: List<String>.from(
-                              post["Images"] ?? []), // List of image URLs
-                          settingButton: false,
-                        );
-                      },
-                    );
-                  } else if (snapshots.hasError) {
-                    return Center(
-                      child: Text("Error: " + snapshots.error.toString()),
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.green,
-                      ), // Loading indicator
-                    );
-                  }
-                },
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  // Listen to Firestore collection for real-time updates
+                  stream: FirebaseFirestore.instance
+                      .collection("user-posts")
+                      .orderBy("Timestamp", descending: true)
+                      .snapshots(),
+                  builder: (context, snapshots) {
+                    if (snapshots.hasData) {
+                      return ListView.builder(
+                        itemCount: snapshots.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final post = snapshots.data!.docs[index];
+                          return PostBaseline(
+                            post: post["post"], // The content of the post
+                            pfp: post["pfp"],
+                            user: post["username"], // The user who posted
+                            postId: post.id, // Unique ID of the post
+                            likes: List<String>.from(
+                                post["Likes"] ?? []), // List of likes
+                            bookmarkedBy:
+                                List<String>.from(post["bookmarkedBy"] ?? []),
+                            isChecked: post[
+                                "isChecked"], // Approval status of the post
+                            images: List<String>.from(
+                                post["Images"] ?? []), // List of image URLs
+                            settingButton: false,
+                          );
+                        },
+                      );
+                    } else if (snapshots.hasError) {
+                      return Center(
+                        child: Text("Error: " + snapshots.error.toString()),
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.green,
+                        ), // Loading indicator
+                      );
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     } else {
