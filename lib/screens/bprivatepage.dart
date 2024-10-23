@@ -144,7 +144,10 @@ class _BPrivatePageState extends State<BPrivatePage> {
               ),
               Text(
                 "Add New",
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20),
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 20,
+                ),
               ),
             ],
           ),

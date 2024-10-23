@@ -394,7 +394,7 @@ class StayLogged extends StatelessWidget {
                 }
 
                 // User is not banned, proceed to show the app content
-                return HomePage(); // Your main content
+                return const HomePage(); // Your main content
               },
             );
           } else {

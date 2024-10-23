@@ -228,6 +228,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                         setState(() {
                                           _post.clear();
                                           _images.clear();
+                                          FocusScope.of(context)
+                                              .unfocus(); // to close the keyboard
                                         });
                                       },
                                       child: Text(
