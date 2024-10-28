@@ -1,16 +1,22 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_import, avoid_unnecessary_containers, sized_box_for_whitespace, dead_code
 import 'package:flutter/material.dart';
+import 'package:majmu/services/auth_service.dart';
 
 // Create a dialog for settings
 Future profileDialog(BuildContext context) {
+  // variable to make it compatible with devices
+  double screenWidth = MediaQuery.of(context).size.width;
+  double screenHeight = MediaQuery.of(context).size.height;
+
   return showDialog(
     context: context,
     builder: (context) => AlertDialog(
       contentPadding: EdgeInsets.zero,
       backgroundColor: Color.fromARGB(255, 36, 36, 36),
       content: Container(
-        height: 230,
-        width: 400,
+        height: screenHeight <= screenWidth * 2
+            ? screenHeight * 0.30
+            : screenHeight * 0.28,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: Color.fromARGB(255, 36, 36, 36),
@@ -22,9 +28,9 @@ Future profileDialog(BuildContext context) {
               children: [
                 // Spacer to push the Settings text to the center
                 Spacer(flex: 3),
-            
+
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.only(left: screenWidth * 0.08),
                   child: Text(
                     "Profile",
                     style: TextStyle(
@@ -33,10 +39,10 @@ Future profileDialog(BuildContext context) {
                     ),
                   ),
                 ),
-            
+
                 // Spacer to push the done button to the right
                 Spacer(flex: 2),
-            
+
                 TextButton(
                   onPressed: () {
                     // Handle the done action
@@ -50,22 +56,24 @@ Future profileDialog(BuildContext context) {
               ],
             ),
 
-            
-
             // edit profile, your post, and logout button container
             Padding(
-              padding: const EdgeInsets.only(top: 20.0),
+              padding: EdgeInsets.only(
+                  top: screenHeight * 0.02,
+                  bottom: screenHeight * 0.02,
+                  left: screenWidth * 0.02,
+                  right: screenWidth * 0.02),
               child: Container(
-                height: 145,
-                width: 350,
+                height: screenHeight <= screenWidth * 2
+                    ? screenHeight * 0.18
+                    : screenHeight * 0.17,
+                width: screenWidth * 0.74,
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 85, 84, 84),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
                   children: [
-
-
                     // edit profile button
                     GestureDetector(
                       onTap: () {
@@ -73,7 +81,10 @@ Future profileDialog(BuildContext context) {
                         Navigator.pushNamed(context, "/editprofilep");
                       },
                       child: Container(
-                        width: 330,
+                        width: screenWidth * 0.7,
+                        height: screenHeight <= screenWidth * 2
+                            ? screenHeight * 0.06
+                            : screenHeight * 0.055,
                         decoration: BoxDecoration(
                           // To create a line below edit profile button
                           border: Border(
@@ -85,17 +96,22 @@ Future profileDialog(BuildContext context) {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 25, right: 8, top: 8, bottom: 8),
+                              padding: EdgeInsets.only(
+                                left: screenWidth * 0.05,
+                                right: screenWidth * 0.017,
+                                top: screenWidth * 0.015,
+                                bottom: screenWidth * 0.01,
+                              ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   // edit profile icon
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 22.0),
+                                    padding: EdgeInsets.only(
+                                        right: screenWidth * 0.02),
                                     child: Icon(
                                       Icons.edit,
-                                      size: 30,
+                                      size: screenWidth * 0.08,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -112,14 +128,13 @@ Future profileDialog(BuildContext context) {
                             // Icon for next
                             Icon(
                               Icons.navigate_next_rounded,
-                              size: 30,
+                              size: screenWidth * 0.08,
                               color: Colors.grey,
                             ),
                           ],
                         ),
                       ),
                     ),
-
 
                     // your posts button
                     GestureDetector(
@@ -128,7 +143,10 @@ Future profileDialog(BuildContext context) {
                         Navigator.pushNamed(context, "/yourpostsp");
                       },
                       child: Container(
-                        width: 330,
+                        width: screenWidth * 0.7,
+                        height: screenHeight <= screenWidth * 2
+                            ? screenHeight * 0.06
+                            : screenHeight * 0.055,
                         decoration: BoxDecoration(
                           // To create a line below your post button
                           border: Border(
@@ -140,17 +158,22 @@ Future profileDialog(BuildContext context) {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 25, right: 8, top: 8, bottom: 8),
+                              padding: EdgeInsets.only(
+                                left: screenWidth * 0.05,
+                                right: screenWidth * 0.017,
+                                top: screenWidth * 0.015,
+                                bottom: screenWidth * 0.01,
+                              ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   // your posts button icon
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 22.0),
+                                    padding: EdgeInsets.only(
+                                        right: screenWidth * 0.02),
                                     child: Icon(
                                       Icons.photo_size_select_large_rounded,
-                                      size: 30,
+                                      size: screenWidth * 0.08,
                                       color: Colors.yellow,
                                     ),
                                   ),
@@ -167,7 +190,7 @@ Future profileDialog(BuildContext context) {
                             // Icon for next
                             Icon(
                               Icons.navigate_next_rounded,
-                              size: 30,
+                              size: screenWidth * 0.08,
                               color: Colors.grey,
                             ),
                           ],
@@ -175,31 +198,40 @@ Future profileDialog(BuildContext context) {
                       ),
                     ),
 
-
                     // log out button
                     GestureDetector(
                       onTap: () {
                         // Implement your logic here
-                        Navigator.pushNamed(context, "/logoutp");
+
+                        AuthService().signOut();
+                        Navigator.popAndPushNamed(context, "/staylogged");
                       },
                       child: Container(
-                        width: 330,
+                        width: screenWidth * 0.7,
+                        height: screenHeight <= screenWidth * 2
+                            ? screenHeight * 0.06
+                            : screenHeight * 0.055,
                         // logout button icon and text
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 25, right: 8, top: 8, bottom: 8),
+                              padding: EdgeInsets.only(
+                                left: screenWidth * 0.05,
+                                right: screenWidth * 0.017,
+                                top: screenWidth * 0.015,
+                                bottom: screenWidth * 0.01,
+                              ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   // log out button icon
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 22.0),
+                                    padding: EdgeInsets.only(
+                                        right: screenWidth * 0.02),
                                     child: Icon(
                                       Icons.logout_rounded,
-                                      size: 30,
+                                      size: screenWidth * 0.08,
                                       color: Colors.red,
                                     ),
                                   ),
@@ -216,7 +248,7 @@ Future profileDialog(BuildContext context) {
                             // Icon for next
                             Icon(
                               Icons.navigate_next_rounded,
-                              size: 30,
+                              size: screenWidth * 0.08,
                               color: Colors.grey,
                             ),
                           ],

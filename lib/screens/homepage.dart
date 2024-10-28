@@ -10,6 +10,7 @@ import 'package:majmu/screens/settingpage.dart';
 import 'package:majmu/theme/theme.dart';
 import 'package:majmu/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui'; // Import this for BackdropFilter and ImageFilter
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,584 +20,424 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //variable for changing pages on bottomnavbar
+  // variable for changing pages on bottomnavbar
   int currentIndex;
 
   // variable for the content buttons
-  final double contentWidth;
-  final double contentHeight;
   final double strokeWidth;
   final double borderRadius;
-  final double contentfontSize;
-
-  //variable for mini content buttons
-  final double miniContentWidth;
-  final double miniContentHeight;
 
   _HomePageState({
     this.currentIndex = 0,
-    this.contentWidth = 400,
-    this.contentHeight = 100,
     this.strokeWidth = 4,
     this.borderRadius = 10,
-    this.contentfontSize = 20,
-    this.miniContentWidth = 196,
-    this.miniContentHeight = 100,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // attribute for wallpaper
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          // Change wallpaper based on the setting (lightmode/darkmode)
-          // need to test with xcode
+    // variable to make it compatible with devices
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
-          image: Provider.of<ThemeProvider>(context).themeData == lightmode
-              ? AssetImage("assets/Lightwallpaper.png")
-              : Provider.of<ThemeProvider>(context).themeData == darkmode
-                  ? AssetImage("assets/Darkwallpaper.png")
-                  : AssetImage("assets/Lightwallpaper.png"),
-          fit: BoxFit.fill,
-        ),
-      ),
-
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-
-        appBar: AppBar(
-          // majmu' logo
-          toolbarHeight: 100,
-          backgroundColor: Colors.transparent,
-          title: Center(
-            // when click the majmu' logo, it will go back to the home page
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  currentIndex = 0;
-                });
-              },
-              child: Image(
-                image: AssetImage("assets/Majmu'.png"),
-                height: 70,
-                width: 70,
-              ),
-            ),
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        // Attribute for wallpaper
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.white, // Starts with white at the top
+              const Color.fromRGBO(
+                  204, 233, 205, 1), // Light green in the upper middle
+              const Color.fromARGB(
+                  255, 167, 192, 168), // Medium green towards the bottom
+              const Color.fromARGB(
+                  255, 118, 140, 119), // Darker green at the bottom
+            ],
+            begin: Alignment.topCenter, // Gradient starts from the top
+            end: Alignment.bottomCenter, // Gradient ends at the bottom
+            stops: [0.1, 0.4, 0.7, 1.0], // Controls how the colors transition
           ),
+        ),
 
-          // profile page button
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 15.0),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+
+          appBar: AppBar(
+            // majmu' logo
+            toolbarHeight: screenHeight * 0.10,
+            backgroundColor: Colors.transparent,
+            title: Center(
+              // when click the majmu' logo, it will go back to the home page
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    profileDialog(context);
+                    currentIndex == 1 ? currentIndex = 1 : currentIndex = 0;
                   });
                 },
-                child: Icon(
-                  Icons.account_circle,
-                  color: const Color.fromARGB(255, 26, 151, 33),
-                  size: 30,
+                child: Image(
+                  image: AssetImage("assets/Majmu'.png"),
+                  height: 70,
+                  width: 70,
                 ),
               ),
             ),
-          ],
 
-          // search button
-          leading: GestureDetector(
-            onTap: () {
-              setState(() {
-                Navigator.of(context).pushNamed("/searchp");
-              });
-            },
-            child: Icon(
-              Icons.search,
-              color: const Color.fromARGB(255, 26, 151, 33),
-              size: 30,
+            // profile page button
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 15.0),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      profileDialog(context);
+                    });
+                  },
+                  child: Icon(
+                    Icons.account_circle,
+                    color: const Color.fromARGB(255, 26, 151, 33),
+                    size: 30,
+                  ),
+                ),
+              ),
+            ],
+
+            // search button
+            leading: GestureDetector(
+              onTap: () {
+                setState(() {
+                  Navigator.of(context).pushNamed("/searchp");
+                });
+              },
+              child: Icon(
+                Icons.search,
+                color: const Color.fromARGB(255, 26, 151, 33),
+                size: 30,
+              ),
             ),
           ),
-        ),
 
-        // body
-        body: Center(
-            child:
-
-                // HOME PAGE
-                currentIndex == 0
-                    ? Container(
-                        child: Column(
-                          children: [
-                            // Alquran Kareem content button
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    Navigator.of(context)
-                                        .pushNamed("/alqurankareemp");
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: AssetImage(
-                                          "assets/alqurankareem.jpg"),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.circular(borderRadius),
+          // body
+          body: Center(
+              child:
+                  // HOME PAGE UI
+                  currentIndex == 0
+                      ? Container(
+                          child: Column(
+                            children: [
+                              // Alquran Kareem content button
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      Navigator.of(context)
+                                          .pushNamed("/alqurankareemp");
+                                    });
+                                  },
+                                  child: _buildContentButton(
+                                    screenWidth,
+                                    screenHeight,
+                                    "Al-quran Kareem",
+                                    "assets/alqurankareem.jpg",
                                   ),
-                                  width: contentWidth,
-                                  height: contentHeight,
-                                  child: Center(
-
-                                      //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                      child: Stack(
-                                    children: <Widget>[
-                                      // Black stroke text
-                                      Text(
-                                        "Al-quran Kareem",
-                                        style: TextStyle(
-                                          fontSize: contentfontSize,
-                                          foreground: Paint()
-                                            ..style = PaintingStyle.stroke
-                                            ..strokeWidth = strokeWidth
-                                            ..color = Colors.black,
-                                        ),
-                                      ),
-                                      // White fill text
-                                      Text(
-                                        "Al-quran Kareem",
-                                        style: TextStyle(
-                                          fontSize: contentfontSize,
-                                          color: Colors
-                                              .white, // This sets the inside color of the text
-                                        ),
-                                      ),
-                                    ],
-                                  )),
                                 ),
                               ),
-                            ),
 
-                            // Daily Invocations content button
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    Navigator.of(context)
-                                        .pushNamed("/dailyinvocationsp");
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: AssetImage(
-                                          "assets/dailyInvocations.jpg"),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.circular(borderRadius),
+                              // Daily Invocations content button
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      Navigator.of(context)
+                                          .pushNamed("/dailyinvocationsp");
+                                    });
+                                  },
+                                  child: _buildContentButton(
+                                    screenWidth,
+                                    screenHeight,
+                                    "Zikir Harian",
+                                    "assets/dailyInvocations.jpg",
                                   ),
-                                  width: contentWidth,
-                                  height: contentHeight,
-                                  child: Center(
-
-                                      //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                      child: Stack(
-                                    children: <Widget>[
-                                      // Black stroke text
-                                      Text(
-                                        "Daily Invocations",
-                                        style: TextStyle(
-                                          fontSize: contentfontSize,
-                                          foreground: Paint()
-                                            ..style = PaintingStyle.stroke
-                                            ..strokeWidth = strokeWidth
-                                            ..color = Colors.black,
-                                        ),
-                                      ),
-                                      // White fill text
-                                      Text(
-                                        "Daily Invocations",
-                                        style: TextStyle(
-                                          fontSize: contentfontSize,
-                                          color: Colors
-                                              .white, // This sets the inside color of the text
-                                        ),
-                                      ),
-                                    ],
-                                  )),
                                 ),
                               ),
-                            ),
 
-                            // Friday Supplication content button
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    Navigator.of(context)
-                                        .pushNamed("/fridaysupplicationsp");
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: AssetImage(
-                                          "assets/fridaySupplications.jpg"),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.circular(borderRadius),
+                              // Friday Supplication content button
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      Navigator.of(context)
+                                          .pushNamed("/fridaysupplicationsp");
+                                    });
+                                  },
+                                  child: _buildContentButton(
+                                    screenWidth,
+                                    screenHeight,
+                                    "Amalan Jumaat",
+                                    "assets/fridaySupplications.jpg",
                                   ),
-                                  width: contentWidth,
-                                  height: contentHeight,
-                                  child: Center(
-
-                                      //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                      child: Stack(
-                                    children: <Widget>[
-                                      // Black stroke text
-                                      Text(
-                                        "Friday Supplications",
-                                        style: TextStyle(
-                                          fontSize: contentfontSize,
-                                          foreground: Paint()
-                                            ..style = PaintingStyle.stroke
-                                            ..strokeWidth = strokeWidth
-                                            ..color = Colors.black,
-                                        ),
-                                      ),
-                                      // White fill text
-                                      Text(
-                                        "Friday Supplications",
-                                        style: TextStyle(
-                                          fontSize: contentfontSize,
-                                          color: Colors
-                                              .white, // This sets the inside color of the text
-                                        ),
-                                      ),
-                                    ],
-                                  )),
                                 ),
                               ),
-                            ),
 
-                            // Islamic Events content button
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    Navigator.of(context)
-                                        .pushNamed("/islamiceventsp");
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: AssetImage(
-                                          "assets/islamicEvents.jpg"),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.circular(borderRadius),
+                              // Islamic Events content button
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      Navigator.of(context)
+                                          .pushNamed("/islamiceventsp");
+                                    });
+                                  },
+                                  child: _buildContentButton(
+                                    screenWidth,
+                                    screenHeight,
+                                    "Peristiwa Islam",
+                                    "assets/islamicEvents.jpg",
                                   ),
-                                  width: contentWidth,
-                                  height: contentHeight,
-                                  child: Center(
-
-                                      //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                      child: Stack(
-                                    children: <Widget>[
-                                      // Black stroke text
-                                      Text(
-                                        "Islamic Events",
-                                        style: TextStyle(
-                                          fontSize: contentfontSize,
-                                          foreground: Paint()
-                                            ..style = PaintingStyle.stroke
-                                            ..strokeWidth = strokeWidth
-                                            ..color = Colors.black,
-                                        ),
-                                      ),
-                                      // White fill text
-                                      Text(
-                                        "Islamic Events",
-                                        style: TextStyle(
-                                          fontSize: contentfontSize,
-                                          color: Colors
-                                              .white, // This sets the inside color of the text
-                                        ),
-                                      ),
-                                    ],
-                                  )),
                                 ),
                               ),
-                            ),
 
-                            // Ziyarah (visits) content button
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    Navigator.of(context)
-                                        .pushNamed("/ziyarahp");
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: AssetImage("assets/ziyarah.jpg"),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.circular(borderRadius),
+                              // Ziyarah content button
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      Navigator.of(context)
+                                          .pushNamed("/ziyarahp");
+                                    });
+                                  },
+                                  child: _buildContentButton(
+                                    screenWidth,
+                                    screenHeight,
+                                    "Ziyarah (Lawatan)",
+                                    "assets/ziyarah.jpg",
                                   ),
-                                  width: contentWidth,
-                                  height: contentHeight,
-                                  child: Center(
-
-                                      //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                      child: Stack(
-                                    children: <Widget>[
-                                      // Black stroke text
-                                      Text(
-                                        "Ziyarah (visits)",
-                                        style: TextStyle(
-                                          fontSize: contentfontSize,
-                                          foreground: Paint()
-                                            ..style = PaintingStyle.stroke
-                                            ..strokeWidth = strokeWidth
-                                            ..color = Colors.black,
-                                        ),
-                                      ),
-                                      // White fill text
-                                      Text(
-                                        "Ziyarah (visits)",
-                                        style: TextStyle(
-                                          fontSize: contentfontSize,
-                                          color: Colors
-                                              .white, // This sets the inside color of the text
-                                        ),
-                                      ),
-                                    ],
-                                  )),
                                 ),
                               ),
-                            ),
 
-                            // mini content buttons
-
-                            Row(
-                              children: [
-                                // Protection prayers content button
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 23.0, right: 8),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        Navigator.of(context)
-                                            .pushNamed("/protectionprayersp");
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          fit: BoxFit.fitWidth,
-                                          image: AssetImage(
-                                              "assets/protectionPrayers.jpg"),
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(borderRadius),
-                                      ),
-                                      width: miniContentWidth,
-                                      height: miniContentHeight,
-                                      child: Center(
-
-                                          //we use stack to make two text on top of each other to create an illusion of inside and outside stroke (outline text)
-                                          child: Stack(
-                                        children: <Widget>[
-                                          // Black stroke text
-                                          Text(
-                                            "Protection Prayers",
-                                            style: TextStyle(
-                                              fontSize: contentfontSize,
-                                              foreground: Paint()
-                                                ..style = PaintingStyle.stroke
-                                                ..strokeWidth = strokeWidth
-                                                ..color = Colors.black,
-                                            ),
-                                          ),
-                                          // White fill text
-                                          Text(
-                                            "Protection Prayers",
-                                            style: TextStyle(
-                                              fontSize: contentfontSize,
-                                              color: Colors
-                                                  .white, // This sets the inside color of the text
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                    ),
-                                  ),
-                                ),
-
-                                // Biographies and references content button
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 23.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        Navigator.of(context).pushNamed(
-                                            "/biographiesnreferencep");
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          fit: BoxFit.fitWidth,
-                                          image: AssetImage(
-                                              "assets/biographiesnreference.jpg"),
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(borderRadius),
-                                      ),
-                                      width: miniContentWidth,
-                                      height: miniContentHeight,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(23.0),
-                                        child: Stack(
-                                          children: <Widget>[
-                                            // Black stroke text
-                                            Text(
-                                              "Biographies and References",
-                                              style: TextStyle(
-                                                fontSize: contentfontSize,
-                                                foreground: Paint()
-                                                  ..style = PaintingStyle.stroke
-                                                  ..strokeWidth = strokeWidth
-                                                  ..color = Colors.black,
-                                              ),
-                                            ),
-                                            // White fill text
-                                            Text(
-                                              "Biographies and References",
-                                              style: TextStyle(
-                                                fontSize: contentfontSize,
-                                                color: Colors
-                                                    .white, // This sets the inside color of the text
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                              // Mini content buttons
+                              Row(
+                                children: [
+                                  // Protection prayers content button
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: screenWidth * 0.036,
+                                        right: screenWidth * 0.025),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          Navigator.of(context)
+                                              .pushNamed("/protectionprayersp");
+                                        });
+                                      },
+                                      child: _buildContentButton(
+                                        screenWidth,
+                                        screenHeight,
+                                        "Doa Pelindung Diri",
+                                        "assets/protectionPrayers.jpg",
+                                        widthFactor: 0.45,
+                                        textSize: 0.04,
                                       ),
                                     ),
                                   ),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      )
-                    :
 
-                    // go to public bookmark page
-                    currentIndex == 1
-                        ? BPublicPage()
-                        :
+                                  // Biographies and references content button
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        right: screenWidth * 0.036),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          Navigator.of(context).pushNamed(
+                                              "/biographiesnreferencep");
+                                        });
+                                      },
+                                      child: _buildContentButton(
+                                        screenWidth,
+                                        screenHeight,
+                                        "Biografi dan Rujukan",
+                                        "assets/biographiesnreference.jpg",
+                                        widthFactor: 0.45,
+                                        textSize: 0.04,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        )
+                      :
+                      // go to public bookmark page
+                      currentIndex == 1
+                          ? IlmPage()
+                          :
+                          // go to create post page
+                          currentIndex == 2
+                              ? CreatePostPage()
+                              :
+                              // go to Ilm Page
+                              currentIndex == 3
+                                  ? BPublicPage()
+                                  :
+                                  // stays at home page
+                                  HomePage()),
 
-                        // go to create post page
-                        currentIndex == 2
-                            ? CreatePostPage()
-                            :
+          // navigation bar
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: currentIndex,
+            backgroundColor: Colors.transparent,
 
-                            // go to Ilm Page
-                            currentIndex == 3
-                                ? IlmPage()
-                                :
+            // to change pages
+            onTap: (int index) {
+              if (index != currentIndex) {
+                // Prevent duplicate navigation
+                setState(() {
+                  currentIndex = index;
+                });
+              }
+            },
 
+            iconSize: 47,
 
-                                    // stays at home page
-                                    HomePage()),
+            // to remove shadow under bottom navigation bar
+            elevation: 0,
 
-        // navigationbar
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: currentIndex,
-          backgroundColor: Colors.transparent,
-
-          // to change pages
-          onTap: (int index) {
-            setState(
-              () {
-                currentIndex = index;
-              },
-            );
-          },
-
-          iconSize: 47,
-
-          // to remove shadow under bottom navigation bar
-          elevation: 0,
-
-          // to make sure bottom navigation bar muat 5 item
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              label: "",
-              icon: Icon(
-                Icons.home_rounded,
-                color: Colors.black,
-              ),
-            ),
-            BottomNavigationBarItem(
-              label: "",
-              icon: Icon(
-                Icons.menu_book_rounded,
-                color: Colors.black,
-              ),
-            ),
-            BottomNavigationBarItem(
-              label: "",
-              icon: Icon(
-                Icons.add_circle_rounded,
-                color: Colors.black,
-              ),
-            ),
-            BottomNavigationBarItem(
-              label: "",
-              icon: Icon(
-                Icons.newspaper,
-                color: Colors.black,
-              ),
-            ),
-
-            // Setting buttons logic
-            BottomNavigationBarItem(
-              label: "",
-              icon: GestureDetector(
-                // if clicked
-                onTap: () {
-                  // go to the setting page
-                  settingsDialog(context);
-                },
-                child: Icon(
-                  Icons.settings,
-                  color: Colors.black,
+            // to make sure bottom navigation bar muat 5 item
+            type: BottomNavigationBarType.fixed,
+            items: [
+              BottomNavigationBarItem(
+                label: "",
+                icon: Icon(
+                  Icons.home_rounded,
+                  color: currentIndex == 0 ? Colors.white : Colors.black,
                 ),
               ),
-            ),
-          ],
+              BottomNavigationBarItem(
+                label: "",
+                icon: Icon(
+                  Icons.newspaper,
+                  color: currentIndex == 1 ? Colors.white : Colors.black,
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: "",
+                icon: Icon(
+                  Icons.add_circle_rounded,
+                  color: currentIndex == 2 ? Colors.white : Colors.black,
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: "",
+                icon: Icon(
+                  Icons.menu_book_rounded,
+                  color: currentIndex == 3 ? Colors.white : Colors.black,
+                ),
+              ),
+              // Setting buttons logic
+              BottomNavigationBarItem(
+                label: "",
+                icon: GestureDetector(
+                  child: Icon(
+                    Icons.settings,
+                    color: currentIndex == 4 ? Colors.white : Colors.black,
+                  ),
+                  // if clicked
+                  onTap: () {
+                    // go to the setting page
+                    settingsDialog(context);
+                  },
+                ),
+              ),
+            ],
+          ),
+          extendBody: true,
         ),
-        extendBody: true,
+      ),
+    );
+  }
+
+  Widget _buildContentButton(
+      double screenWidth, double screenHeight, String title, String imagePath,
+      {double widthFactor = 0.93, double textSize = 0.048}) {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.fitWidth,
+          image: AssetImage(imagePath),
+        ),
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(
+          color: Colors.black,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 3,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      width: screenWidth * widthFactor,
+      height: screenHeight * 0.1,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Stack(
+                  children: <Widget>[
+                    // Black stroke text with shadow
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: screenWidth * textSize * 0.9,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = strokeWidth
+                          ..color = Colors.black.withOpacity(0.7),
+                        fontWeight: FontWeight.bold, // Bold text
+                        shadows: [
+                          Shadow(
+                            blurRadius: 2.0,
+                            color: Colors.black.withOpacity(0.5),
+                            offset: Offset(1.0, 1.0),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // White fill text with shadow
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: screenWidth * textSize * 0.9,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold, // Bold text
+                        shadows: [
+                          Shadow(
+                            blurRadius: 2.0,
+                            color: Colors.black.withOpacity(0.5),
+                            offset: Offset(1.0, 1.0),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

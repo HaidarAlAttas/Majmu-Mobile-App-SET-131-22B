@@ -1,21 +1,13 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, non_constant_identifier_names, prefer_interpolation_to_compose_strings, curly_braces_in_flow_control_structures
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:majmu/screens/bprivatepage.dart';
-import 'package:majmu/screens/bpublicpage.dart';
-import 'package:majmu/screens/createpostpage.dart';
-import 'package:majmu/screens/homepage.dart';
-import 'package:majmu/screens/ilmpage.dart';
-import 'package:majmu/screens/settingpage.dart';
-import 'package:majmu/theme/theme.dart';
-import 'package:majmu/theme/theme_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:google_sign_in/testing.dart';
+import 'package:majmu/components/posts%20components/postbaselines.dart';
+import 'package:majmu/services/auth_service.dart';
 
-// features not added yet:
-// - hashtag
-// - multi-picture
-// - likes and comments
-
+// The main page to display all user posts
 class IlmPage extends StatefulWidget {
   const IlmPage({super.key});
 
@@ -24,200 +16,155 @@ class IlmPage extends StatefulWidget {
 }
 
 class _IlmPageState extends State<IlmPage> {
-  // constructor
-  bool likecolor = false;
+  // to check whether the user has logged on with a valid Gmail account
+  final AuthService _authService = AuthService();
 
-  // method fot posts baseline
-  Widget PostBaseline() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            // post baselines (post base size)
-            Container(
-              width: 400,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  width: 2,
-                  color: Colors.black,
+  @override
+  Widget build(BuildContext context) {
+    // Get current user
+    final currentUser = FirebaseAuth.instance.currentUser!;
+
+    // Get screen dimensions for responsive design
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    if (_authService.isSignedInWithGoogle()) {
+      return Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  "Ilm Page",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: screenWidth * 0.07),
                 ),
-                borderRadius: BorderRadius.circular(7),
               ),
-
-              // Partitioning for the User part
-              //pfp and username,
-              //Content's Text,
-              //Image
-              //like and comment button
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  // Listen to Firestore collection for real-time updates
+                  stream: FirebaseFirestore.instance
+                      .collection("user-posts")
+                      .orderBy("Timestamp", descending: true)
+                      .snapshots(),
+                  builder: (context, snapshots) {
+                    if (snapshots.hasData) {
+                      return ListView.builder(
+                        itemCount: snapshots.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final post = snapshots.data!.docs[index];
+                          return PostBaseline(
+                            post: post["post"], // The content of the post
+                            pfp: post["pfp"],
+                            user: post["username"], // The user who posted
+                            postId: post.id, // Unique ID of the post
+                            likes: List<String>.from(
+                                post["Likes"] ?? []), // List of likes
+                            bookmarkedBy:
+                                List<String>.from(post["bookmarkedBy"] ?? []),
+                            isChecked: post[
+                                "isChecked"], // Approval status of the post
+                            images: List<String>.from(
+                                post["Images"] ?? []), // List of image URLs
+                            settingButton: false,
+                          );
+                        },
+                      );
+                    } else if (snapshots.hasError) {
+                      return Center(
+                        child: Text("Error: " + snapshots.error.toString()),
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.green,
+                        ), // Loading indicator
+                      );
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(screenWidth * 0.03),
+                child: Text(
+                  "Verify your account to use the Ilm feature",
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // pfp and username
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 8.0, top: 8, bottom: 20),
-                    child: Row(
-                      children: [
-                        // profile picture
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1,
-                              color: Colors.black,
-                            ),
+                  GestureDetector(
+                    // logic implementation
+                    onTap: () {
+                      AuthService().signInWithGoogle(context);
+                    },
 
-                            // demo image
-                            image: DecorationImage(
-                              image: AssetImage(
-                                "assets/ziyarah.jpg",
-                              ),
-                              fit: BoxFit.cover,
-                            ),
+                    // base for the google sign in button
+                    child: Container(
+                      height: screenHeight * 0.04,
+                      width: screenWidth * 0.5,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            spreadRadius: 3,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
                           ),
-                        ),
-
-                        // username
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            // demo username
-                            "@wiegehtsab",
-                            style: TextStyle(fontWeight: FontWeight.w900),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // text baseline
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-
-                        // demo post text/caption
-                        "🌟 Meet the incredible Habib Umar bin Hafiz! 🌟 \nDiscover the inspiring journey of this visionary leader, renowned for his wisdom and compassion. From spreading love and knowledge to uplifting communities worldwide, he's a beacon of positivity and change. \nJoin us in celebrating his remarkable contributions to our global muslim community! \n#Inspiration #CommunityLeader #HabibUmarBinHafiz ✨"),
-                  ),
-
-                  // Image baseline
-                  Padding(
-                    padding: const EdgeInsets.all(23.0),
-                    child: Row(
-                      children: [
-                        Image(
-                          height: 350,
-                          width: 350,
-                          image: AssetImage(
-                            // demo image
-                            "assets/ziyarah.jpg",
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // likes and comments
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 23, right: 23, bottom: 23),
-                    child: GestureDetector(
-
-                      // demo- need to change bila dah siap post-id so that bila like, bukan semua post akan di like
-                      // if clicked
-                      onTap: () {
-                        setState(() {
-                          likecolor = !likecolor;
-                        });
-                      },
-
+                        ],
+                      ),
                       child: Row(
                         children: [
-                          // like button
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.thumb_up_alt_rounded,
-                                  color: likecolor == true
-                                        ? Colors.blue
-                                        : Colors.black,
-                                  size: 20,
-                                ),
-                                Text(
-                                  "Like",
-                                  style: TextStyle(
-                                    color: likecolor == true
-                                        ? Colors.blue
-                                        : Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                          // google image
+                          Image(
+                            image: AssetImage(
+                              "assets/google_logo-google_icongoogle-512.webp",
                             ),
+                            height: screenHeight * 0.03,
+                            width: screenWidth * 0.1,
                           ),
 
-                          // comment button
-                          // demo- buat functionalities after dah siap post-id
-
-                          GestureDetector(
-                            // if clicked
-                            onTap: () {
-                              setState(() {
-
-                              });
-                            },
-
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.comment_rounded,
-                                  color: Colors.black,
-                                  size: 20,
-                                ),
-                                Text(
-                                  "Comment",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                          // sign in with google text
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: screenWidth * 0.02,
+                              right: screenWidth * 0.02,
+                            ),
+                            child: Text(
+                              "Verify with Google",
+                              style: TextStyle(),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            // to call the post baseline
-            PostBaseline(),
-            PostBaseline(),
-          ],
-        ),
-      ),
-    );
+      );
+    }
   }
 }

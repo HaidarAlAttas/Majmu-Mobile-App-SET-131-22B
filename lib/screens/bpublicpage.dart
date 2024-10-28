@@ -1,15 +1,17 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, avoid_unnecessary_containers, non_constant_identifier_names, body_might_complete_normally_nullable, unused_element
+// ignore_for_file: prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:majmu/components/bookmarkpages%20components/navigator2_bookmark.dart';
+import 'package:majmu/components/bookmarkpages%20components/navigator_bookmark.dart';
+import 'package:majmu/components/bookmarkpages%20components/postPublicBookmark.dart';
+import 'package:majmu/components/posts%20components/postbaselines.dart';
 import 'package:majmu/screens/bprivatepage.dart';
-import 'package:majmu/screens/bpublicpage.dart';
-import 'package:majmu/screens/createpostpage.dart';
-import 'package:majmu/screens/homepage.dart';
-import 'package:majmu/screens/ilmpage.dart';
-import 'package:majmu/screens/settingpage.dart';
-import 'package:majmu/theme/theme.dart';
-import 'package:majmu/theme/theme_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:majmu/screens/content/contentviewer.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BPublicPage extends StatefulWidget {
   const BPublicPage({super.key});
@@ -19,205 +21,299 @@ class BPublicPage extends StatefulWidget {
 }
 
 class _BPublicPageState extends State<BPublicPage> {
-  // variable for the public and private button
-  final double buttonWidth;
-  final double buttonHeight;
-  final Color whiteColor;
-  final Color blackColor;
-  bool publicChoice = true;
-  bool privateChoice = true;
-  int i = 0;
+  // Variable for public/private button state
+  late bool publicChoice = true;
+  late int puborpriv =
+      0; // State to determine if public or private content is shown
 
-  // state to change page from public to private
-  int puborpriv = 0;
+  //
+  late bool contentChoice = true;
 
-  _BPublicPageState({
-    this.buttonWidth = 185,
-    this.buttonHeight = 30,
-    this.whiteColor = Colors.white,
-    this.blackColor = Colors.black,
-  });
+  //
+  late int contentOrPost = 0;
 
-  @override
-  Widget build(BuildContext context) {
+  // Fetch current user ID
+  final String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
 
+  // Variable for bookmarks
+  late Future<List<Map<String, dynamic>>> futureContentBookmarks =
+      fetchContentBookmarks();
 
-    // create method to apply a blueprint for the bookmarks (public)
-    Widget PublicBContent() {
+  // Access the document in Firestore
+  DocumentReference postRef =
+      FirebaseFirestore.instance.collection("user-posts").doc();
 
+  // Fetch homepage/ content bookmarks from Firestore
+  Future<List<Map<String, dynamic>>> fetchContentBookmarks() async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection("user-cred")
+        .doc(currentUserUid)
+        .collection("contentsPublicBookmark")
+        .orderBy(
+          "Timestamp",
+          descending: true,
+        )
+        .get();
 
-      return GestureDetector(
+    return snapshot.docs
+        .map((doc) => {"name": doc.id, "path": doc["filePath"]})
+        .toList();
+  }
 
-        // detect input
-        onTap: () {
-          setState(() {});
-        },
-        child: Padding(
-          padding: EdgeInsets.only(right: 20.0, left: 20.0, bottom: 15),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            height: 70,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Color.fromARGB(255, 201, 218, 162),
-              border: Border.all(color: Colors.black, width: 2),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  // Method to open PDF
+  Future<void> openPDF(
+      BuildContext context, String filePath, String fileName) async {
+    final Reference ref = FirebaseStorage.instance
+        .refFromURL(filePath); // Create Reference from URL
+    final dir = await getDownloadsDirectory();
+    final localFilePath =
+        '${dir!.path}/$fileName.pdf'; // Local file path for download
 
-              children: [
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing the dialog manually
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(), // Loading spinner
+        );
+      },
+    );
 
-                // content name
-                Text(
-                  "Surah Ad-Dhuha",
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+    try {
+      final downloadURL = await ref.getDownloadURL(); // Get the download URL
+      await Dio().download(downloadURL, localFilePath); // Download the PDF
 
-                      // conditional statement for the text in the button color
-                      color: blackColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      ),
-                      
-                ),
+      // Hide loading indicator
+      Navigator.pop(context);
 
-                // icon to go to the content file (>)
-                Container(
-                  alignment: Alignment.centerRight,
-                  child: Icon(
-                    Icons.navigate_next_rounded,
-                    color: Colors.black,
-                    size: 35,
-                  ),
-                )
-              ],
-            ),
-            
+      // Navigate to content viewer after download
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ContentViewer(
+            path: localFilePath,
+            name: fileName,
+            fileReference: ref,
           ),
         ),
       );
+    } catch (e) {
+      // Hide loading indicator in case of an error
+      Navigator.pop(context);
+
+      print("Error while downloading the PDF: $e"); // Handle download error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error downloading PDF')),
+      );
     }
+  }
+
+  // method to return name for surah and juz by removing the "_" but if there's no such thing, will return the normal file name
+  String getName(String fileName) {
+    if (fileName.contains("_")) {
+      return fileName.split('_').sublist(1).join('_');
+    }
+    return fileName;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // to create accurate sizing of the phone size
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      // body
-      body: Center(
-        child: Container(
-          child: Column(
-            children: [
-              // container for public and private bookmark navigator
-              Padding(
-                padding:
-                    const EdgeInsets.only(right: 20.0, left: 20.0, bottom: 30),
-                child: Container(
-                  height: 45,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black, width: 2),
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Container for public and private bookmark navigator
+            NavigatorBookmark(
+              onUpdate: (bool newChoice, int newPubOrPriv) {
+                setState(() {
+                  publicChoice = newChoice;
+                  puborpriv = newPubOrPriv;
+                });
+              },
+              publicChoice: publicChoice,
+              puborpriv: puborpriv,
+            ),
 
-                  // button for public and private bookmark
-                  child: Row(
-                    children: [
-                      // public button
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            // to change the color of the button when clicked
-                            publicChoice = true;
-                            privateChoice = true;
-                            puborpriv = 0;
-                            // get the public bookmark
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
-                          child: Container(
-                            height: buttonHeight,
-                            width: buttonWidth,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-
-                              // conditional statement for the button color
-                              color: publicChoice == true
-                                  ? blackColor
-                                  : whiteColor,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Public",
-                                style: TextStyle(
-
-                                    // conditional statement for the text in the button color
-                                    color: publicChoice == false
-                                        ? blackColor
-                                        : whiteColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
+            // Conditional display of bookmarks or private page
+            Expanded(
+              child: puborpriv == 0
+                  ? Column(
+                      children: [
+                        Navigator2Bookmark(
+                          contentChoice: contentChoice,
+                          contentOrPost: contentOrPost,
+                          onUpdate:
+                              (bool newContentChoice, int newContentOrPost) {
+                            setState(() {
+                              contentChoice = newContentChoice;
+                              contentOrPost = newContentOrPost;
+                            });
+                          },
                         ),
-                      ),
+                        // Use Expanded to allow proper scrolling
+                        Expanded(
+                          child: contentOrPost == 0
+                              ? FutureBuilder<List<Map<String, dynamic>>>(
+                                  future: futureContentBookmarks,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      ); // Loading state
+                                    }
 
-                      // private button
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            publicChoice = false;
-                            privateChoice = false;
-                            puborpriv = 1;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
-                          child: Container(
-                            height: buttonHeight,
-                            width: buttonWidth,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                        child: Text('Error: ${snapshot.error}'),
+                                      ); // Error handling
+                                    }
 
-                              // conditional statement for the button color
-                              color: publicChoice == false
-                                  ? blackColor
-                                  : whiteColor,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Private",
-                                style: TextStyle(
+                                    final bookmarks = snapshot.data;
 
-                                    // conditional statement for the text in the button color
-                                    color: publicChoice == true
-                                        ? blackColor
-                                        : whiteColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
+                                    if (bookmarks == null ||
+                                        bookmarks.isEmpty) {
+                                      return Center(
+                                        child: Text(
+                                            'No bookmarks yet, add them now!'),
+                                      ); // No bookmarks message
+                                    }
+
+                                    return ListView.builder(
+                                      itemCount: bookmarks.length,
+                                      itemBuilder: (context, index) {
+                                        final bookmark = bookmarks[index];
+                                        return GestureDetector(
+                                          onTap: () async {
+                                            openPDF(
+                                              context,
+                                              bookmark["path"],
+                                              bookmark["name"],
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(16.0),
+                                            margin: EdgeInsets.symmetric(
+                                              vertical: 8.0,
+                                              horizontal: 16.0,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  spreadRadius: 3,
+                                                  blurRadius: 7,
+                                                  offset: Offset(0, 3),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    getName(bookmark["name"]),
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  icon: Icon(Icons
+                                                      .navigate_next_rounded),
+                                                  onPressed: () async {
+                                                    await openPDF(
+                                                        context,
+                                                        bookmark["path"],
+                                                        bookmark["name"]);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                )
+                              : StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('user-posts')
+                                      .where('bookmarkedBy',
+                                          arrayContains: currentUserUid)
+                                      .snapshots(), // Listen for real-time updates
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      ); // Loading state
+                                    }
+
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                        child: Text('Error: ${snapshot.error}'),
+                                      ); // Error handling
+                                    }
+
+                                    final postBookmarks =
+                                        snapshot.data?.docs ?? [];
+
+                                    if (postBookmarks.isEmpty) {
+                                      return Center(
+                                        child: Text(
+                                            'No bookmarks yet, add them now!'),
+                                      ); // No bookmarks message
+                                    }
+
+                                    return ListView.builder(
+                                      itemCount: postBookmarks.length,
+                                      itemBuilder: (context, index) {
+                                        final post = postBookmarks[index];
+
+                                        return KeyedSubtree(
+                                          key: Key(post
+                                              .id), // Assign a unique key to each post
+                                          child: PostBaseline(
+                                            post: post["post"],
+                                            pfp: post["pfp"],
+                                            user: post["username"],
+                                            postId: post.id,
+                                            likes: List<String>.from(
+                                                post["Likes"] ?? []),
+                                            bookmarkedBy: List<String>.from(
+                                                post["bookmarkedBy"] ?? []),
+                                            isChecked: post["isChecked"],
+                                            images: List<String>.from(
+                                                post["Images"] ?? []),
+                                            settingButton: false,
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // conditional statement to change from public to private bookmark
-              // if public clicked
-              puborpriv == 0
-
-              // bila dah dapat all content, buat ListView widget kat sini
-                  ? PublicBContent()
-
-                  // if private clicked
-                  : BPrivatePage(),
-            ],
-          ),
+                      ],
+                    )
+                  : BPrivatePage(), // Render private page if selected
+            ),
+          ],
         ),
-
-        // home page
       ),
     );
   }
