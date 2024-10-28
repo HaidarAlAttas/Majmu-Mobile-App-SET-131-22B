@@ -367,10 +367,6 @@ class _HomePageState extends State<HomePage> {
       {double widthFactor = 0.93, double textSize = 0.048}) {
     return Container(
       decoration: BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.fitWidth,
-          image: AssetImage(imagePath),
-        ),
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(
           color: Colors.black,
@@ -388,55 +384,45 @@ class _HomePageState extends State<HomePage> {
       height: screenHeight * 0.1,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: Stack(
-                  children: <Widget>[
-                    // Black stroke text with shadow
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: screenWidth * textSize * 0.9,
-                        foreground: Paint()
-                          ..style = PaintingStyle.stroke
-                          ..strokeWidth = strokeWidth
-                          ..color = Colors.black.withOpacity(0.7),
-                        fontWeight: FontWeight.bold, // Bold text
-                        shadows: [
-                          Shadow(
-                            blurRadius: 2.0,
-                            color: Colors.black.withOpacity(0.5),
-                            offset: Offset(1.0, 1.0),
-                          ),
-                        ],
+        child: Stack(
+          children: [
+            // Image with adjusted brightness overlay
+            Image.asset(
+              imagePath,
+              fit: BoxFit.fitWidth,
+              width: screenWidth * widthFactor,
+              height: screenHeight * 0.1,
+            ),
+            Container(
+              // Overlay with adjustable brightness level
+              color: Colors.black
+                  .withOpacity(0.55), // Change opacity for brightness
+            ),
+            // Title with blur effect
+            BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 1.5,
+                sigmaY: 1.5,
+              ),
+              child: Center(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: screenWidth * textSize * 0.9,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 2.0,
+                        color: Colors.black.withOpacity(0.5),
+                        offset: Offset(1.0, 1.0),
                       ),
-                    ),
-                    // White fill text with shadow
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: screenWidth * textSize * 0.9,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold, // Bold text
-                        shadows: [
-                          Shadow(
-                            blurRadius: 2.0,
-                            color: Colors.black.withOpacity(0.5),
-                            offset: Offset(1.0, 1.0),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
