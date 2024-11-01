@@ -15,41 +15,13 @@
       },
       "oauth_client": [
         {
-          "client_id": "767846292948-3d2gir4kkds9rn1k8s2dne65kq2h78t6.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAs90RbRAFgo4QAdqta_hrRuhOSlEfF-nk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "767846292948-3d2gir4kkds9rn1k8s2dne65kq2h78t6.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "767846292948-1j73pccuac9dv4vqona47pdid0nc63f7.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.majmu"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:767846292948:android:50f729736292ee46554a41",
-        "android_client_info": {
-          "package_name": "com.majmu.app"
-        }
-      },
-      "oauth_client": [
+          "client_id": "767846292948-iduciug7qhkutj4q8lfbio89i263399c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.majmu",
+            "certificate_hash": "94bf3c5f35b4be41737dc6d0b9fb14d6376d1abd"
+          }
+        },
         {
           "client_id": "767846292948-3d2gir4kkds9rn1k8s2dne65kq2h78t6.apps.googleusercontent.com",
           "client_type": 3

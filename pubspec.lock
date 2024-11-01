@@ -185,8 +185,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.6"
-<<<<<<< HEAD
-=======
   csslib:
     dependency: transitive
     description:
@@ -195,7 +193,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
->>>>>>> 556970cf51b827d3f7ee318df200427eaa76294c
   cunning_document_scanner:
     dependency: "direct main"
     description:
@@ -478,13 +475,6 @@ packages:
   gallery_picker:
     dependency: "direct main"
     description:
-<<<<<<< HEAD
-      name: image
-      sha256: f31d52537dc417fdcde36088fdf11d191026fd5e4fae742491ebd40e5a8bea7d
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.3.0"
-=======
       name: gallery_picker
       sha256: d44cae58b014fe0e3584cf10aee0d517c172c7e9af854ef49395181a28b5b399
       url: "https://pub.dev"
@@ -674,7 +664,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.9.0"
->>>>>>> 556970cf51b827d3f7ee318df200427eaa76294c
   leak_tracker:
     dependency: transitive
     description:
@@ -731,8 +720,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.15.0"
-<<<<<<< HEAD
-=======
   mime:
     dependency: transitive
     description:
@@ -741,7 +728,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
->>>>>>> 556970cf51b827d3f7ee318df200427eaa76294c
   nested:
     dependency: transitive
     description:
@@ -1075,8 +1061,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.2"
-<<<<<<< HEAD
-=======
   transparent_image:
     dependency: transitive
     description:
@@ -1085,7 +1069,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
->>>>>>> 556970cf51b827d3f7ee318df200427eaa76294c
   typed_data:
     dependency: transitive
     description:
@@ -1094,8 +1077,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
-<<<<<<< HEAD
-=======
   url_launcher:
     dependency: "direct main"
     description:
@@ -1160,7 +1141,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.3"
->>>>>>> 556970cf51b827d3f7ee318df200427eaa76294c
   vector_math:
     dependency: transitive
     description:
@@ -1233,8 +1213,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
-<<<<<<< HEAD
-=======
   win32:
     dependency: transitive
     description:
@@ -1251,7 +1229,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.5"
->>>>>>> 556970cf51b827d3f7ee318df200427eaa76294c
   xdg_directories:
     dependency: transitive
     description:
