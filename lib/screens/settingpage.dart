@@ -90,12 +90,14 @@ Future settingsDialog(BuildContext context) {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+
+                            // Majmu' Button
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 // Majmu' Image
                                 Padding(
-                                  padding: EdgeInsets.all(screenWidth * 0.01),
+                                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01, vertical: screenHeight * 0.007),
                                   child: Image(
                                     image: AssetImage("assets/Majmu'.png"),
                                     height: screenWidth * 0.1,
@@ -159,7 +161,7 @@ Future settingsDialog(BuildContext context) {
                                   left: screenWidth * 0.05,
                                   right: screenWidth * 0.017,
                                   top: screenWidth * 0.015,
-                                  bottom: screenWidth * 0.01),
+                                  bottom: screenWidth * 0.005),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
