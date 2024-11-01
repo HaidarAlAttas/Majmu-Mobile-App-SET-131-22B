@@ -66,9 +66,7 @@ Future settingsDialog(BuildContext context) {
                   right: screenWidth * 0.02),
               child: Container(
                 // to make sure it's compatible with phone size that is distorted on height like iphone 8 etc.
-                height: screenHeight <= screenWidth * 2
-                    ? screenHeight * 0.16
-                    : screenHeight * 0.13,
+                
 
                 width: screenWidth * 0.74,
                 decoration: BoxDecoration(
@@ -160,8 +158,8 @@ Future settingsDialog(BuildContext context) {
                               padding: EdgeInsets.only(
                                   left: screenWidth * 0.05,
                                   right: screenWidth * 0.017,
-                                  top: screenWidth * 0.015,
-                                  bottom: screenWidth * 0.005),
+                                  top: screenHeight * 0.007,
+                                  bottom: screenHeight * 0.01),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
