@@ -66,7 +66,6 @@ class AuthService {
         return 'An error occurred: email has been used, or weak password';
       }
     } catch (e) {
-      Navigator.pop(context);
       return 'An unexpected error occurred: email has been used, or weak password';
     }
   }

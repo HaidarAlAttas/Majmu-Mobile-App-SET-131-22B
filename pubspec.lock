@@ -241,6 +241,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  document_scanner:
+    dependency: "direct main"
+    description:
+      name: document_scanner
+      sha256: "6e0663f86cf7182a98d9a98f2dd8de82eeb3685dfa19282e5d3e1802f6b8b6e5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   fake_async:
     dependency: transitive
     description:

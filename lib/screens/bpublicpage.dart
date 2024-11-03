@@ -7,7 +7,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/components/bookmarkpages%20components/navigator2_bookmark.dart';
 import 'package:majmu/components/bookmarkpages%20components/navigator_bookmark.dart';
-import 'package:majmu/components/bookmarkpages%20components/postPublicBookmark.dart';
 import 'package:majmu/components/posts%20components/postbaselines.dart';
 import 'package:majmu/screens/bprivatepage.dart';
 import 'package:majmu/screens/content/contentviewer.dart';

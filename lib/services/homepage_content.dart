@@ -6,27 +6,28 @@ import 'package:flutter/material.dart';
 import 'package:majmu/screens/content/contentviewer.dart';
 import 'package:path_provider/path_provider.dart';
 
-class JuzPage extends StatefulWidget {
-  const JuzPage({super.key});
+class HomepageContent extends StatefulWidget {
+  final String folder;
+
+  const HomepageContent({
+    super.key,
+    required this.folder,
+  });
 
   @override
-  State<JuzPage> createState() => _JuzPageState();
+  State<HomepageContent> createState() => _HomepageContentState();
 }
 
-class _JuzPageState extends State<JuzPage> {
+class _HomepageContentState extends State<HomepageContent> {
   late Future<ListResult> futureFolders;
 
-  // Predefined list of 30 Juz in the format "001_ Juz 1"
-  List<String> quranJuzOrder = List.generate(30, (index) {
-    final juzNumber = index + 1;
-    return '${juzNumber.toString().padLeft(3, '0')}_ Juz $juzNumber';
-  });
+
+  // letak index ii for file ii lain
 
   @override
   void initState() {
     super.initState();
-    futureFolders =
-        FirebaseStorage.instance.ref('/alqurankareem/juz').listAll();
+    futureFolders = FirebaseStorage.instance.ref(widget.folder).listAll();
   }
 
   // Method to open PDF
@@ -56,47 +57,88 @@ class _JuzPageState extends State<JuzPage> {
 
   // Method to open folder and handle automatic PDF opening
   Future<void> openFolder(BuildContext context, Reference folder) async {
-    final files = await folder.listAll();
-    final pdfFiles =
-        files.items.where((file) => file.name.endsWith('.pdf')).toList();
-    String surahName = getJuzName(folder.name);
+    // Show loading indicator while the files are being fetched
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissal while loading
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(), // Loading spinner
+        );
+      },
+    );
 
-    if (pdfFiles.length == 1) {
-      await openPDF(context, pdfFiles[0], surahName);
-    } else if (pdfFiles.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Scaffold(
-            appBar: AppBar(title: Text(getJuzName(folder.name))),
-            body: ListView.builder(
-              itemCount: pdfFiles.length,
-              itemBuilder: (context, index) {
-                final file = pdfFiles[index];
-                return GestureDetector(
-                  onTap: () async {
-                    await openPDF(context, file, surahName);
-                  },
-                  child: ListTile(
-                    title: Text(file.name),
-                    trailing: Icon(Icons.navigate_next_rounded),
-                  ),
-                );
-              },
+    try {
+      // Fetch the list of files in the folder
+      final files = await folder.listAll();
+      final pdfFiles =
+          files.items.where((file) => file.name.endsWith('.pdf')).toList();
+      String folderName = folder.name;
+
+      // Close the loading dialog once files are fetched
+      Navigator.of(context, rootNavigator: true).pop();
+
+      if (pdfFiles.length == 1) {
+        // Open the single PDF file directly
+        await openPDF(context, pdfFiles[0], folderName);
+      } else if (pdfFiles.isNotEmpty) {
+        // Navigate to a new screen with a list of PDF files if more than one is found
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Scaffold(
+              appBar: AppBar(title: Text(folderName)),
+              body: ListView.builder(
+                itemCount: pdfFiles.length,
+                itemBuilder: (context, index) {
+                  final file = pdfFiles[index];
+                  return GestureDetector(
+                    onTap: () async {
+                      // Show loading indicator when opening PDF
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      );
+                      await openPDF(context, file, folderName);
+                      // Close the loading dialog after opening PDF
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: ListTile(
+                      title: Text(file.name),
+                      trailing: Icon(Icons.navigate_next_rounded),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
-        ),
-      );
-    } else {
+        );
+      } else {
+        // Show a message if no PDF files are found
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No PDF files found in this folder.'),
+          ),
+        );
+      }
+    } catch (e) {
+      // Close the loading dialog in case of an error
+      Navigator.of(context, rootNavigator: true).pop();
+      // Show an error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('No PDF files found in this folder.'),
+          content: Text('Failed to load files: $e'),
         ),
       );
     }
   }
 
-  String getJuzName(String folderName) {
+  String getSurahName(String folderName) {
     return folderName.split('_').sublist(1).join('_');
   }
 
@@ -111,8 +153,12 @@ class _JuzPageState extends State<JuzPage> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+
+        // appbar
         appBar: AppBar(
           backgroundColor: Colors.transparent,
+
+          // button to go back
           leading: GestureDetector(
             onTap: () {
               Navigator.pop(context);
@@ -122,6 +168,8 @@ class _JuzPageState extends State<JuzPage> {
             ),
           ),
         ),
+
+        // content inside
         body: Padding(
           padding: EdgeInsets.only(top: screenHeight * 0.03),
           child: FutureBuilder<ListResult>(
@@ -130,15 +178,10 @@ class _JuzPageState extends State<JuzPage> {
               if (snapshot.hasData) {
                 final folders = snapshot.data!.prefixes;
 
-                // Sort folders based on predefined Quranic Juz order
-                folders.sort((a, b) {
-                  int indexA = quranJuzOrder.indexOf(getJuzName(a.name));
-                  int indexB = quranJuzOrder.indexOf(getJuzName(b.name));
-
-                  if (indexA == -1) indexA = quranJuzOrder.length;
-                  if (indexB == -1) indexB = quranJuzOrder.length;
-
-                  return indexA.compareTo(indexB);
+              // susun surah
+                List<String> contentOrder = List.generate(30, (index) {
+                  final contentNumber = index + 1;
+                  return '${contentNumber.toString().padLeft(3, '0')}_ Juz $contentNumber';
                 });
 
                 return ListView.builder(
@@ -171,7 +214,7 @@ class _JuzPageState extends State<JuzPage> {
                           children: [
                             Expanded(
                               child: Text(
-                                getJuzName(folder.name),
+                                getSurahName(folder.name),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,

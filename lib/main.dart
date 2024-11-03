@@ -6,9 +6,7 @@ import 'package:majmu/firebase_options.dart';
 import 'package:majmu/screens/auth/forgotpassword.dart';
 import 'package:majmu/screens/auth/registerpage.dart';
 import 'package:majmu/screens/auth/loginpage.dart';
-import 'package:majmu/screens/content/alquran/alqurankareempage.dart';
-import 'package:majmu/screens/content/alquran/juz.dart';
-import 'package:majmu/screens/content/alquran/surah.dart';
+import 'package:majmu/screens/content/alqurankareempage.dart';
 import 'package:majmu/screens/content/biografi_dan_rujukanpage.dart';
 import 'package:majmu/screens/content/zikir_harianpage.dart';
 import 'package:majmu/screens/content/amalan_jumaatpage.dart';
@@ -87,9 +85,7 @@ class MyApp extends StatelessWidget {
         "/logoutp": (context) => const LogoutPage(),
         "/yourpostsp": (context) => const YourPostsPage(),
 
-        // alquran kareem route
-        "/alquransurahp": (context) => const SurahPage(),
-        "/alquranjuzp": (context) => const JuzPage(),
+        
       },
 
       // remove demo sign

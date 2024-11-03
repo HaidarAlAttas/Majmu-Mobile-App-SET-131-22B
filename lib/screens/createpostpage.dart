@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:majmu/screens/auth/googlebutton.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/services/auth_service.dart';
 
@@ -450,59 +451,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 ),
               ),
               SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    // logic implementation
-                    onTap: () {
-                      AuthService().signInWithGoogle(context);
-                    },
-
-                    // base for the google sign in button
-                    child: Container(
-                      height: screenHeight * 0.04,
-                      width: screenWidth * 0.5,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 7,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          // google image
-                          Image(
-                            image: AssetImage(
-                              "assets/google_logo-google_icongoogle-512.webp",
-                            ),
-                            height: screenHeight * 0.03,
-                            width: screenWidth * 0.1,
-                          ),
-
-                          // sign in with google text
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: screenWidth * 0.02,
-                              right: screenWidth * 0.02,
-                            ),
-                            child: Text(
-                              "Verify with Google",
-                              style: TextStyle(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
+              
+              GoogleButton(),
             ],
           ),
         ),

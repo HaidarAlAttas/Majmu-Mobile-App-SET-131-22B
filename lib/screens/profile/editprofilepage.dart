@@ -8,6 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:majmu/screens/auth/googlebutton.dart';
 import 'package:majmu/screens/bprivatepage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
@@ -472,53 +473,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    // logic implementation
-                    onTap: () {
-                      AuthService().signInWithGoogle(context);
-                    },
-
-                    // base for the google sign in button
-                    child: Container(
-                      height: screenHeight * 0.04,
-                      width: screenWidth * 0.5,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 7,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          // google image
-                          Image(
-                            image: AssetImage(
-                              "assets/google_logo-google_icongoogle-512.webp",
-                            ),
-                            height: screenHeight * 0.03,
-                            width: screenWidth * 0.1,
-                          ),
-
-                          // sign in with google text
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: screenWidth * 0.02,
-                                right: screenWidth * 0.02),
-                            child: Text(
-                              "Sign in with Google",
-                              style: TextStyle(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
+                  GoogleButton(),
                 ],
               ),
             ),

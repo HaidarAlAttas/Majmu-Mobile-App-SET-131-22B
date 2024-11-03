@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:majmu/screens/auth/googlebutton.dart';
 import 'package:majmu/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -353,59 +354,10 @@ class _LoginPageState extends State<LoginPage> {
 
               // google sign in button
               Padding(
-                padding: EdgeInsets.only(top: ScreenHeight * 0.04),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      // logic implementation
-                      onTap: () {
-                        AuthService().signInWithGoogle(context);
-                      },
-
-                      // base for the google sign in button
-                      child: Container(
-                        height: ScreenHeight * 0.04,
-                        width: ScreenWidth * 0.5,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              spreadRadius: 3,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            // google image
-                            Image(
-                              image: AssetImage(
-                                "assets/google_logo-google_icongoogle-512.webp",
-                              ),
-                              height: ScreenHeight * 0.03,
-                              width: ScreenWidth * 0.1,
-                            ),
-
-                            // sign in with google text
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: ScreenWidth * 0.02,
-                                  right: ScreenWidth * 0.02),
-                              child: Text(
-                                "Sign in with Google",
-                                style: TextStyle(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
+                padding: EdgeInsets.only(
+                  top: ScreenHeight * 0.04,
                 ),
+                child: GoogleButton(),
               ),
             ],
           ),

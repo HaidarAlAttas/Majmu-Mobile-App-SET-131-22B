@@ -56,31 +56,35 @@ class _RegisterPageState extends State<RegisterPage> {
     double TextfieldWidth = ScreenWidth * 0.75;
 
     // UI for register page
-    return Container(
-      height: ScreenHeight,
-      width: ScreenWidth,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/loginbackground.png"),
-          fit: BoxFit.fill,
-        ),
-      ),
-      child: Scaffold(
-        // to view wallpaper on the back
-        backgroundColor: Colors.transparent,
-
-        resizeToAvoidBottomInset: false,
-
-        // content inside register page
-        body: Center(
-          child: SafeArea(
-            child: SingleChildScrollView(
+    return Stack(
+      children: [
+        Container(
+          height: ScreenHeight,
+          width: ScreenWidth,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/loginbackground.png"),
+              fit: BoxFit.fill,
+            ),
+          ),
+        
+        
+          child: Scaffold(
+            // to view wallpaper on the back
+            backgroundColor: Colors.transparent,
+        
+            // to avoid resizing of scaffold
+            resizeToAvoidBottomInset: false,
+        
+            // content inside register page
+            body: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   // majmu' Icon UI
                   Padding(
                     padding: EdgeInsets.only(
+                      top: ScreenHeight * 0.2,
                       bottom: ScreenHeight * 0.01,
                     ),
                     child: Image(
@@ -88,7 +92,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: ScreenWidth * 0.3,
                     ),
                   ),
-
+                        
                   // Majmu' title
                   Text(
                     "Majmu'",
@@ -107,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ],
                     ),
                   ),
-
+                        
                   Padding(
                     padding: EdgeInsets.only(top: ScreenHeight * 0.01),
                     child: Text(
@@ -128,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-
+                        
                   // textfield for email, password, and re-enter password
                   Padding(
                     padding: EdgeInsets.only(
@@ -156,10 +160,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             child: TextField(
                               // input variable
                               controller: _email,
-
+                        
                               // the color of the cursor
                               cursorColor: Colors.black,
-
+                        
                               //
                               decoration: InputDecoration(
                                 // to make the content stays in the middle
@@ -167,7 +171,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   vertical: TextfieldWidth * 0.050,
                                   horizontal: 10.0,
                                 ),
-
+                        
                                 suffixIcon: GestureDetector(
                                   onTap: () {
                                     _email.clear();
@@ -177,7 +181,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     color: Colors.black,
                                   ),
                                 ),
-
+                        
                                 // hint text configuration
                                 hintText: "Email",
                                 hintStyle: TextStyle(
@@ -185,11 +189,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                   color: Colors.grey,
                                   fontSize: ScreenWidth * 0.032,
                                 ),
-
+                        
                                 // to remove the underline
                                 border: InputBorder.none,
                               ),
-
+                        
                               // input configuration
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -198,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                         ),
-
+                        
                         // password textfield
                         Padding(
                           padding: EdgeInsets.only(bottom: ScreenHeight * 0.02),
@@ -220,13 +224,13 @@ class _RegisterPageState extends State<RegisterPage> {
                             child: TextField(
                               // input variable
                               controller: _password,
-
+                        
                               // the color of the cursor
                               cursorColor: Colors.black,
-
+                        
                               // to make the input is "*"
                               obscureText: !checkedValue,
-
+                        
                               //
                               decoration: InputDecoration(
                                 // to make the content stays in the middle
@@ -234,7 +238,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   vertical: TextfieldWidth * 0.050,
                                   horizontal: 10.0,
                                 ),
-
+                        
                                 suffixIcon: GestureDetector(
                                   onTap: () {
                                     _password.clear();
@@ -244,7 +248,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     color: Colors.black,
                                   ),
                                 ),
-
+                        
                                 // hint text configuration
                                 hintText: "Password",
                                 hintStyle: TextStyle(
@@ -252,11 +256,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                   color: Colors.grey,
                                   fontSize: ScreenWidth * 0.032,
                                 ),
-
+                        
                                 // to remove the underline
                                 border: InputBorder.none,
                               ),
-
+                        
                               // input configuration
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -264,7 +268,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                         ),
-
+                        
                         // re-password textfield
                         Container(
                           width: TextfieldWidth,
@@ -284,13 +288,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: TextField(
                             // input variable
                             controller: _re_password,
-
+                        
                             // the color of the cursor
                             cursorColor: Colors.black,
-
+                        
                             // to make the input is "*"
                             obscureText: !checkedValue,
-
+                        
                             //
                             decoration: InputDecoration(
                               // to make the content stays in the middle
@@ -298,7 +302,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 vertical: TextfieldWidth * 0.050,
                                 horizontal: 10.0,
                               ),
-
+                        
                               suffixIcon: GestureDetector(
                                 onTap: () {
                                   _re_password.clear();
@@ -308,7 +312,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   color: Colors.black,
                                 ),
                               ),
-
+                        
                               // hint text configuration
                               hintText: "Re-enter Password",
                               hintStyle: TextStyle(
@@ -316,11 +320,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                 color: Colors.grey,
                                 fontSize: ScreenWidth * 0.032,
                               ),
-
+                        
                               // to remove the underline
                               border: InputBorder.none,
                             ),
-
+                        
                             // input configuration
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -331,7 +335,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ],
                     ),
                   ),
-
+                        
                   // show password and get started button
                   Container(
                     width: ScreenWidth * 0.73,
@@ -355,13 +359,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                   // Otherwise, keep the default active color
                                   return Colors.blue;
                                 }),
-
+                        
                                 // the right icon color
                                 checkColor: Colors.white,
-
+                        
                                 // value of the checkbox
                                 value: checkedValue,
-
+                        
                                 // logical implementation of the checkbox
                                 onChanged: (newValue) {
                                   setState(
@@ -378,7 +382,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ],
                         ),
-
+                        
                         // Get started button
                         GestureDetector(
                           // logical implementation here
@@ -386,7 +390,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             // Convert the asset image to a file for pfp
                             File profilePictureFile = await assetImageToFile(
                                 'assets/baseProfilePicture.png');
-
+                        
                             // check if the registration textfields is empty or not
                             if (_email.text.isNotEmpty) {
                               if (_password.text.isNotEmpty) {
@@ -409,7 +413,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     context: context,
                                     profilePictureFile: profilePictureFile,
                                   );
-
+                        
                                   // Check if registration returned an error message
                                   if (result != null && mounted) {
                                     // Display error message in a SnackBar
@@ -426,7 +430,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                            "Account registered: Welcome to Majmu x PAID app, to unlock the full feature, please link your account with a gmail account;)"),
+                                            "Account registered: Welcome to Majmu x PAID app, to unlock the full feature, please link your account with a gmail account ;)"),
                                         backgroundColor: Colors.green,
                                         behavior: SnackBarBehavior.floating,
                                         duration: Duration(seconds: 10),
@@ -497,7 +501,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ],
                     ),
                   ),
-
+                        
                   Padding(
                     padding: EdgeInsets.only(top: ScreenHeight * 0.03),
                     child: Row(
@@ -530,7 +534,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
