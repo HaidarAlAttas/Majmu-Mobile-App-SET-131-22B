@@ -27,70 +27,63 @@ class _AlquranKareemPageState extends State<AlquranKareemPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    // WALLPAPER
-    // Background wallpaper color
-    return Container(
-      decoration: BoxDecoration(
-        color: Color.fromARGB(255, 245, 241, 222),
-      ),
-      // BODY
-      child: Scaffold(
+    return Scaffold(
+      // Background wallpaper color
+      backgroundColor: Color.fromARGB(255, 245, 241, 222),
+      appBar: AppBar(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          // Back button
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-            ),
+        // Back button
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back_ios_new_rounded,
           ),
         ),
-        // Contents
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              // alquran arranged by surah
-              ContentButton(
-                name: "Alquran arranged by Surah",
-                onTap: () {
-                  setState(
-                    () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomepageContent(
-                            folder: "/alqurankareem/surah",
-                          ),
+      ),
+      // Contents
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // alquran arranged by surah
+            ContentButton(
+              name: "Alquran arranged by Surah",
+              onTap: () {
+                setState(
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomepageContent(
+                          folder: "/alqurankareem/surah",
                         ),
-                      );
-                    },
-                  );
-                },
-              ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
 
-              // alquran arranged by juz
-              ContentButton(
-                name: "Quran arranged by Juz",
-                onTap: () {
-                  setState(
-                    () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomepageContent(
-                            folder: "/alqurankareem/juz",
-                          ),
+            // alquran arranged by juz
+            ContentButton(
+              name: "Quran arranged by Juz",
+              onTap: () {
+                setState(
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomepageContent(
+                          folder: "/alqurankareem/juz",
                         ),
-                      );
-                    },
-                  );
-                },
-              )
-            ],
-          ),
+                      ),
+                    );
+                  },
+                );
+              },
+            )
+          ],
         ),
       ),
     );
