@@ -22,47 +22,62 @@ class MyTextBox extends StatelessWidget {
 
     return Center(
       child: Container(
-        height: screenHeight * 0.15,
+        height: screenHeight * 0.12,
         width: screenWidth * 0.9,
+        padding: EdgeInsets.all(screenWidth * 0.04),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: Offset(0, 5),
+            ),
+          ],
+          border: Border.all(color: Colors.grey.shade300),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // section name
-            Padding(
-              padding: EdgeInsets.all(screenWidth * 0.02),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    sectionName,
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
+            // Section name with edit icon
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  sectionName,
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: screenWidth * 0.045,
+                    fontWeight: FontWeight.w500,
                   ),
-                  GestureDetector(
-                    onTap: onTap,
-                    child: Icon(
-                      Icons.edit,
-                      color: sectionName == "Username"
-                          ? Colors.grey
-
-                          // make it invinsible if it was the user email text box
-                          : Colors.white,
-                    ),
-                  )
-                ],
-              ),
+                ),
+                GestureDetector(
+                  onTap: onTap,
+                  child: Icon(
+                    Icons.edit,
+                    color: sectionName == "Username"
+                        ? Colors.grey
+                        : Colors
+                            .transparent, // Make invisible for email section
+                    size: screenWidth * 0.05,
+                  ),
+                ),
+              ],
             ),
 
-            SizedBox(
-              height: screenHeight * 0.02,
-            ),
-            // text
+            // Main text
             Text(
               text,
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: screenWidth * 0.04,
+                fontWeight: FontWeight.w400,
+                height: 1.4,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

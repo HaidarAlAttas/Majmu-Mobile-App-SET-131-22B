@@ -1,6 +1,5 @@
-platform :ios, '14.0' # Uncommented to set the minimum iOS version
+platform :ios, '14.0'
 
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -26,7 +25,6 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
-# Use HTTPS instead of SSH for GitHub
 source 'https://github.com/CocoaPods/Specs.git'
 
 target 'Runner' do
@@ -35,26 +33,49 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
-  # Add modular headers for Firebase pods to avoid non-modular header issues
   pod 'Firebase/Core', :modular_headers => true
   pod 'Firebase/Auth', :modular_headers => true
   pod 'Firebase/Storage', :modular_headers => true
   pod 'Firebase/Firestore', :modular_headers => true
   pod 'Firebase/Messaging', :modular_headers => true
+  # pod 'Permission-Camera', :modular_headers => true
 
   target 'RunnerTests' do
     inherit! :search_paths
   end
 end
 
-# Single post_install block with combined logic
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
 
-    # Ensure the correct use of HTTPS for GitHub repositories
+    # Configure the permissions
     target.build_configurations.each do |config|
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
+      
+      # Permission settings
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+        '$(inherited)',
+        
+        ## Enable only necessary permissions
+        'PERMISSION_CAMERA=1',
+        'PERMISSION_MICROPHONE=1',
+        'PERMISSION_PHOTOS=1',
+        'PERMISSION_MEDIA_LIBRARY=1',
+        
+        ## Uncomment or add additional permissions as needed
+        # 'PERMISSION_EVENTS=1',
+        # 'PERMISSION_REMINDERS=1',
+        # 'PERMISSION_CONTACTS=1',
+        # 'PERMISSION_SPEECH_RECOGNIZER=1',
+        # 'PERMISSION_LOCATION=1',
+        # 'PERMISSION_NOTIFICATIONS=1',
+        # 'PERMISSION_BLUETOOTH=1',
+        # 'PERMISSION_APP_TRACKING_TRANSPARENCY=1',
+        # 'PERMISSION_CRITICAL_ALERTS=1',
+        # 'PERMISSION_SENSORS=1',
+      ]
     end
   end
 end

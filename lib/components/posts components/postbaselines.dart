@@ -125,9 +125,16 @@ class _PostBaselineState extends State<PostBaseline> {
     try {
       // Delete the document by its ID
       await posts.doc(documentId).delete();
-      print("Document successfully deleted!");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Post successfully deleted!'),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.green,
+        ),
+      );
+      print("Post successfully deleted!");
     } catch (e) {
-      print("Error deleting document: $e");
+      print("Error deleting post: $e");
     }
   }
 
@@ -193,123 +200,75 @@ class _PostBaselineState extends State<PostBaseline> {
                         // if on ilmpage, this button wont appear
                         // button to delete post
                         settingButton
-                            ? GestureDetector(
-                                onTap: () => showPopover(
-                                  context: context,
-                                  width: screenWidth * 0.5,
-                                  height: screenHeight * 0.12,
-
-                                  // color of thew popup background
-                                  backgroundColor: Color(0xFFE8F5E9),
-
-                                  // the popup will pop on the bottom
-                                  direction: PopoverDirection.top,
-                                  bodyBuilder: (context) => Column(
-                                    children: [
-                                      // delete post button
-                                      Container(
-                                        height: screenHeight * 0.06,
-                                        decoration: BoxDecoration(
-                                          color: Colors.green[100],
-                                        ),
-                                        child: GestureDetector(
-                                          onTap: () async {
-                                            bool shouldDelete =
-                                                await showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                  // alert dialog to reconfirm post deletion
-                                                  backgroundColor:
-                                                      Colors.green[50],
-                                                  title: Text(
-                                                    "Delete Post",
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                  content: Text(
-                                                    "Are you sure you want to delete this post?",
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context, false),
-                                                      child: Text(
-                                                        "Cancel",
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context, true),
-                                                      child: Text(
-                                                        "Delete",
-                                                        style: TextStyle(
-                                                          color: Colors.red,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-
-                                            // call delete post method
-                                            if (shouldDelete) {
-                                              await deletePost(widget.postId);
-                                              Navigator.pop(context, true);
-                                            }
-                                          },
-
-                                          // delete post text design
-                                          child: Center(
-                                              child: Text(
+                            ? PopupMenuButton<String>(
+                                icon: Icon(Icons.more_vert_rounded),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                color: Colors.white,
+                                onSelected: (value) async {
+                                  if (value == 'delete') {
+                                    bool shouldDelete = await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text(
                                             "Delete Post",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )),
-                                        ),
-                                      ),
-
-                                      // share post button
-                                      Container(
-                                        height: screenHeight * 0.06,
-                                        decoration: BoxDecoration(
-                                          color: Colors.green[50],
-                                        ),
-
-                                        // logic will be implemented here
-                                        child: GestureDetector(
-                                          onTap: () async {},
-                                          child: Center(
-                                            child: Text(
-                                              "Share Post",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontWeight: FontWeight.bold,
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          ),
+                                          content: Text(
+                                            "Are you sure you want to delete this post?",
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, false),
+                                              child: Text(
+                                                "Cancel",
+                                                style: TextStyle(
+                                                    color: Colors.black),
                                               ),
                                             ),
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, true),
+                                              child: Text(
+                                                "Delete",
+                                                style: TextStyle(
+                                                    color: Colors.red),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+
+                                    if (shouldDelete) {
+                                      await deletePost(widget.postId);
+                                    }
+                                  }
+                                },
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    value: 'delete',
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.delete, color: Colors.red),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Delete Post',
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-
-                                // setting icon that will only pop up in your posts
-                                child: Icon(
-                                  Icons.more_vert_rounded,
-                                ),
+                                ],
                               )
 
                             // if not on your posts, it wont appear

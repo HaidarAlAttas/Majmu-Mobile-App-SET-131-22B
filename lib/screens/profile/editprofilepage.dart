@@ -306,9 +306,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     bool isLogged = _authService.isSignedInWithGoogle();
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Color.fromARGB(255, 245, 241, 222),
       appBar: AppBar(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Color.fromARGB(255, 245, 241, 222),
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
@@ -333,7 +333,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       snapshot.data!.data() as Map<String, dynamic>;
                   return ListView(
                     children: [
-                      SizedBox(height: screenHeight * 0.07),
+                      SizedBox(height: screenHeight * 0.04),
+
+                      // profile text
+                      Center(
+                        child: Text(
+                          "P R O F I L E",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: screenWidth * 0.08,
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.02),
 
                       // profile picture
                       UserPfp(

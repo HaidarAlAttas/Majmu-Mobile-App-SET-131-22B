@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, non_constant_identifier_names
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, non_constant_identifier_names, sort_child_properties_last
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,27 +42,40 @@ class _BPrivatePageState extends State<BPrivatePage> {
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                     return const Center(
                         child:
-                            Text('No Private Bookmark yet, add them now :)'));
+                            Text('No Private Bookmarks yet, add them now :)'));
                   }
-                  return ListView(
-                    children: snapshot.data!.docs.map((doc) {
-                      return PrivateBookmarks(
-                        bookmarkId: doc.id,
-                        fileName: doc['name'],
-                        description: doc['description'],
-                        previewImageUrl: doc['previewImageUrl'],
-                        pdfUrl: doc['fileUrl'], // Update to use 'fileUrl'
-                        dateCreated: doc['dateCreated'],
-                      );
-                    }).toList(),
+                  return Stack(
+                    children: [
+                      ListView(
+                        children: snapshot.data!.docs.map((doc) {
+                          return PrivateBookmarks(
+                            bookmarkId: doc.id,
+                            fileName: doc['name'],
+                            description: doc['description'],
+                            previewImageUrl: doc['previewImageUrl'],
+                            pdfUrl: doc['fileUrl'], // Update to use 'fileUrl'
+                            dateCreated: doc['dateCreated'],
+                          );
+                        }).toList(),
+                      ),
+
+                      // scan new document button
+                      Positioned(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            right: screenWidth * 0.03,
+                            bottom: screenHeight * 0.01,
+                          ),
+                          child: DocScanButton(),
+                        ),
+                        right: 1,
+                        bottom: 1,
+                      ),
+                    ],
                   );
                 },
               ),
             ),
-            SizedBox(
-              height: screenHeight * 0.01,
-            ),
-            DocScanButton(),
           ],
         ),
       ),

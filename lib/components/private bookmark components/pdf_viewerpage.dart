@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -57,12 +59,61 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Variable to make it compatible with devices
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.name),
+        backgroundColor: Colors.transparent,
+        actions: [
+          // Info button to show full description
+          GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(
+                      widget.name,
+                    ),
+                    content: Text(
+                      "description:\n\n" + widget.description,
+                    ), // Replace "data" with your actual description variable
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: Text(
+                          "Close",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: Padding(
+              padding: EdgeInsets.only(right: screenWidth * 0.017),
+              child: Icon(
+                Icons.info_outline_rounded,
+              ),
+            ),
+          ),
+        ],
       ),
       body: _pdfController == null
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Colors.green,
+              ),
+            )
           : PdfView(controller: _pdfController!),
     );
   }

@@ -64,9 +64,9 @@ class _BPublicPageState extends State<BPublicPage> {
       BuildContext context, String filePath, String fileName) async {
     final Reference ref = FirebaseStorage.instance
         .refFromURL(filePath); // Create Reference from URL
-    final dir = await getDownloadsDirectory();
+    final dir = await getTemporaryDirectory(); // Use temporary directory
     final localFilePath =
-        '${dir!.path}/$fileName.pdf'; // Local file path for download
+        '${dir.path}/$fileName.pdf'; // Local file path for download
 
     // Show loading indicator
     showDialog(
@@ -74,7 +74,9 @@ class _BPublicPageState extends State<BPublicPage> {
       barrierDismissible: false, // Prevent dismissing the dialog manually
       builder: (BuildContext context) {
         return Center(
-          child: CircularProgressIndicator(), // Loading spinner
+          child: CircularProgressIndicator(
+            color: Colors.green,
+          ), // Loading spinner
         );
       },
     );
@@ -164,7 +166,9 @@ class _BPublicPageState extends State<BPublicPage> {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
                                       return Center(
-                                        child: CircularProgressIndicator(),
+                                        child: CircularProgressIndicator(
+                                          color: Colors.green,
+                                        ),
                                       ); // Loading state
                                     }
 
@@ -259,7 +263,9 @@ class _BPublicPageState extends State<BPublicPage> {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
                                       return Center(
-                                        child: CircularProgressIndicator(),
+                                        child: CircularProgressIndicator(
+                                          color: Colors.green,
+                                        ),
                                       ); // Loading state
                                     }
 

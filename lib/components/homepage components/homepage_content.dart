@@ -30,15 +30,19 @@ class _HomepageContentState extends State<HomepageContent> {
   }
 
   // Method to open PDF
+
   Future<void> openPDF(
       BuildContext context, Reference ref, String folderName) async {
-    final dir = await getDownloadsDirectory();
-    final filePath = '${dir!.path}/${ref.name}';
+    // Use the Temporary Directory on iOS
+    final dir = await getTemporaryDirectory();
+    final filePath = '${dir.path}/${ref.name}';
 
     try {
+      // Get the download URL and download the file using Dio
       final downloadURL = await ref.getDownloadURL();
       await Dio().download(downloadURL, filePath);
 
+      // Navigate to ContentViewer to display the PDF
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -62,7 +66,9 @@ class _HomepageContentState extends State<HomepageContent> {
       barrierDismissible: false, // Prevent dismissal while loading
       builder: (BuildContext context) {
         return Center(
-          child: CircularProgressIndicator(), // Loading spinner
+          child: CircularProgressIndicator(
+            color: Colors.green,
+          ), // Loading spinner
         );
       },
     );
@@ -99,7 +105,9 @@ class _HomepageContentState extends State<HomepageContent> {
                         barrierDismissible: false,
                         builder: (BuildContext context) {
                           return Center(
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator(
+                              color: Colors.green,
+                            ),
                           );
                         },
                       );
@@ -236,7 +244,10 @@ class _HomepageContentState extends State<HomepageContent> {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }
 
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CircularProgressIndicator(
+                color: Colors.green,
+              ));
             },
           ),
         ),

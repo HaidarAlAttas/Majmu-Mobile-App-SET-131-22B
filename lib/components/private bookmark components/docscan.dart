@@ -9,8 +9,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
-import 'package:flutter_document_scanner/flutter_document_scanner.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart'; // Import permission_handler
 
 class DocScanButton extends StatefulWidget {
   const DocScanButton({super.key});
@@ -31,165 +31,163 @@ class _DocScanButtonState extends State<DocScanButton> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    // add new bookmarks button
-    return SizedBox(
-      width: screenWidth * 0.6,
-      child: ElevatedButton(
-        // inside the ElevatedButton onPressed to show the dialog
-        onPressed: () => showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              title: const Text('Add New Bookmarks'),
-              content: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // TextField for file name
-                    TextField(
-                      onChanged: (value) => fileName = value,
-                      decoration: InputDecoration(
-                        labelText: 'File Name',
-                        labelStyle:
-                            TextStyle(color: Colors.grey), // Label color
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(12.0), // Rounded corners
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(
-                                  255, 98, 147, 101)), // Border color
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(12.0), // Rounded corners
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 98, 147, 101),
-                              width: 2), // Thicker border when focused
-                        ),
-                        filled: true,
-                        fillColor: Colors.white, // Background color
-                        contentPadding:
-                            EdgeInsets.all(12), // Padding inside the TextField
+    // Add new bookmarks button
+    return FloatingActionButton(
+      onPressed: () => showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: const Text('Add New Bookmarks'),
+            content: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // TextField for file name
+                  TextField(
+                    onChanged: (value) => fileName = value,
+                    maxLength: 50,
+                    decoration: InputDecoration(
+                      labelText: 'File Name',
+                      labelStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(
+                            color: Color.fromARGB(255, 98, 147, 101)),
                       ),
-                    ),
-
-                    SizedBox(
-                      height: screenHeight * 0.012,
-                    ),
-
-                    // Multi-line TextField for file description
-                    TextField(
-                      onChanged: (value) => description = value,
-                      decoration: InputDecoration(
-                        labelText: 'Descriptions',
-                        labelStyle:
-                            TextStyle(color: Colors.grey), // Label color
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(12.0), // Rounded corners
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(
-                                  255, 98, 147, 101)), // Border color
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(12.0), // Rounded corners
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 98, 147, 101),
-                              width: 2), // Thicker border when focused
-                        ),
-                        filled: true,
-                        fillColor: Colors.white, // Background color
-                        contentPadding:
-                            EdgeInsets.all(12), // Padding inside the TextField
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(
+                            color: Color.fromARGB(255, 98, 147, 101), width: 2),
                       ),
-                      maxLines: 3, // Set to 3 or more for multi-line
-                      keyboardType: TextInputType.multiline,
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: EdgeInsets.all(12),
                     ),
+                  ),
 
-                    SizedBox(
-                      height: screenHeight * 0.012,
+                  SizedBox(height: screenHeight * 0.012),
+
+                  // Multi-line TextField for file description
+                  TextField(
+                    onChanged: (value) => description = value,
+                    maxLength: 400,
+                    decoration: InputDecoration(
+                      labelText: 'Descriptions',
+                      labelStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(
+                            color: Color.fromARGB(255, 98, 147, 101)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(
+                            color: Color.fromARGB(255, 98, 147, 101), width: 2),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: EdgeInsets.all(12),
                     ),
+                    maxLines: 3,
+                    keyboardType: TextInputType.multiline,
+                  ),
 
-                    // Row for buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Cancel button
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Close dialog
-                          },
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(color: Colors.red),
+                  SizedBox(height: screenHeight * 0.012),
+
+                  // Row for buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Cancel button
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close dialog
+                        },
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+
+                      // Scan File button
+                      ElevatedButton(
+                        onPressed: () {
+                          requestCameraPermission().then((granted) {
+                            if (granted) {
+                              // If granted, proceed to scan
+                              scanAndSavePDF();
+                              // Close the Dialog after the process is finished
+                              Navigator.of(context).pop();
+                            } else {
+                              // Handle the case when permission is denied
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content:
+                                      const Text('Camera permission denied.'),
+                                  duration: const Duration(seconds: 2),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          });
+                        },
+                        child: const Text(
+                          'Scan File',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 98, 147, 101),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 10.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          elevation: 5,
+                        ),
+                      ),
+
+                      // Show the progress indicator only when uploading
+                      if (_isUploading)
+                        Center(
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.green),
                           ),
                         ),
-
-                        // Scan File button
-                        ElevatedButton(
-                          onPressed: () {
-                            // Call the doc scanner method
-                            scanAndSavePDF();
-                            // Close the Dialog after the process is finished
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text(
-                            'Scan File',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                                255, 98, 147, 101), // Button color
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 10.0), // Padding
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  10.0), // Rounded corners
-                            ),
-                            elevation: 5, // Shadow effect
-                          ),
-                        ),
-
-                        // Show the progress indicator only when uploading
-                        if (_isUploading)
-                          Center(
-                            child: CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.green),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
-            );
-          },
-        ),
-        child: Text(
-          'Add New Bookmarks',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: screenWidth * 0.04,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 98, 147, 101),
-          padding: EdgeInsets.symmetric(
-              horizontal: 20.0, vertical: 12.0), // Adjusted padding
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0), // Rounded corners
-          ),
-          elevation: 5, // Elevation for shadow
-        ),
+            ),
+          );
+        },
+      ),
+      backgroundColor: const Color.fromARGB(255, 98, 147, 101),
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.circular(8.0), // Square shape with rounded edges
+      ),
+      child: Icon(
+        Icons.note_add, // Icon resembling "add document"
+        color: Colors.white,
+        size: screenWidth * 0.08,
       ),
     );
+  }
+
+  Future<bool> requestCameraPermission() async {
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      // Request the permission if it is not granted
+      await Permission.camera.request();
+      // Check again the permission status
+      status = await Permission.camera.status;
+    }
+    return status.isGranted; // Return whether permission is granted
   }
 
   Future<void> scanAndSavePDF() async {
@@ -235,7 +233,7 @@ class _DocScanButtonState extends State<DocScanButton> {
         await previewImageRef.putFile(File(previewImagePath));
         final previewImageUrl = await previewImageRef.getDownloadURL();
 
-        // format the date so that can be easily readable
+        // Format the date so that can be easily readable
         String formattedDate =
             DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
 
@@ -253,29 +251,42 @@ class _DocScanButtonState extends State<DocScanButton> {
           'dateCreated': formattedDate,
         });
 
-        setState(() {
-          _isUploading = false;
-        });
-
-        // Show a Snackbar message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('File uploaded successfully!'),
+            content: const Text('PDF saved successfully!'),
             duration: const Duration(seconds: 2),
             backgroundColor: Colors.green,
           ),
         );
 
-        print('PDF saved and uploaded successfully');
+        // Clear the scanned images and reset file details
+        setState(() {
+          _scannedImages.clear();
+          fileName = null;
+          description = null;
+        });
       } else {
-        print('No scanned images or missing fields.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Please scan at least one document.'),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } catch (e) {
-      Navigator.of(context).pop();
+      // Handle exceptions
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('An error occurred while saving the PDF.'),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
       setState(() {
         _isUploading = false;
       });
-      print('Error during scanning or saving: $e');
     }
   }
 }
