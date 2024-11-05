@@ -14,6 +14,17 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // Back button
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back_ios_new_rounded,
+          ),
+        ),
+
+        // appbar title
         title: Text(""),
       ),
       body: SingleChildScrollView(),

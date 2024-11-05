@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:majmu/screens/bprivatepage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/content/content%20components/content_button.dart';
-import 'package:majmu/services/homepage_content.dart';
+import 'package:majmu/components/homepage%20components/homepage_content.dart';
 import 'package:majmu/screens/createpostpage.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/screens/ilmpage.dart';
@@ -52,7 +52,6 @@ class _AlquranKareemPageState extends State<AlquranKareemPage> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-
               // alquran arranged by surah
               ContentButton(
                 name: "Alquran arranged by Surah",

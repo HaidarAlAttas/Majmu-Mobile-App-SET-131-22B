@@ -138,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                                   child: _buildContentButton(
                                     screenWidth,
                                     screenHeight,
-                                    "Al-quran Kareem",
+                                    "Al-Quran Kareem",
                                     "assets/alqurankareem.jpg",
                                   ),
                                 ),

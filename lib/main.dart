@@ -15,7 +15,6 @@ import 'package:majmu/screens/content/doa_pelindung_diripage.dart';
 import 'package:majmu/screens/content/lawatan_ziyarahpage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
-import 'package:majmu/screens/docscan.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/screens/ilmpage.dart';
 import 'package:majmu/screens/profile/editprofilepage.dart';
@@ -71,9 +70,6 @@ class MyApp extends StatelessWidget {
         "/biographiesnreferencep": (context) =>
             const BiographiesnReferencePage(),
 
-        // camera routes
-        "/docscan": (context) => const DocScan(),
-
         // settings route
         "/storagep": (context) => const StorageAndDataPage(),
         "/customerservp": (context) => const CustomerServicePage(),
@@ -84,8 +80,6 @@ class MyApp extends StatelessWidget {
         "/editprofilep": (context) => const EditProfilePage(),
         "/logoutp": (context) => const LogoutPage(),
         "/yourpostsp": (context) => const YourPostsPage(),
-
-        
       },
 
       // remove demo sign

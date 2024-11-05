@@ -21,7 +21,6 @@ class HomepageContent extends StatefulWidget {
 class _HomepageContentState extends State<HomepageContent> {
   late Future<ListResult> futureFolders;
 
-
   // letak index ii for file ii lain
 
   @override
@@ -73,7 +72,7 @@ class _HomepageContentState extends State<HomepageContent> {
       final files = await folder.listAll();
       final pdfFiles =
           files.items.where((file) => file.name.endsWith('.pdf')).toList();
-      String folderName = folder.name;
+      String folderName = getName(folder.name);
 
       // Close the loading dialog once files are fetched
       Navigator.of(context, rootNavigator: true).pop();
@@ -138,7 +137,7 @@ class _HomepageContentState extends State<HomepageContent> {
     }
   }
 
-  String getSurahName(String folderName) {
+  String getName(String folderName) {
     return folderName.split('_').sublist(1).join('_');
   }
 
@@ -178,7 +177,7 @@ class _HomepageContentState extends State<HomepageContent> {
               if (snapshot.hasData) {
                 final folders = snapshot.data!.prefixes;
 
-              // susun surah
+                // susun surah
                 List<String> contentOrder = List.generate(30, (index) {
                   final contentNumber = index + 1;
                   return '${contentNumber.toString().padLeft(3, '0')}_ Juz $contentNumber';
@@ -214,7 +213,7 @@ class _HomepageContentState extends State<HomepageContent> {
                           children: [
                             Expanded(
                               child: Text(
-                                getSurahName(folder.name),
+                                getName(folder.name),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,

@@ -46,7 +46,11 @@ class MyTextBox extends StatelessWidget {
                     onTap: onTap,
                     child: Icon(
                       Icons.edit,
-                      color: Colors.grey,
+                      color: sectionName == "Username"
+                          ? Colors.grey
+
+                          // make it invinsible if it was the user email text box
+                          : Colors.white,
                     ),
                   )
                 ],

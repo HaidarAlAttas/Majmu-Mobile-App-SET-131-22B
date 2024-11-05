@@ -66,7 +66,6 @@ Future settingsDialog(BuildContext context) {
                   right: screenWidth * 0.02),
               child: Container(
                 // to make sure it's compatible with phone size that is distorted on height like iphone 8 etc.
-                
 
                 width: screenWidth * 0.74,
                 decoration: BoxDecoration(
@@ -88,14 +87,15 @@ Future settingsDialog(BuildContext context) {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-
                             // Majmu' Button
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 // Majmu' Image
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01, vertical: screenHeight * 0.007),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: screenWidth * 0.01,
+                                      vertical: screenHeight * 0.007),
                                   child: Image(
                                     image: AssetImage("assets/Majmu'.png"),
                                     height: screenWidth * 0.1,

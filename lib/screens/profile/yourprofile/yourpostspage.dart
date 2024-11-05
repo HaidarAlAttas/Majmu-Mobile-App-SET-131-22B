@@ -67,9 +67,22 @@ class _YourPostsPageState extends State<YourPostsPage> {
 
     if (_authService.isSignedInWithGoogle()) {
       return Scaffold(
-        backgroundColor: Colors.green[50],
+        backgroundColor: Color.fromARGB(255, 245, 241, 222),
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 131, 157, 132),
+          // Back button
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(
+              Icons.arrow_back_ios_new_rounded,
+            ),
+          ),
+
+          // wallpaper color
+          backgroundColor: Color.fromARGB(255, 245, 241, 222),
+
+          // title appbar
           title: Text(
             'Your Posts',
             style: TextStyle(

@@ -23,7 +23,7 @@ android {
         checkReleaseBuilds false
     }
     namespace = "com.example.majmu"  // Ensure this matches your package name
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -31,10 +31,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     defaultConfig {
         applicationId "com.example.majmu"
         minSdk = 23
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 34
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
@@ -44,6 +48,13 @@ android {
             signingConfig = signingConfigs.debug // Use debug keys for now
         }
     }
+
+    packagingOptions {
+    pickFirst "lib/arm64-v8a/libc++_shared.so"
+    pickFirst "lib/x86_64/libc++_shared.so"
+    pickFirst "lib/x86/libc++_shared.so"
+    pickFirst "lib/armeabi-v7a/libc++_shared.so"
+}
 }
 
 flutter {
@@ -51,7 +62,7 @@ flutter {
 }
 
 // Set the Kotlin version here
-ext.kotlin_version = '1.8.22' // Update to a compatible and stable version
+ext.kotlin_version = '1.9.10' // Update to a compatible and stable version
 
 // Ensure you are using the Kotlin version in dependencies
 dependencies {

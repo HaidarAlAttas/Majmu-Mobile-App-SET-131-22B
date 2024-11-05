@@ -110,6 +110,16 @@ class AuthService {
           .set({});
 
       await userDocRef
+          .collection("postPublicBookmark")
+          .doc("initialList")
+          .delete();
+
+      await userDocRef
+          .collection("privateBookmarks")
+          .doc("initialList")
+          .set({});
+
+      await userDocRef
           .collection("privateBookmarks")
           .doc("initialList")
           .delete();
@@ -268,9 +278,20 @@ class AuthService {
               .delete();
 
           await userDocRef
+              .collection("postPublicBookmark")
+              .doc("initialList")
+              .set({});
+
+          await userDocRef
+              .collection("postPublicBookmark")
+              .doc("initialList")
+              .delete();
+
+          await userDocRef
               .collection("privateBookmarks")
               .doc("initialList")
               .set({});
+
           await userDocRef
               .collection("privateBookmarks")
               .doc("initialList")

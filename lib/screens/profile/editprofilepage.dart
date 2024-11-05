@@ -440,6 +440,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         onTap: () => editField('username'),
                       ),
 
+                      SizedBox(height: screenHeight * 0.04),
+
+                      // email
+                      MyTextBox(
+                        text: userData["email"],
+                        sectionName: "Email",
+                        onTap: () {},
+                      ),
+
                       // google sign in button
                     ],
                   );
