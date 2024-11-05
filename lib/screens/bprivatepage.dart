@@ -37,12 +37,34 @@ class _BPrivatePageState extends State<BPrivatePage> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                        child: CircularProgressIndicator(
+                      color: Colors.green,
+                    ));
                   }
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(
-                        child:
-                            Text('No Private Bookmarks yet, add them now :)'));
+                    return Stack(
+                      children: [
+                        Center(
+                          child: Text(
+                            'No Private Bookmarks yet, add them now :)',
+                          ),
+                        ),
+
+                        // scan new document button
+                        Positioned(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              right: screenWidth * 0.03,
+                              bottom: screenHeight * 0.01,
+                            ),
+                            child: DocScanButton(),
+                          ),
+                          right: 1,
+                          bottom: 1,
+                        ),
+                      ],
+                    );
                   }
                   return Stack(
                     children: [
