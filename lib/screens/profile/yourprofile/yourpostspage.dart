@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/components/posts%20components/postbaselines.dart';
 import 'package:majmu/screens/auth/googlebutton.dart';
+import 'package:majmu/screens/profile/yourprofile/rejectedpost.dart';
 import 'package:majmu/services/auth_service.dart';
 
 class YourPostsPage extends StatefulWidget {
@@ -323,8 +324,11 @@ class _YourPostsPageState extends State<YourPostsPage> {
                                       postData["isChecked"] ?? false;
                                   List<String> images = List<String>.from(
                                       postData["Images"] ?? []);
+                                  String rejectMessage =
+                                      postData["rejectedMessage"] ??
+                                          "No reject message";
 
-                                  return PostBaseline(
+                                  return RejectedPost(
                                     post: postContent, // Post content
                                     pfp:
                                         postProfilePicture, // post profile picture
@@ -334,7 +338,7 @@ class _YourPostsPageState extends State<YourPostsPage> {
                                     bookmarkedBy: bookmarked,
                                     isChecked: isApproved, // Approval status
                                     images: images, // List of image URLs
-                                    settingButton: true,
+                                    rejectMessage: rejectMessage,
                                   );
                                 },
                               );
