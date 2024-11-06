@@ -33,65 +33,79 @@ class _DocScanButtonState extends State<DocScanButton> {
 
     // Add new bookmarks button
     return FloatingActionButton(
+      // show a popup
       onPressed: () => showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: Colors.white,
-            title: const Text('Add New Bookmarks'),
+
+            // title
+            title: Text('Add New Bookmarks'),
             content: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.01,
+                vertical: screenHeight * 0.03,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // TextField for file name
-                  TextField(
-                    onChanged: (value) => fileName = value,
-                    maxLength: 50,
-                    decoration: InputDecoration(
-                      labelText: 'File Name',
-                      labelStyle: TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 98, 147, 101)),
+                  Container(
+                    width: screenWidth * 0.8,
+                    child: TextField(
+                      onChanged: (value) => fileName = value,
+                      maxLength: 50,
+                      decoration: InputDecoration(
+                        labelText: 'File Name',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 98, 147, 101)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 98, 147, 101),
+                              width: 2),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: EdgeInsets.all(12),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 98, 147, 101), width: 2),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: EdgeInsets.all(12),
                     ),
                   ),
 
                   SizedBox(height: screenHeight * 0.012),
 
                   // Multi-line TextField for file description
-                  TextField(
-                    onChanged: (value) => description = value,
-                    maxLength: 400,
-                    decoration: InputDecoration(
-                      labelText: 'Descriptions',
-                      labelStyle: TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 98, 147, 101)),
+                  Container(
+                    width: screenWidth * 0.8,
+                    child: TextField(
+                      onChanged: (value) => description = value,
+                      maxLength: 400,
+                      decoration: InputDecoration(
+                        labelText: 'Descriptions',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 98, 147, 101)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 98, 147, 101),
+                              width: 2),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: EdgeInsets.all(12),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 98, 147, 101), width: 2),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: EdgeInsets.all(12),
+                      maxLines: 3,
+                      keyboardType: TextInputType.multiline,
                     ),
-                    maxLines: 3,
-                    keyboardType: TextInputType.multiline,
                   ),
 
                   SizedBox(height: screenHeight * 0.012),
