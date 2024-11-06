@@ -193,6 +193,9 @@ class PrivateBookmarks extends StatelessWidget {
               // field to edit name of the file
               TextField(
                 onChanged: (value) => updatedFileName = value,
+
+                // max character
+                maxLength: 50,
                 decoration: InputDecoration(
                   labelText: 'File Name',
                   labelStyle: TextStyle(color: Colors.grey[700]),
@@ -210,6 +213,9 @@ class PrivateBookmarks extends StatelessWidget {
               // field to update the file description
               TextField(
                 onChanged: (value) => updatedDescription = value,
+
+                // max character
+                maxLength: 400,
                 decoration: InputDecoration(
                   labelText: 'Description',
                   labelStyle: TextStyle(color: Colors.grey[700]),

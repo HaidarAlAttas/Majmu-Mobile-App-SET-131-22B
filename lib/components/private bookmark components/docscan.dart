@@ -47,6 +47,8 @@ class _DocScanButtonState extends State<DocScanButton> {
                 horizontal: screenWidth * 0.01,
                 vertical: screenHeight * 0.03,
               ),
+
+              // content inside dialog box
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -186,7 +188,7 @@ class _DocScanButtonState extends State<DocScanButton> {
             BorderRadius.circular(8.0), // Square shape with rounded edges
       ),
       child: Icon(
-        Icons.note_add, // Icon resembling "add document"
+        Icons.document_scanner_rounded, // Icon resembling "add document"
         color: Colors.white,
         size: screenWidth * 0.08,
       ),

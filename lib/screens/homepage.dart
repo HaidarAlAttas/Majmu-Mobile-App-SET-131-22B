@@ -39,325 +39,313 @@ class _HomePageState extends State<HomePage> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        // Attribute for wallpaper
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.white, // Starts with white at the top
-              const Color.fromRGBO(
-                  204, 233, 205, 1), // Light green in the upper middle
-              const Color.fromARGB(
-                  255, 167, 192, 168), // Medium green towards the bottom
-              const Color.fromARGB(
-                  255, 118, 140, 119), // Darker green at the bottom
-            ],
-            begin: Alignment.topCenter, // Gradient starts from the top
-            end: Alignment.bottomCenter, // Gradient ends at the bottom
-            stops: [0.1, 0.4, 0.7, 1.0], // Controls how the colors transition
-          ),
+    return Container(
+      // Attribute for wallpaper
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.white, // Starts with white at the top
+            const Color.fromRGBO(
+                204, 233, 205, 1), // Light green in the upper middle
+            const Color.fromARGB(
+                255, 167, 192, 168), // Medium green towards the bottom
+            const Color.fromARGB(
+                255, 118, 140, 119), // Darker green at the bottom
+          ],
+          begin: Alignment.topCenter, // Gradient starts from the top
+          end: Alignment.bottomCenter, // Gradient ends at the bottom
+          stops: [0.1, 0.4, 0.7, 1.0], // Controls how the colors transition
         ),
+      ),
 
-        child: Scaffold(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+
+        appBar: AppBar(
+          // majmu' logo
+          toolbarHeight: screenHeight * 0.10,
           backgroundColor: Colors.transparent,
+          title: Center(
+            // when click the majmu' logo, it will go back to the home page
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  currentIndex == 1 ? currentIndex = 1 : currentIndex = 0;
+                });
+              },
+              child: Image(
+                image: AssetImage("assets/Majmu'.png"),
+                height: 70,
+                width: 70,
+              ),
+            ),
+          ),
 
-          appBar: AppBar(
-            // majmu' logo
-            toolbarHeight: screenHeight * 0.10,
-            backgroundColor: Colors.transparent,
-            title: Center(
-              // when click the majmu' logo, it will go back to the home page
+          // profile page button
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 15.0),
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    currentIndex == 1 ? currentIndex = 1 : currentIndex = 0;
+                    profileDialog(context);
                   });
                 },
-                child: Image(
-                  image: AssetImage("assets/Majmu'.png"),
-                  height: 70,
-                  width: 70,
+                child: Icon(
+                  Icons.account_circle,
+                  color: const Color.fromARGB(255, 26, 151, 33),
+                  size: 30,
                 ),
               ),
             ),
+          ],
 
-            // profile page button
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 15.0),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      profileDialog(context);
-                    });
-                  },
-                  child: Icon(
-                    Icons.account_circle,
-                    color: const Color.fromARGB(255, 26, 151, 33),
-                    size: 30,
-                  ),
-                ),
-              ),
-            ],
-
-            // search button
-            leading: GestureDetector(
-              onTap: () {
-                setState(() {
-                  Navigator.of(context).pushNamed("/searchp");
-                });
-              },
-              child: Icon(
-                Icons.search,
-                color: const Color.fromARGB(255, 26, 151, 33),
-                size: 30,
-              ),
-            ),
-          ),
-
-          // body
-          body: Center(
-              child:
-                  // HOME PAGE UI
-                  currentIndex == 0
-                      ? Container(
-                          child: Column(
-                            children: [
-                              // Alquran Kareem content button
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      Navigator.of(context)
-                                          .pushNamed("/alqurankareemp");
-                                    });
-                                  },
-                                  child: _buildContentButton(
-                                    screenWidth,
-                                    screenHeight,
-                                    "Al-Quran Kareem",
-                                    "assets/alqurankareem.jpg",
-                                  ),
-                                ),
-                              ),
-
-                              // Daily Invocations content button
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      Navigator.of(context)
-                                          .pushNamed("/dailyinvocationsp");
-                                    });
-                                  },
-                                  child: _buildContentButton(
-                                    screenWidth,
-                                    screenHeight,
-                                    "Zikir Harian",
-                                    "assets/dailyInvocations.jpg",
-                                  ),
-                                ),
-                              ),
-
-                              // Friday Supplication content button
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      Navigator.of(context)
-                                          .pushNamed("/fridaysupplicationsp");
-                                    });
-                                  },
-                                  child: _buildContentButton(
-                                    screenWidth,
-                                    screenHeight,
-                                    "Amalan Jumaat",
-                                    "assets/fridaySupplications.jpg",
-                                  ),
-                                ),
-                              ),
-
-                              // Islamic Events content button
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      Navigator.of(context)
-                                          .pushNamed("/islamiceventsp");
-                                    });
-                                  },
-                                  child: _buildContentButton(
-                                    screenWidth,
-                                    screenHeight,
-                                    "Peristiwa Islam",
-                                    "assets/islamicEvents.jpg",
-                                  ),
-                                ),
-                              ),
-
-                              // Ziyarah content button
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      Navigator.of(context)
-                                          .pushNamed("/ziyarahp");
-                                    });
-                                  },
-                                  child: _buildContentButton(
-                                    screenWidth,
-                                    screenHeight,
-                                    "Ziyarah (Lawatan)",
-                                    "assets/ziyarah.jpg",
-                                  ),
-                                ),
-                              ),
-
-                              // Mini content buttons
-                              Row(
-                                children: [
-                                  // Protection prayers content button
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: screenWidth * 0.036,
-                                        right: screenWidth * 0.025),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          Navigator.of(context)
-                                              .pushNamed("/protectionprayersp");
-                                        });
-                                      },
-                                      child: _buildContentButton(
-                                        screenWidth,
-                                        screenHeight,
-                                        "Doa Pelindung Diri",
-                                        "assets/protectionPrayers.jpg",
-                                        widthFactor: 0.45,
-                                        textSize: 0.04,
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Biographies and references content button
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        right: screenWidth * 0.036),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          Navigator.of(context).pushNamed(
-                                              "/biographiesnreferencep");
-                                        });
-                                      },
-                                      child: _buildContentButton(
-                                        screenWidth,
-                                        screenHeight,
-                                        "Biografi dan Rujukan",
-                                        "assets/biographiesnreference.jpg",
-                                        widthFactor: 0.45,
-                                        textSize: 0.04,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        )
-                      :
-                      // go to public bookmark page
-                      currentIndex == 1
-                          ? IlmPage()
-                          :
-                          // go to create post page
-                          currentIndex == 2
-                              ? CreatePostPage()
-                              :
-                              // go to Ilm Page
-                              currentIndex == 3
-                                  ? BPublicPage()
-                                  :
-                                  // stays at home page
-                                  HomePage()),
-
-          // navigation bar
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: currentIndex,
-            backgroundColor: Colors.transparent,
-
-            // to change pages
-            onTap: (int index) {
-              if (index != currentIndex) {
-                // Prevent duplicate navigation
-                setState(() {
-                  currentIndex = index;
-                });
-              }
+          // search button
+          leading: GestureDetector(
+            onTap: () {
+              setState(() {
+                Navigator.of(context).pushNamed("/searchp");
+              });
             },
-
-            iconSize: 47,
-
-            // to remove shadow under bottom navigation bar
-            elevation: 0,
-
-            // to make sure bottom navigation bar muat 5 item
-            type: BottomNavigationBarType.fixed,
-            items: [
-              BottomNavigationBarItem(
-                label: "",
-                icon: Icon(
-                  Icons.home_rounded,
-                  color: currentIndex == 0 ? Colors.white : Colors.black,
-                ),
-              ),
-              BottomNavigationBarItem(
-                label: "",
-                icon: Icon(
-                  Icons.newspaper,
-                  color: currentIndex == 1 ? Colors.white : Colors.black,
-                ),
-              ),
-              BottomNavigationBarItem(
-                label: "",
-                icon: Icon(
-                  Icons.add_circle_rounded,
-                  color: currentIndex == 2 ? Colors.white : Colors.black,
-                ),
-              ),
-              BottomNavigationBarItem(
-                label: "",
-                icon: Icon(
-                  Icons.menu_book_rounded,
-                  color: currentIndex == 3 ? Colors.white : Colors.black,
-                ),
-              ),
-              // Setting buttons logic
-              BottomNavigationBarItem(
-                label: "",
-                icon: GestureDetector(
-                  child: Icon(
-                    Icons.settings,
-                    color: currentIndex == 4 ? Colors.white : Colors.black,
-                  ),
-                  // if clicked
-                  onTap: () {
-                    // go to the setting page
-                    settingsDialog(context);
-                  },
-                ),
-              ),
-            ],
+            child: Icon(
+              Icons.search,
+              color: const Color.fromARGB(255, 26, 151, 33),
+              size: 30,
+            ),
           ),
-          extendBody: true,
         ),
+
+        // body
+        body: Center(
+            child:
+                // HOME PAGE UI
+                currentIndex == 0
+                    ? Container(
+                        child: Column(
+                          children: [
+                            // Alquran Kareem content button
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    Navigator.of(context)
+                                        .pushNamed("/alqurankareemp");
+                                  });
+                                },
+                                child: _buildContentButton(
+                                  screenWidth,
+                                  screenHeight,
+                                  "Al-Quran Kareem",
+                                  "assets/alqurankareem.jpg",
+                                ),
+                              ),
+                            ),
+
+                            // Daily Invocations content button
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    Navigator.of(context)
+                                        .pushNamed("/dailyinvocationsp");
+                                  });
+                                },
+                                child: _buildContentButton(
+                                  screenWidth,
+                                  screenHeight,
+                                  "Zikir Harian",
+                                  "assets/dailyInvocations.jpg",
+                                ),
+                              ),
+                            ),
+
+                            // Friday Supplication content button
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    Navigator.of(context)
+                                        .pushNamed("/fridaysupplicationsp");
+                                  });
+                                },
+                                child: _buildContentButton(
+                                  screenWidth,
+                                  screenHeight,
+                                  "Amalan Jumaat",
+                                  "assets/fridaySupplications.jpg",
+                                ),
+                              ),
+                            ),
+
+                            // Islamic Events content button
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    Navigator.of(context)
+                                        .pushNamed("/islamiceventsp");
+                                  });
+                                },
+                                child: _buildContentButton(
+                                  screenWidth,
+                                  screenHeight,
+                                  "Peristiwa Islam",
+                                  "assets/islamicEvents.jpg",
+                                ),
+                              ),
+                            ),
+
+                            // Ziyarah content button
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    Navigator.of(context)
+                                        .pushNamed("/ziyarahp");
+                                  });
+                                },
+                                child: _buildContentButton(
+                                  screenWidth,
+                                  screenHeight,
+                                  "Ziyarah (Lawatan)",
+                                  "assets/ziyarah.jpg",
+                                ),
+                              ),
+                            ),
+
+                            // Mini content buttons
+                            Row(
+                              children: [
+                                // Protection prayers content button
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: screenWidth * 0.036,
+                                      right: screenWidth * 0.025),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        Navigator.of(context)
+                                            .pushNamed("/protectionprayersp");
+                                      });
+                                    },
+                                    child: _buildContentButton(
+                                      screenWidth,
+                                      screenHeight,
+                                      "Doa Pelindung Diri",
+                                      "assets/protectionPrayers.jpg",
+                                      widthFactor: 0.45,
+                                      textSize: 0.04,
+                                    ),
+                                  ),
+                                ),
+
+                                // Biographies and references content button
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      right: screenWidth * 0.036),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        Navigator.of(context).pushNamed(
+                                            "/biographiesnreferencep");
+                                      });
+                                    },
+                                    child: _buildContentButton(
+                                      screenWidth,
+                                      screenHeight,
+                                      "Biografi dan Rujukan",
+                                      "assets/biographiesnreference.jpg",
+                                      widthFactor: 0.45,
+                                      textSize: 0.04,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    :
+                    // go to public bookmark page
+                    currentIndex == 1
+                        ? IlmPage()
+                        :
+                        // go to create post page
+                        currentIndex == 2
+                            ? CreatePostPage()
+                            :
+                            // go to Ilm Page
+                            currentIndex == 3
+                                ? BPublicPage()
+                                :
+                                // stays at home page
+                                HomePage()),
+
+        // navigation bar
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: currentIndex,
+          backgroundColor: Colors.transparent,
+
+          // to change pages
+          onTap: (int index) {
+            if (index == 4) {
+              // Show the settings dialog if the settings button is tapped
+              settingsDialog(context);
+            } else if (index != currentIndex) {
+              // Prevent duplicate navigation and avoid rebuilds
+              setState(() {
+                currentIndex = index;
+              });
+            }
+          },
+
+          iconSize: 47,
+          elevation: 0,
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              label: "",
+              icon: Icon(
+                Icons.home_rounded,
+                color: currentIndex == 0 ? Colors.white : Colors.black,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: "",
+              icon: Icon(
+                Icons.newspaper,
+                color: currentIndex == 1 ? Colors.white : Colors.black,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: "",
+              icon: Icon(
+                Icons.add_circle_rounded,
+                color: currentIndex == 2 ? Colors.white : Colors.black,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: "",
+              icon: Icon(
+                Icons.menu_book_rounded,
+                color: currentIndex == 3 ? Colors.white : Colors.black,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: "",
+              icon: Icon(
+                Icons.settings,
+                color: currentIndex == 4 ? Colors.white : Colors.black,
+              ),
+            ),
+          ],
+        ),
+        extendBody: true,
       ),
     );
   }
