@@ -103,9 +103,12 @@ class _BPublicPageState extends State<BPublicPage> {
       // Hide loading indicator in case of an error
       Navigator.pop(context);
 
-      print("Error while downloading the PDF: $e"); // Handle download error
+      print(
+          "Error while downloading the PDF: please contact the admin in setting page"); // Handle download error
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error downloading PDF')),
+        SnackBar(
+            content: Text(
+                'Error downloading PDF: please contact the admin in setting page')),
       );
     }
   }

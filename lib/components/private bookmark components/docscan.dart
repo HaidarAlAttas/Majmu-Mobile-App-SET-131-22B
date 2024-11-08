@@ -23,7 +23,6 @@ class _DocScanButtonState extends State<DocScanButton> {
   String? fileName;
   String? description;
   List<String> _scannedImages = [];
-  bool _isUploading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,7 @@ class _DocScanButtonState extends State<DocScanButton> {
             content: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: screenWidth * 0.01,
-                vertical: screenHeight * 0.03,
+                vertical: screenHeight * 0.01,
               ),
 
               // content inside dialog box
@@ -133,6 +132,9 @@ class _DocScanButtonState extends State<DocScanButton> {
                           requestCameraPermission().then((granted) {
                             if (granted) {
                               // If granted, proceed to scan
+
+                              //
+
                               scanAndSavePDF();
                               // Close the Dialog after the process is finished
                               Navigator.of(context).pop();
@@ -164,15 +166,6 @@ class _DocScanButtonState extends State<DocScanButton> {
                           elevation: 5,
                         ),
                       ),
-
-                      // Show the progress indicator only when uploading
-                      if (_isUploading)
-                        Center(
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.green),
-                          ),
-                        ),
                     ],
                   ),
                 ],
@@ -207,102 +200,84 @@ class _DocScanButtonState extends State<DocScanButton> {
   }
 
   Future<void> scanAndSavePDF() async {
-    try {
-      setState(() {
-        _isUploading = true;
-      });
+    if (fileName != null && description != null) {
+      try {
+        final List<String>? scannedImages =
+            await CunningDocumentScanner.getPictures();
 
-      final List<String>? scannedImages =
-          await CunningDocumentScanner.getPictures();
+        if (scannedImages != null && scannedImages.isNotEmpty) {
+          final pdf = pw.Document();
+          final directory = await getApplicationDocumentsDirectory();
+          final pdfFilePath = '${directory.path}/$fileName.pdf';
 
-      if (scannedImages != null &&
-          scannedImages.isNotEmpty &&
-          fileName != null &&
-          description != null) {
-        final pdf = pw.Document();
-        final directory = await getApplicationDocumentsDirectory();
-        final pdfFilePath = '${directory.path}/$fileName.pdf';
+          for (String imagePath in scannedImages) {
+            final image = pw.MemoryImage(File(imagePath).readAsBytesSync());
+            pdf.addPage(
+                pw.Page(build: (pw.Context context) => pw.Image(image)));
+          }
 
-        for (String imagePath in scannedImages) {
-          final image = pw.MemoryImage(File(imagePath).readAsBytesSync());
-          pdf.addPage(pw.Page(build: (pw.Context context) => pw.Image(image)));
+          final pdfFile = File(pdfFilePath);
+          await pdfFile.writeAsBytes(await pdf.save());
+
+          // Upload PDF to Firebase Storage
+          final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+          final String uniquePdfId =
+              DateTime.now().millisecondsSinceEpoch.toString();
+          final storageRef = FirebaseStorage.instance
+              .ref()
+              .child('privateBookmark/$currentUserId/$uniquePdfId.pdf');
+          await storageRef.putFile(pdfFile);
+          final downloadUrl = await storageRef.getDownloadURL();
+
+          // Upload Preview Image
+          final previewImagePath = scannedImages.first;
+          final previewImageRef = FirebaseStorage.instance
+              .ref()
+              .child('privateBookmark/$currentUserId/preview_$uniquePdfId.jpg');
+          await previewImageRef.putFile(File(previewImagePath));
+          final previewImageUrl = await previewImageRef.getDownloadURL();
+
+          // Format the date so that can be easily readable
+          String formattedDate =
+              DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+
+          // Save file details in Firestore
+          await FirebaseFirestore.instance
+              .collection('user-cred')
+              .doc(currentUserId)
+              .collection('privateBookmarks')
+              .doc(uniquePdfId)
+              .set({
+            'name': fileName,
+            'description': description,
+            'previewImageUrl': previewImageUrl,
+            'fileUrl': downloadUrl,
+            'dateCreated': formattedDate,
+          });
+
+          print("PDF saved successfully!");
+
+          // Clear the scanned images and reset file details (bila clear automatic keluar error bawah skali)
+          setState(() {
+            _scannedImages.clear();
+            fileName = null;
+            description = null;
+          });
+        } else {
+          print("Please scan at least one document.");
         }
-
-        final pdfFile = File(pdfFilePath);
-        await pdfFile.writeAsBytes(await pdf.save());
-
-        // Upload PDF to Firebase Storage
-        final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
-        final String uniquePdfId =
-            DateTime.now().millisecondsSinceEpoch.toString();
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('privateBookmark/$currentUserId/$uniquePdfId.pdf');
-        await storageRef.putFile(pdfFile);
-        final downloadUrl = await storageRef.getDownloadURL();
-
-        // Upload Preview Image
-        final previewImagePath = scannedImages.first;
-        final previewImageRef = FirebaseStorage.instance
-            .ref()
-            .child('privateBookmark/$currentUserId/preview_$uniquePdfId.jpg');
-        await previewImageRef.putFile(File(previewImagePath));
-        final previewImageUrl = await previewImageRef.getDownloadURL();
-
-        // Format the date so that can be easily readable
-        String formattedDate =
-            DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
-
-        // Save file details in Firestore
-        await FirebaseFirestore.instance
-            .collection('user-cred')
-            .doc(currentUserId)
-            .collection('privateBookmarks')
-            .doc(uniquePdfId)
-            .set({
-          'name': fileName,
-          'description': description,
-          'previewImageUrl': previewImageUrl,
-          'fileUrl': downloadUrl,
-          'dateCreated': formattedDate,
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('PDF saved successfully!'),
-            duration: const Duration(seconds: 2),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        // Clear the scanned images and reset file details
-        setState(() {
-          _scannedImages.clear();
-          fileName = null;
-          description = null;
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Please scan at least one document.'),
-            duration: const Duration(seconds: 2),
-            backgroundColor: Colors.red,
-          ),
-        );
+      } catch (e) {
+        // Handle exceptions
+        print("An error occurred while saving the PDF.");
       }
-    } catch (e) {
-      // Handle exceptions
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('An error occurred while saving the PDF.'),
-          duration: const Duration(seconds: 2),
+          content: Text("You need to add a name and description"),
+          duration: Duration(seconds: 2),
           backgroundColor: Colors.red,
         ),
       );
-    } finally {
-      setState(() {
-        _isUploading = false;
-      });
     }
   }
 }

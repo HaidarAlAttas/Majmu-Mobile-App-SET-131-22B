@@ -34,6 +34,7 @@ class _BPrivatePageState extends State<BPrivatePage> {
                     .collection('user-cred')
                     .doc(FirebaseAuth.instance.currentUser!.uid)
                     .collection('privateBookmarks')
+                    .orderBy("dateCreated", descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

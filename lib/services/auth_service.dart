@@ -402,11 +402,18 @@ class StayLogged extends StatelessWidget {
               future: checkIfUserIsBanned(currentUser),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: Colors.green,
+                  ));
                 }
 
                 if (snapshot.hasError) {
-                  return const Center(child: Text("Error loading user data"));
+                  return const Center(
+                    child: Text(
+                      "Error loading your data, please restart the app",
+                    ),
+                  );
                 }
 
                 if (snapshot.hasData && snapshot.data == true) {

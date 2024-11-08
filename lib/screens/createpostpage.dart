@@ -249,11 +249,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                       onTap: postMessage,
                                       child: Container(
                                         width: screenWidth * 0.16,
+                                        height: screenHeight * 0.03,
                                         decoration: BoxDecoration(
                                           color: const Color.fromARGB(
                                               255, 98, 147, 101),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(
+                                              screenWidth * 0.03),
                                           boxShadow: [
                                             BoxShadow(
                                               color:
@@ -451,7 +452,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 ),
               ),
               SizedBox(height: 20),
-              
               GoogleButton(),
             ],
           ),

@@ -70,13 +70,13 @@ class _HomePageState extends State<HomePage> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  currentIndex == 1 ? currentIndex = 1 : currentIndex = 0;
+                  currentIndex = 0;
                 });
               },
               child: Image(
                 image: AssetImage("assets/Majmu'.png"),
-                height: 70,
-                width: 70,
+                height: screenHeight * 0.1,
+                width: screenWidth * 0.17,
               ),
             ),
           ),
@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
           // profile page button
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 15.0),
+              padding: EdgeInsets.only(right: screenWidth * 0.029),
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                 child: Icon(
                   Icons.account_circle,
                   color: const Color.fromARGB(255, 26, 151, 33),
-                  size: 30,
+                  size: screenWidth * 0.08,
                 ),
               ),
             ),
@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
             child: Icon(
               Icons.search,
               color: const Color.fromARGB(255, 26, 151, 33),
-              size: 30,
+              size: screenWidth * 0.08,
             ),
           ),
         ),

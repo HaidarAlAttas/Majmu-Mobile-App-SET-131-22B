@@ -90,12 +90,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
         try {
           // Get the user's email and encode it to avoid issues with special characters
-          String userUID = currentUser.uid!;
+          String userUID = currentUser.uid;
 
           // Fetch existing profile picture URL from Firestore
           DocumentSnapshot userDoc = await FirebaseFirestore.instance
               .collection("user-cred")
-              .doc(currentUser.uid!)
+              .doc(currentUser.uid)
               .get();
 
           // Fetch existing profile picture URL from Firestore
@@ -137,6 +137,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
           if (oldUserPfp.isNotEmpty) {
             await FirebaseFirestore.instance
                 .collection("user-posts")
+                .where("pfp",
+                    isEqualTo: oldUserPfp) // Use the old username here
+                .get()
+                .then((snapshot) {
+              for (var doc in snapshot.docs) {
+                doc.reference.update({"pfp": newDownloadUrl});
+              }
+            });
+
+            await FirebaseFirestore.instance
+                .collection("rejected-posts")
                 .where("pfp",
                     isEqualTo: oldUserPfp) // Use the old username here
                 .get()
@@ -270,6 +281,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
         if (oldUsername.isNotEmpty) {
           await FirebaseFirestore.instance
               .collection("user-posts")
+              .where("username",
+                  isEqualTo: oldUsername) // Use the old username here
+              .get()
+              .then((snapshot) {
+            for (var doc in snapshot.docs) {
+              doc.reference.update({"username": newValue});
+            }
+          });
+
+          await FirebaseFirestore.instance
+              .collection("rejected-posts")
               .where("username",
                   isEqualTo: oldUsername) // Use the old username here
               .get()

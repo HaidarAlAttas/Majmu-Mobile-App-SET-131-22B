@@ -53,6 +53,19 @@ class _HomepageContentState extends State<HomepageContent> {
           ),
         ),
       );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Swipe downwards',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          duration: const Duration(seconds: 4),
+          backgroundColor: Colors.grey[800],
+        ),
+      );
     } catch (e) {
       print("Error while downloading the PDF: $e");
     }

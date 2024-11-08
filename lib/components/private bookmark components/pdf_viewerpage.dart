@@ -38,7 +38,21 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
     _pdfController = PdfController(
       document: PdfDocument.openFile(pdfFile.path),
     );
+
     setState(() {});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text(
+          'Swipe to the right',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        duration: const Duration(seconds: 4),
+        backgroundColor: Colors.grey[800],
+      ),
+    );
   }
 
   Future<File> _downloadPDF(String url) async {

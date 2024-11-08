@@ -58,12 +58,14 @@ class _YourPostsPageState extends State<YourPostsPage> {
     Stream<QuerySnapshot> userPostsStream = FirebaseFirestore.instance
         .collection('user-posts')
         .where('userUid', isEqualTo: userUid)
+        .orderBy("Timestamp", descending: true)
         .snapshots();
 
     // Stream for user rejected posts where UserEmail matches current user's email
     Stream<QuerySnapshot> userRejectedPostsStream = FirebaseFirestore.instance
         .collection('rejected-posts')
         .where('userUid', isEqualTo: userUid)
+        .orderBy("Timestamp", descending: true)
         .snapshots();
 
     if (_authService.isSignedInWithGoogle()) {

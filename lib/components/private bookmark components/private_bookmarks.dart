@@ -258,7 +258,12 @@ class PrivateBookmarks extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text('Save'),
+              child: const Text(
+                'Save',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         );
@@ -323,10 +328,6 @@ class PrivateBookmarks extends StatelessWidget {
           .collection('privateBookmarks')
           .doc(bookmarkId)
           .delete();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Bookmark deleted successfully')),
-      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error deleting bookmark: $e')),
