@@ -44,7 +44,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text(
-          'Swipe to the right',
+          'Swipe to the left',
           style: TextStyle(
             color: Colors.white,
           ),

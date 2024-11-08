@@ -34,30 +34,9 @@ class _BPublicPageState extends State<BPublicPage> {
   // Fetch current user ID
   final String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
 
-  // Variable for bookmarks
-  late Future<List<Map<String, dynamic>>> futureContentBookmarks =
-      fetchContentBookmarks();
-
   // Access the document in Firestore
   DocumentReference postRef =
       FirebaseFirestore.instance.collection("user-posts").doc();
-
-  // Fetch homepage/ content bookmarks from Firestore
-  Future<List<Map<String, dynamic>>> fetchContentBookmarks() async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection("user-cred")
-        .doc(currentUserUid)
-        .collection("contentsPublicBookmark")
-        .orderBy(
-          "Timestamp",
-          descending: true,
-        )
-        .get();
-
-    return snapshot.docs
-        .map((doc) => {"name": doc.id, "path": doc["filePath"]})
-        .toList();
-  }
 
   // Method to open PDF
   Future<void> openPDF(
@@ -107,8 +86,9 @@ class _BPublicPageState extends State<BPublicPage> {
           "Error while downloading the PDF: please contact the admin in setting page"); // Handle download error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                'Error downloading PDF: please contact the admin in setting page')),
+          content: Text(
+              'Error downloading PDF: please contact the admin in setting page'),
+        ),
       );
     }
   }
@@ -163,8 +143,13 @@ class _BPublicPageState extends State<BPublicPage> {
                         // Use Expanded to allow proper scrolling
                         Expanded(
                           child: contentOrPost == 0
-                              ? FutureBuilder<List<Map<String, dynamic>>>(
-                                  future: futureContentBookmarks,
+                              ? StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection("user-cred")
+                                      .doc(currentUserUid)
+                                      .collection("contentsPublicBookmark")
+                                      .orderBy("Timestamp", descending: true)
+                                      .snapshots(), // Real-time data stream
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
@@ -181,7 +166,12 @@ class _BPublicPageState extends State<BPublicPage> {
                                       ); // Error handling
                                     }
 
-                                    final bookmarks = snapshot.data;
+                                    final bookmarks = snapshot.data?.docs
+                                        .map((doc) => {
+                                              "name": doc.id,
+                                              "path": doc["filePath"]
+                                            })
+                                        .toList();
 
                                     if (bookmarks == null ||
                                         bookmarks.isEmpty) {
@@ -197,18 +187,14 @@ class _BPublicPageState extends State<BPublicPage> {
                                         final bookmark = bookmarks[index];
                                         return GestureDetector(
                                           onTap: () async {
-                                            openPDF(
-                                              context,
-                                              bookmark["path"],
-                                              bookmark["name"],
-                                            );
+                                            openPDF(context, bookmark["path"],
+                                                bookmark["name"]);
                                           },
                                           child: Container(
                                             padding: EdgeInsets.all(16.0),
                                             margin: EdgeInsets.symmetric(
-                                              vertical: 8.0,
-                                              horizontal: 16.0,
-                                            ),
+                                                vertical: 8.0,
+                                                horizontal: 16.0),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
