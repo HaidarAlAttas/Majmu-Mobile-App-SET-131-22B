@@ -130,9 +130,7 @@ class _SearchPageState extends State<SearchPage> {
                                 onTap: () {
                                   openPDF(
                                     result['filepath'],
-                                    result['name'].split('_').length > 1
-                                        ? result['name'].split('_')[1]
-                                        : result['name'],
+                                    result['name'],
                                   );
                                 },
                               ),

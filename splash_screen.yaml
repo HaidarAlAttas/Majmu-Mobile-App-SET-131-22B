@@ -3,4 +3,4 @@ flutter_native_splash:
   ios: true
   web: false
 
-  color: "#005606"
+  background_image: "assets/splashscreen.png"

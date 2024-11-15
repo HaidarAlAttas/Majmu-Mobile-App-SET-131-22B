@@ -63,10 +63,13 @@ class AuthService {
       } else if (e.code == 'email-already-in-use') {
         return 'The email has already been taken';
       } else {
-        return 'An error occurred: email has been used, or weak password';
+        return 'An error occurred: Email doesnt exist';
       }
+
+      // if the error was not from firebaseAuth
+      // tambah click button so that boleh go to email to email teh admin about the problem
     } catch (e) {
-      return 'An unexpected error occurred: email has been used, or weak password';
+      return 'An unexpected error occurred: please contact the Admin by clicking here';
     }
   }
 

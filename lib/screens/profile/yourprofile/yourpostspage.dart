@@ -240,6 +240,10 @@ class _YourPostsPageState extends State<YourPostsPage> {
                                       postData["post"] ?? "No content";
                                   String postUsername =
                                       postData["username"] ?? "No user";
+                                  String postUserEmail =
+                                      postData["userEmail"] ?? ["no email"];
+                                  String userUid =
+                                      postData["userUid"] ?? "No userUid";
                                   String postProfilePicture =
                                       postData["pfp"] ?? "";
                                   String postId = postDocs[index].id;
@@ -257,6 +261,8 @@ class _YourPostsPageState extends State<YourPostsPage> {
                                     pfp:
                                         postProfilePicture, // post profile picture
                                     user: postUsername, // The user who posted
+                                    userEmail: postUserEmail,
+                                    userUid: userUid,
                                     postId: postId, // Post ID
                                     likes: likes, // List of likes
                                     bookmarkedBy: bookmarked,

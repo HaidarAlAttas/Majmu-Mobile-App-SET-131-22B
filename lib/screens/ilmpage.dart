@@ -60,7 +60,10 @@ class _IlmPageState extends State<IlmPage> {
                         return PostBaseline(
                           post: post["post"], // The content of the post
                           pfp: post["pfp"],
-                          user: post["username"], // The user who posted
+                          user: post["username"], // The user who posted\
+
+                          userEmail: post["userEmail"] ?? ["no email"],
+                          userUid: post["userUid"],
                           postId: post.id, // Unique ID of the post
                           likes: List<String>.from(
                               post["Likes"] ?? []), // List of likes

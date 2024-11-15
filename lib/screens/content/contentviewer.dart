@@ -99,7 +99,9 @@ class _ContentViewerState extends State<ContentViewer> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         // back button
         leading: GestureDetector(
           onTap: () {
@@ -124,7 +126,11 @@ class _ContentViewerState extends State<ContentViewer> {
           ),
         ],
 
-        title: Text(widget.name),
+        title: Text(
+          widget.name.contains("_")
+              ? widget.name.split('_').sublist(1).join('_')
+              : widget.name,
+        ),
       ),
       body: PDFView(
         filePath: widget.path,

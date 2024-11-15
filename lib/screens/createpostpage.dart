@@ -156,6 +156,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
         ),
       );
     }
+    if (_post.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Please insert your caption"),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   // Function to remove an image
@@ -174,265 +184,273 @@ class _CreatePostPageState extends State<CreatePostPage> {
     // if the user is logged on with a valid Gmail account
     if (_authService.isSignedInWithGoogle()) {
       var userData;
-      return SafeArea(
-        child:
-            // Loading indicator
-            _isLoading == true
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.green,
-                    ),
-                  )
-                : SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          // Design of the baseline for the create content
-                          width: screenWidth * 0.96,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(9),
-                            border: Border.all(
-                              width: 2,
-                              color: Colors.black,
+      return GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SafeArea(
+          child:
+              // Loading indicator
+              _isLoading == true
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.green,
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            // Design of the baseline for the create content
+                            width: screenWidth * 0.96,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(9),
+                              border: Border.all(
+                                width: 2,
+                                color: Colors.black,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.5),
+                                  spreadRadius: 1,
+                                  blurRadius: 6,
+                                  offset: Offset(0, 2.5),
+                                ),
+                              ],
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 6,
-                                offset: Offset(0, 2.5),
-                              ),
-                            ],
-                          ),
 
-                          // Functions inside the create content button
-                          child: Column(
-                            children: [
-                              // Cancel and post button
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: screenHeight * 0.01,
-                                  bottom: screenHeight * 0.02,
-                                  left: screenWidth * 0.02,
-                                  right: screenWidth * 0.02,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // Cancel button
-                                    GestureDetector(
-                                      // If clicked
-                                      onTap: () {
-                                        setState(() {
-                                          _post.clear();
-                                          _images.clear();
-                                          FocusScope.of(context)
-                                              .unfocus(); // to close the keyboard
-                                        });
-                                      },
-                                      child: Text(
-                                        "Cancel",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w900,
-                                          color: Colors.red,
-                                          fontSize: screenWidth * 0.035,
-                                        ),
-                                      ),
-                                    ),
-
-                                    // Post button
-                                    GestureDetector(
-                                      // If clicked
-                                      onTap: postMessage,
-                                      child: Container(
-                                        width: screenWidth * 0.16,
-                                        height: screenHeight * 0.03,
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 98, 147, 101),
-                                          borderRadius: BorderRadius.circular(
-                                              screenWidth * 0.03),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.5),
-                                              spreadRadius: 1,
-                                              blurRadius: 6,
-                                              offset: Offset(0, 2.5),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Post",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w900,
-                                              fontSize: screenWidth * 0.037,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              // Row for profile image and textfield
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 8, right: 8),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Profile image
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8),
-                                      child: InstaImageViewer(
-                                        child: Container(
-                                          width: screenWidth * 0.09,
-                                          height: screenHeight * 0.04,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                              // Demo image
-                                              image: profilePictureUrl != null
-                                                  ? NetworkImage(
-                                                      profilePictureUrl!) // Use the fetched profile picture URL
-                                                  : AssetImage(
-                                                          'assets/baseProfilePicture.png')
-                                                      as ImageProvider,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    // TextField to insert content
-                                    Container(
-                                      height: _images.isNotEmpty
-                                          ? screenHeight * 0.3
-                                          : screenHeight * 0.45,
-                                      width: screenWidth * 0.8,
-                                      child: TextField(
-                                        controller: _post,
-                                        cursorColor: Colors.black,
-                                        maxLines:
-                                            null, // Allows the TextField to have unlimited lines
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
-                                            vertical: screenHeight * 0.015,
-                                            horizontal: screenWidth * 0.02,
-                                          ),
-                                          hintText: "What's on your mind?",
-                                          hintStyle: TextStyle(
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                          border: InputBorder.none,
-                                        ),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        keyboardType: TextInputType
-                                            .multiline, // Allows multiline input
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              // Display selected images in a column
-                              if (_images.isNotEmpty)
+                            // Functions inside the create content button
+                            child: Column(
+                              children: [
+                                // Cancel and post button
                                 Padding(
-                                  padding: EdgeInsets.all(screenHeight *
-                                      0.01), // Added padding for better layout
-                                  child: Column(
+                                  padding: EdgeInsets.only(
+                                    top: screenHeight * 0.01,
+                                    bottom: screenHeight * 0.02,
+                                    left: screenWidth * 0.02,
+                                    right: screenWidth * 0.02,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      for (int i = 0; i < _images.length; i++)
-                                        Stack(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(bottom: 10),
-                                              child: Image.file(
-                                                _images[i],
-                                                height: screenHeight * 0.25,
-                                                width: screenWidth,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                            Positioned(
-                                              top: 5,
-                                              right: 5,
-                                              child: GestureDetector(
-                                                onTap: () => removeImage(i),
-                                                child: Container(
-                                                  color: Colors.black
-                                                      .withOpacity(0.6),
-                                                  child: Icon(
-                                                    Icons.close,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                      // Cancel button
+                                      GestureDetector(
+                                        // If clicked
+                                        onTap: () {
+                                          setState(() {
+                                            _post.clear();
+                                            _images.clear();
+                                            FocusScope.of(context)
+                                                .unfocus(); // to close the keyboard
+                                          });
+                                        },
+                                        child: Text(
+                                          "Cancel",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            color: Colors.red,
+                                            fontSize: screenWidth * 0.035,
+                                          ),
                                         ),
+                                      ),
+
+                                      // Post button
+                                      GestureDetector(
+                                        // If clicked
+                                        onTap: postMessage,
+                                        child: Container(
+                                          width: screenWidth * 0.16,
+                                          height: screenHeight * 0.03,
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                255, 98, 147, 101),
+                                            borderRadius: BorderRadius.circular(
+                                                screenWidth * 0.03),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.5),
+                                                spreadRadius: 1,
+                                                blurRadius: 6,
+                                                offset: Offset(0, 2.5),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Post",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: screenWidth * 0.037,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
 
-                              // Add photo button
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: screenWidth * 0.02,
-                                    vertical: screenHeight * 0.01),
-                                child: GestureDetector(
-                                  onTap: addImage,
-                                  child: Container(
-                                    height: screenHeight * 0.055,
-                                    decoration: BoxDecoration(
-                                        color: const Color.fromARGB(
-                                            255, 98, 147, 101),
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              spreadRadius: 3,
-                                              blurRadius: 7,
-                                              color:
-                                                  Colors.grey.withOpacity(0.5),
-                                              offset: Offset(0, 2))
-                                        ]),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.photo_library,
-                                          color: Colors.white,
+                                // Row for profile image and textfield
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8, right: 8),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Profile image
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 8),
+                                        child: InstaImageViewer(
+                                          child: Container(
+                                            width: screenWidth * 0.09,
+                                            height: screenHeight * 0.04,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              image: DecorationImage(
+                                                // Demo image
+                                                image: profilePictureUrl != null
+                                                    ? NetworkImage(
+                                                        profilePictureUrl!) // Use the fetched profile picture URL
+                                                    : AssetImage(
+                                                            'assets/baseProfilePicture.png')
+                                                        as ImageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                        SizedBox(width: screenWidth * 0.02),
-                                        Text(
-                                          "Add photo",
+                                      ),
+
+                                      // TextField to insert content
+                                      Container(
+                                        height: _images.isNotEmpty
+                                            ? screenHeight * 0.3
+                                            : screenHeight * 0.45,
+                                        width: screenWidth * 0.8,
+                                        child: TextField(
+                                          controller: _post,
+                                          cursorColor: Colors.black,
+                                          maxLines:
+                                              null, // Allows the TextField to have unlimited lines
+                                          decoration: InputDecoration(
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                              vertical: screenHeight * 0.015,
+                                              horizontal: screenWidth * 0.02,
+                                            ),
+                                            hintText: "What's on your mind?",
+                                            hintStyle: TextStyle(
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                            border: InputBorder.none,
+                                          ),
                                           style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w900),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          keyboardType: TextInputType
+                                              .multiline, // Allows multiline input
                                         ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // Display selected images in a column
+                                if (_images.isNotEmpty)
+                                  Padding(
+                                    padding: EdgeInsets.all(screenHeight *
+                                        0.01), // Added padding for better layout
+                                    child: Column(
+                                      children: [
+                                        for (int i = 0; i < _images.length; i++)
+                                          Stack(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 10),
+                                                child: Image.file(
+                                                  _images[i],
+                                                  height: screenHeight * 0.25,
+                                                  width: screenWidth,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                              Positioned(
+                                                top: 5,
+                                                right: 5,
+                                                child: GestureDetector(
+                                                  onTap: () => removeImage(i),
+                                                  child: Container(
+                                                    color: Colors.black
+                                                        .withOpacity(0.6),
+                                                    child: Icon(
+                                                      Icons.close,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                       ],
                                     ),
                                   ),
+
+                                // Add photo button
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: screenWidth * 0.02,
+                                      vertical: screenHeight * 0.01),
+                                  child: GestureDetector(
+                                    onTap: addImage,
+                                    child: Container(
+                                      height: screenHeight * 0.055,
+                                      decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 98, 147, 101),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                spreadRadius: 3,
+                                                blurRadius: 7,
+                                                color: Colors.grey
+                                                    .withOpacity(0.5),
+                                                offset: Offset(0, 2))
+                                          ]),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.photo_library,
+                                            color: Colors.white,
+                                          ),
+                                          SizedBox(width: screenWidth * 0.02),
+                                          Text(
+                                            "Add photo",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w900),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+        ),
       );
     } else {
       return SafeArea(

@@ -254,7 +254,7 @@ Future settingsDialog(BuildContext context) {
                                 Text(
                                   "Storage and data",
                                   style: TextStyle(
-                                    color: Colors.grey,
+                                    color: Colors.white,
                                   ),
                                 )
                               ],
@@ -370,7 +370,7 @@ Future settingsDialog(BuildContext context) {
                                 Text(
                                   "Customer Services",
                                   style: TextStyle(
-                                    color: Colors.grey,
+                                    color: Colors.white,
                                   ),
                                 )
                               ],

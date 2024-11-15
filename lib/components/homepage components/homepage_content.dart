@@ -33,6 +33,19 @@ class _HomepageContentState extends State<HomepageContent> {
 
   Future<void> openPDF(
       BuildContext context, Reference ref, String folderName) async {
+    // Show loading indicator while the file is being downloaded
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissal while loading
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(
+            color: Colors.green,
+          ),
+        );
+      },
+    );
+
     // Use the Temporary Directory on iOS
     final dir = await getTemporaryDirectory();
     final filePath = '${dir.path}/${ref.name}';
@@ -41,6 +54,9 @@ class _HomepageContentState extends State<HomepageContent> {
       // Get the download URL and download the file using Dio
       final downloadURL = await ref.getDownloadURL();
       await Dio().download(downloadURL, filePath);
+
+      // Close the loading dialog once the download is complete
+      Navigator.of(context, rootNavigator: true).pop();
 
       // Navigate to ContentViewer to display the PDF
       Navigator.push(
@@ -67,13 +83,22 @@ class _HomepageContentState extends State<HomepageContent> {
         ),
       );
     } catch (e) {
+      // Close the loading dialog in case of an error
+      Navigator.of(context, rootNavigator: true).pop();
       print("Error while downloading the PDF: $e");
+
+      // Show an error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load the PDF: $e'),
+        ),
+      );
     }
   }
 
   // Method to open folder and handle automatic PDF opening
   Future<void> openFolder(BuildContext context, Reference folder) async {
-    // Show loading indicator while the files are being fetched
+    // Show loading indicator while the file is being fetched
     showDialog(
       context: context,
       barrierDismissible: false, // Prevent dismissal while loading
@@ -88,63 +113,41 @@ class _HomepageContentState extends State<HomepageContent> {
 
     try {
       // Fetch the list of files in the folder
-      final files = await folder.listAll();
-      final pdfFiles =
+      final ListResult files = await folder.listAll();
+      final List<Reference> pdfFiles =
           files.items.where((file) => file.name.endsWith('.pdf')).toList();
-      String folderName = getName(folder.name);
 
-      // Close the loading dialog once files are fetched
-      Navigator.of(context, rootNavigator: true).pop();
-
-      if (pdfFiles.length == 1) {
-        // Open the single PDF file directly
-        await openPDF(context, pdfFiles[0], folderName);
-      } else if (pdfFiles.isNotEmpty) {
-        // Navigate to a new screen with a list of PDF files if more than one is found
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Scaffold(
-              appBar: AppBar(title: Text(folderName)),
-              body: ListView.builder(
-                itemCount: pdfFiles.length,
-                itemBuilder: (context, index) {
-                  final file = pdfFiles[index];
-                  return GestureDetector(
-                    onTap: () async {
-                      // Show loading indicator when opening PDF
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (BuildContext context) {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.green,
-                            ),
-                          );
-                        },
-                      );
-                      await openPDF(context, file, folderName);
-                      // Close the loading dialog after opening PDF
-                      Navigator.of(context, rootNavigator: true).pop();
-                    },
-                    child: ListTile(
-                      title: Text(file.name),
-                      trailing: Icon(Icons.navigate_next_rounded),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        );
-      } else {
-        // Show a message if no PDF files are found
+      if (pdfFiles.isEmpty) {
+        Navigator.of(context, rootNavigator: true)
+            .pop(); // Close loading dialog
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('No PDF files found in this folder.'),
           ),
         );
+        return;
+      }
+
+      // Retrieve metadata and find the latest file
+      Reference? latestFile;
+      DateTime? latestTime;
+
+      // iterate over each file to find the latest one
+      for (var file in pdfFiles) {
+        final metadata = await file.getMetadata();
+        if (latestTime == null || metadata.timeCreated!.isAfter(latestTime)) {
+          latestFile = file;
+          latestTime = metadata.timeCreated;
+        }
+      }
+
+      // Close the loading dialog once the latest file is identified
+      Navigator.of(context, rootNavigator: true).pop();
+
+      if (latestFile != null) {
+        // Open the latest PDF file directly
+        await openPDF(
+            context, latestFile, folder.name); // folder.name sebab nak elak
       }
     } catch (e) {
       // Close the loading dialog in case of an error
@@ -152,7 +155,7 @@ class _HomepageContentState extends State<HomepageContent> {
       // Show an error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to load files: $e'),
+          content: Text('Failed to load the latest file: $e'),
         ),
       );
     }
@@ -172,7 +175,7 @@ class _HomepageContentState extends State<HomepageContent> {
         color: Color.fromARGB(255, 245, 241, 222),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromARGB(255, 245, 241, 222),
 
         // appbar
         appBar: AppBar(
@@ -198,7 +201,7 @@ class _HomepageContentState extends State<HomepageContent> {
               if (snapshot.hasData) {
                 final folders = snapshot.data!.prefixes;
 
-                // susun surah
+                // susunan content
                 List<String> contentOrder = List.generate(30, (index) {
                   final contentNumber = index + 1;
                   return '${contentNumber.toString().padLeft(3, '0')}_ Juz $contentNumber';

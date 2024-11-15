@@ -117,6 +117,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
               padding: EdgeInsets.only(right: screenWidth * 0.017),
               child: Icon(
                 Icons.info_outline_rounded,
+                size: screenWidth * 0.07,
               ),
             ),
           ),

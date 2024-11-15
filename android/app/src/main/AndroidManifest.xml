@@ -18,12 +18,36 @@
         android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"/>
     <uses-permission
         android:name="android.permission.CAMERA"/>
+        <!-- Provide required visibility configuration for API level 30 and above -->
+    <queries>
+    <!-- If your app opens https URLs -->
+    <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="https" />
+    </intent>
+    <!-- If your app opens http URLs -->
+    <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="http" />
+    </intent>
+    <!-- If your app checks for SMS support -->
+    <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="sms" />
+    </intent>
+    <!-- If your app checks for call support -->
+    <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="tel" />
+    </intent>
+    </queries>
     <application
         android:enableOnBackInvokedCallback="true"
         android:label="Majmu'"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:requestLegacyExternalStorage="true">
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true">
         <activity
             android:name="com.example.majmu.MainActivity"
             android:exported="true"

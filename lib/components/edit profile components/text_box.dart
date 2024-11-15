@@ -22,7 +22,6 @@ class MyTextBox extends StatelessWidget {
 
     return Center(
       child: Container(
-        height: screenHeight * 0.12,
         width: screenWidth * 0.9,
         padding: EdgeInsets.all(screenWidth * 0.04),
         decoration: BoxDecoration(

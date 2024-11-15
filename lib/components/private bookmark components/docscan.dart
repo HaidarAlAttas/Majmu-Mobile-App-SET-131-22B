@@ -199,8 +199,9 @@ class _DocScanButtonState extends State<DocScanButton> {
     return status.isGranted; // Return whether permission is granted
   }
 
+  // method to save pdf
   Future<void> scanAndSavePDF() async {
-    if (fileName != null && description != null) {
+    if (fileName != null || description != null) {
       try {
         final List<String>? scannedImages =
             await CunningDocumentScanner.getPictures();
@@ -269,11 +270,18 @@ class _DocScanButtonState extends State<DocScanButton> {
       } catch (e) {
         // Handle exceptions
         print("An error occurred while saving the PDF.");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("You need to fill in the name and description field"),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("You need to add a name and description"),
+          content: Text("You need to fill in the name and description field"),
           duration: Duration(seconds: 2),
           backgroundColor: Colors.red,
         ),

@@ -12,6 +12,8 @@ class PostBaseline extends StatefulWidget {
   final String post;
   final String pfp;
   final String user;
+  final String userEmail;
+  final String userUid;
   final String postId;
   final List<String> likes;
   final List<String> bookmarkedBy;
@@ -24,6 +26,8 @@ class PostBaseline extends StatefulWidget {
     required this.post,
     required this.pfp,
     required this.user,
+    required this.userEmail,
+    required this.userUid,
     required this.postId,
     required this.likes,
     required this.bookmarkedBy,
@@ -63,7 +67,7 @@ class _PostBaselineState extends State<PostBaseline> {
   }
 
   // Toggle like status for the post
-  void ToggleLike() {
+  void ToggleLike() async {
     setState(() {
       isLiked = !isLiked; // Toggle the like status
     });
@@ -72,47 +76,101 @@ class _PostBaselineState extends State<PostBaseline> {
     DocumentReference postRef =
         FirebaseFirestore.instance.collection("user-posts").doc(widget.postId);
 
+    DocumentReference postBookmarkLikes = FirebaseFirestore.instance
+        .collection("user-cred")
+        .doc(currentUser.uid)
+        .collection("postPublicBookmark")
+        .doc(widget.postId);
+
+    // Check if the post is already bookmarked by the user
+    DocumentSnapshot snapshot = await postBookmarkLikes.get();
+
+    // The post is already in the user's postPublicBookmark collection
     if (isLiked) {
-      // If the post is liked, add the current user's email to likes[]
+      // If the post is liked, add the current user's UID to likes[] in user-posts collection
       postRef.update({
         "Likes": FieldValue.arrayUnion(
           [currentUser.uid],
-        )
+        ),
       });
+
+      if (snapshot.exists) {
+        // Add the current user's UID to likes[] in postPublicBookmark
+        postBookmarkLikes.update({
+          "Likes": FieldValue.arrayUnion(
+            [currentUser.uid],
+          ),
+        });
+      } else {
+        // If the post is not bookmarked, you may want to handle this differently (optional)
+        print('The post is not bookmarked in postPublicBookmark.');
+      }
     } else {
-      // If it's unliked, remove the current user's email from likes[]
+      // If the post is unliked, remove the current user's UID from likes[] in user-posts collection
       postRef.update({
         "Likes": FieldValue.arrayRemove(
           [currentUser.uid],
-        )
+        ),
       });
+
+      if (snapshot.exists) {
+        // Remove the current user's UID from likes[] in postPublicBookmark
+        postBookmarkLikes.update({
+          "Likes": FieldValue.arrayRemove(
+            [currentUser.uid],
+          ),
+        });
+      } else {
+        // If the post is not bookmarked, you may want to handle this differently (optional)
+        print('The post is not bookmarked in postPublicBookmark.');
+      }
     }
   }
 
   // method when toggling bookmark in post
-  void ToggleBookmarked() {
+  void ToggleBookmarked() async {
+    // Toggle bookmark first, based on the current state
     setState(() {
       isBookmarked = !isBookmarked;
     });
 
-    // Access the document in Firestore
+    // Reference the Firestore documents
     DocumentReference postRef =
         FirebaseFirestore.instance.collection("user-posts").doc(widget.postId);
 
+    DocumentReference postBookmark = FirebaseFirestore.instance
+        .collection("user-cred")
+        .doc(currentUser.uid)
+        .collection("postPublicBookmark")
+        .doc(widget.postId);
+
+    // Check if the post is already bookmarked by the user
+    DocumentSnapshot snapshot = await postBookmark.get();
+
+    // Update Firestore accordingly based on the bookmark toggle
     if (isBookmarked) {
-      // If the post is bookmarked, add the current user's email to likes[]
-      postRef.update({
-        "bookmarkedBy": FieldValue.arrayUnion(
-          [currentUser.uid],
-        )
+      // Add the user to the bookmarks
+      await postRef.update({
+        "bookmarkedBy": FieldValue.arrayUnion([currentUser.uid]),
       });
+
+      if (!snapshot.exists) {
+        // Add bookmark data if not already in postPublicBookmark
+        Map<String, dynamic> bookmarkData = {
+          'timestamp': Timestamp.now(),
+        };
+        await postBookmark.set(bookmarkData);
+      }
     } else {
-      // If it's unbookmarked, remove the current user's email from likes[]
-      postRef.update({
-        "bookmarkedBy": FieldValue.arrayRemove(
-          [currentUser.uid],
-        )
+      // Remove the user from bookmarks
+      await postRef.update({
+        "bookmarkedBy": FieldValue.arrayRemove([currentUser.uid]),
       });
+
+      if (snapshot.exists) {
+        // If bookmarked, delete from postPublicBookmark
+        await postBookmark.delete();
+      }
     }
   }
 

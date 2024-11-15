@@ -83,11 +83,11 @@ class _BPublicPageState extends State<BPublicPage> {
       Navigator.pop(context);
 
       print(
-          "Error while downloading the PDF: please contact the admin in setting page"); // Handle download error
+          "Error while downloading the PDF: please inform the customer service team in the setting page"); // Handle download error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-              'Error downloading PDF: please contact the admin in setting page'),
+              'Error downloading PDF: please inform the customer service team in the setting page'),
         ),
       );
     }
@@ -189,6 +189,9 @@ class _BPublicPageState extends State<BPublicPage> {
                                           onTap: () async {
                                             openPDF(context, bookmark["path"],
                                                 bookmark["name"]);
+
+                                            // check what name it will read
+                                            print(bookmark["name"]);
                                           },
                                           child: Container(
                                             padding: EdgeInsets.all(16.0),
@@ -244,24 +247,27 @@ class _BPublicPageState extends State<BPublicPage> {
                                 )
                               : StreamBuilder<QuerySnapshot>(
                                   stream: FirebaseFirestore.instance
-                                      .collection('user-posts')
-                                      .where('bookmarkedBy',
-                                          arrayContains: currentUserUid)
-                                      .snapshots(), // Listen for real-time updates
+                                      .collection('user-cred')
+                                      .doc(currentUserUid)
+                                      .collection("postPublicBookmark")
+                                      .orderBy(
+                                        "timestamp",
+                                        descending: true,
+                                      )
+                                      .snapshots(),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
                                       return Center(
                                         child: CircularProgressIndicator(
-                                          color: Colors.green,
-                                        ),
-                                      ); // Loading state
+                                            color: Colors.green),
+                                      );
                                     }
 
                                     if (snapshot.hasError) {
                                       return Center(
                                         child: Text('Error: ${snapshot.error}'),
-                                      ); // Error handling
+                                      );
                                     }
 
                                     final postBookmarks =
@@ -271,31 +277,88 @@ class _BPublicPageState extends State<BPublicPage> {
                                       return Center(
                                         child: Text(
                                             'No bookmarks yet, add them now!'),
-                                      ); // No bookmarks message
+                                      );
                                     }
 
                                     return ListView.builder(
                                       itemCount: postBookmarks.length,
                                       itemBuilder: (context, index) {
-                                        final post = postBookmarks[index];
+                                        final postBookmark =
+                                            postBookmarks[index];
+                                        final postId = postBookmark
+                                            .id; // ID of the bookmarked post
 
-                                        return KeyedSubtree(
-                                          key: Key(post
-                                              .id), // Assign a unique key to each post
-                                          child: PostBaseline(
-                                            post: post["post"],
-                                            pfp: post["pfp"],
-                                            user: post["username"],
-                                            postId: post.id,
-                                            likes: List<String>.from(
-                                                post["Likes"] ?? []),
-                                            bookmarkedBy: List<String>.from(
-                                                post["bookmarkedBy"] ?? []),
-                                            isChecked: post["isChecked"],
-                                            images: List<String>.from(
-                                                post["Images"] ?? []),
-                                            settingButton: false,
-                                          ),
+                                        // Use nested StreamBuilder to listen for real-time updates in 'user-posts' collection
+                                        return StreamBuilder<DocumentSnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('user-posts')
+                                              .doc(postId)
+                                              .snapshots(),
+                                          builder: (context, postSnapshot) {
+                                            if (postSnapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+
+                                            if (postSnapshot.hasError) {
+                                              return Center(
+                                                  child: Text(
+                                                      'Error loading post data'));
+                                            }
+
+                                            if (!postSnapshot.hasData ||
+                                                !postSnapshot.data!.exists) {
+                                              return Center(
+                                                  child:
+                                                      Text('Post not found'));
+                                            }
+
+                                            final postData = postSnapshot.data!
+                                                .data() as Map<String, dynamic>;
+
+                                            // Parsing each field safely with fallback values
+                                            final postContent =
+                                                postData["post"] ?? '';
+                                            final profilePicture =
+                                                postData["pfp"] ?? '';
+                                            final username =
+                                                postData["username"] ??
+                                                    'Unknown User';
+                                            final userEmail =
+                                                postData["userEmail"] ??
+                                                    "no email";
+                                            final userUid =
+                                                postData["userUid"] ?? '';
+                                            final likes = List<String>.from(
+                                                postData["Likes"] ?? []);
+                                            final bookmarkedBy =
+                                                List<String>.from(
+                                                    postData["bookmarkedBy"] ??
+                                                        []);
+                                            final isChecked =
+                                                postData["isChecked"] ?? false;
+                                            final images = List<String>.from(
+                                                postData["Images"] ?? []);
+
+                                            return KeyedSubtree(
+                                              key: Key(postId),
+                                              child: PostBaseline(
+                                                post: postContent,
+                                                pfp: profilePicture,
+                                                user: username,
+                                                userEmail: userEmail,
+                                                userUid: userUid,
+                                                postId: postId,
+                                                likes: likes,
+                                                bookmarkedBy: bookmarkedBy,
+                                                isChecked: isChecked,
+                                                images: images,
+                                                settingButton: false,
+                                              ),
+                                            );
+                                          },
                                         );
                                       },
                                     );
