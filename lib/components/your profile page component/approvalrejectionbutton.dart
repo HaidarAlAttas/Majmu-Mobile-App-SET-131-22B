@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 
-class NavigatorBookmark extends StatelessWidget {
-  final bool publicChoice;
-  final int puborpriv;
+class ApprovalRejectionButtons extends StatelessWidget {
+  final bool approvedChoice;
+  final int appOrRej;
   final Function(bool, int)? onUpdate;
 
-  const NavigatorBookmark({
-    super.key,
+  const ApprovalRejectionButtons({
+    Key? key,
+    required this.approvedChoice,
+    required this.appOrRej,
     required this.onUpdate,
-    required this.publicChoice,
-    required this.puborpriv,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Screen size calculations for responsiveness
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -23,8 +22,6 @@ class NavigatorBookmark extends StatelessWidget {
         horizontal: screenWidth * 0.03,
         vertical: screenHeight * 0.02,
       ),
-
-      // main container
       child: Container(
         height: screenHeight * 0.05,
         width: double.infinity,
@@ -40,21 +37,19 @@ class NavigatorBookmark extends StatelessWidget {
             ),
           ],
         ),
-
-        // stack for animation
         child: Stack(
           children: [
             // Animated selection indicator
             AnimatedPositioned(
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              left: publicChoice ? 0 : screenWidth * 0.5 - screenWidth * 0.04,
+              left: approvedChoice ? 0 : screenWidth * 0.5 - screenWidth * 0.04,
               top: 0,
               bottom: 0,
               child: Container(
-                width: screenWidth * 0.47,  // Adjusted width for better proportion
+                width: screenWidth * 0.47,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [
                       Colors.blue,
                       Colors.green,
@@ -66,11 +61,10 @@ class NavigatorBookmark extends StatelessWidget {
                 ),
               ),
             ),
-            // Row with buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // Public button
+                // Approved button
                 GestureDetector(
                   onTap: () {
                     onUpdate?.call(true, 0);
@@ -79,16 +73,16 @@ class NavigatorBookmark extends StatelessWidget {
                     width: screenWidth * 0.43,
                     alignment: Alignment.center,
                     child: Text(
-                      "Public",
+                      "Approved",
                       style: TextStyle(
-                        color: publicChoice ? Colors.white : Colors.black,
+                        color: approvedChoice ? Colors.white : Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: screenWidth * 0.045,
+                        fontSize: 16,
                       ),
                     ),
                   ),
                 ),
-                // Private button
+                // Rejected button
                 GestureDetector(
                   onTap: () {
                     onUpdate?.call(false, 1);
@@ -97,11 +91,11 @@ class NavigatorBookmark extends StatelessWidget {
                     width: screenWidth * 0.43,
                     alignment: Alignment.center,
                     child: Text(
-                      "Private",
+                      "Rejected",
                       style: TextStyle(
-                        color: !publicChoice ? Colors.white : Colors.black,
+                        color: !approvedChoice ? Colors.white : Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: screenWidth * 0.045,
+                        fontSize: 16,
                       ),
                     ),
                   ),

@@ -1,7 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_import, non_constant_identifier_names, prefer_interpolation_to_compose_strings, curly_braces_in_flow_control_structures
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/testing.dart';
 import 'package:majmu/components/posts%20components/postbaselines.dart';
@@ -83,9 +86,11 @@ class _IlmPageState extends State<IlmPage> {
                     );
                   } else {
                     return Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.green,
-                      ), // Loading indicator
+                      child: Platform.isIOS
+                          ? CupertinoActivityIndicator()
+                          : CircularProgressIndicator(
+                              color: Colors.green,
+                            ), // Loading indicator
                     );
                   }
                 },

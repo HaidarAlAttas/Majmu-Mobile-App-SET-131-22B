@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -47,11 +45,23 @@ class LikeButton extends StatelessWidget {
           );
         }
 
+        // Gradient color for the heart icon when liked
+        final gradient = LinearGradient(
+          colors: [Colors.blue, Colors.green],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        );
+
         return GestureDetector(
           onTap: onTap,
-          child: Icon(
-            isLiked ? Icons.favorite : Icons.favorite_border_outlined,
-            color: isLiked ? Colors.red : Colors.grey,
+          child: ShaderMask(
+            shaderCallback: (bounds) {
+              return gradient.createShader(bounds);
+            },
+            child: Icon(
+              isLiked ? Icons.favorite : Icons.favorite_border_outlined,
+              color: Colors.white, // Set icon color to white to apply the gradient
+            ),
           ),
         );
       },

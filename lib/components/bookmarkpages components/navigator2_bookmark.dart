@@ -20,78 +20,92 @@ class Navigator2Bookmark extends StatelessWidget {
 
     // Adjust container width to center it and reduce its size
     return Padding(
-      padding: EdgeInsets.only(
-        left: screenWidth * 0.1, // Set padding to center the container
-        right: screenWidth * 0.1,
-        bottom: screenHeight * 0.02,
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.1,
+        vertical: screenHeight * 0.02,
       ),
+      // main container
       child: Container(
-        height: screenHeight * 0.04, // Small height for the buttons
-        width: screenWidth * 0.7, // Centered and smaller width
+        height: screenHeight * 0.04, // Slightly increased height for balance
+        width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(30),
           color: Colors.white,
-          border: Border.all(color: Colors.black, width: 1.5),
+          border: Border.all(color: Colors.black, width: 2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 5,
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 6,
               offset: Offset(0, 3),
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceEvenly, // Spacing between buttons
+        // stack for animation
+        child: Stack(
           children: [
-            // Content button
-            GestureDetector(
-              onTap: () {
-                onUpdate(true, 0); // Update state on tap
-              },
+            // Animated selection indicator
+            AnimatedPositioned(
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              left: contentChoice ? 0 : screenWidth * 0.5 - screenWidth * 0.11,
+              top: 0,
+              bottom: 0,
               child: Container(
-                height: screenHeight * 0.03,
-                width: screenWidth * 0.3, // Shrinked button width
+                width: screenWidth * 0.40,  // Adjusted width for better proportion
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: contentChoice ? Colors.black : Colors.white,
-                ),
-                child: Center(
-                  child: Text(
-                    "Content",
-                    style: TextStyle(
-                      fontSize: 14, // Adjusted font size
-                      color: contentChoice ? Colors.white : Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue,
+                      Colors.green,
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   ),
+                  borderRadius: BorderRadius.circular(30),
                 ),
               ),
             ),
-            // Post button
-            GestureDetector(
-              onTap: () {
-                onUpdate(false, 1); // Update state on tap
-              },
-              child: Container(
-                height: screenHeight * 0.03,
-                width: screenWidth * 0.3, // Shrinked button width
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: contentChoice ? Colors.white : Colors.black,
-                ),
-                child: Center(
-                  child: Text(
-                    "Post",
-                    style: TextStyle(
-                      fontSize: 14, // Adjusted font size
-                      color: contentChoice ? Colors.black : Colors.white,
-                      fontWeight: FontWeight.bold,
+            // Row with buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Content button
+                GestureDetector(
+                  onTap: () {
+                    onUpdate(true, 0);
+                  },
+                  child: Container(
+                    width: screenWidth * 0.30, // Consistent width for both buttons
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Content",
+                      style: TextStyle(
+                        color: contentChoice ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: screenWidth * 0.042,
+                      ),
                     ),
                   ),
                 ),
-              ),
+                // Post button
+                GestureDetector(
+                  onTap: () {
+                    onUpdate(false, 1);
+                  },
+                  child: Container(
+                    width: screenWidth * 0.30, // Consistent width for both buttons
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Post",
+                      style: TextStyle(
+                        color: !contentChoice ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: screenWidth * 0.042,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

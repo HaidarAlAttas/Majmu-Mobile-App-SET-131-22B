@@ -1,13 +1,11 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class MyTextBox extends StatelessWidget {
+class OtherTextBox extends StatelessWidget {
   final String text;
   final String sectionName;
   final void Function()? onTap;
-
-  const MyTextBox({
+  const OtherTextBox({
     super.key,
     required this.text,
     required this.sectionName,
@@ -52,17 +50,7 @@ class MyTextBox extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                GestureDetector(
-                  onTap: onTap,
-                  child: Icon(
-                    Icons.edit,
-                    color: sectionName == "Email" 
-                        ? Colors.transparent
-                        : Colors
-                            .grey, // Make invisible for email section
-                    size: screenWidth * 0.05,
-                  ),
-                ),
+                
               ],
             ),
 

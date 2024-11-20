@@ -265,19 +265,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                           width: screenWidth * 0.16,
                                           height: screenHeight * 0.03,
                                           decoration: BoxDecoration(
-                                            color: const Color.fromARGB(
-                                                255, 98, 147, 101),
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Colors.blue, // Start color
+                                                Colors.green, // End color
+                                              ],
+                                              begin: Alignment.centerLeft,
+                                              end: Alignment.centerRight,
+                                            ),
                                             borderRadius: BorderRadius.circular(
-                                                screenWidth * 0.03),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.5),
-                                                spreadRadius: 1,
-                                                blurRadius: 6,
-                                                offset: Offset(0, 2.5),
-                                              ),
-                                            ],
+                                                30), // Match button shape
                                           ),
                                           child: Center(
                                             child: Text(
@@ -412,18 +409,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                     child: Container(
                                       height: screenHeight * 0.055,
                                       decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 98, 147, 101),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          boxShadow: [
-                                            BoxShadow(
-                                                spreadRadius: 3,
-                                                blurRadius: 7,
-                                                color: Colors.grey
-                                                    .withOpacity(0.5),
-                                                offset: Offset(0, 2))
-                                          ]),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.blue, // Start color
+                                            Colors.green, // End color
+                                          ],
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                            30), // Match button shape
+                                      ),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,

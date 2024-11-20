@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/components/bookmarkpages%20components/navigator2_bookmark.dart';
 import 'package:majmu/components/bookmarkpages%20components/navigator_bookmark.dart';
@@ -162,7 +165,10 @@ class _BPublicPageState extends State<BPublicPage> {
 
                                     if (snapshot.hasError) {
                                       return Center(
-                                        child: Text('Error: ${snapshot.error}'),
+                                        child: Text(
+                                          'Error: ${snapshot.error}',
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ); // Error handling
                                     }
 
@@ -177,7 +183,9 @@ class _BPublicPageState extends State<BPublicPage> {
                                         bookmarks.isEmpty) {
                                       return Center(
                                         child: Text(
-                                            'No bookmarks yet, add them now!'),
+                                          'No bookmarks yet, add them now!',
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ); // No bookmarks message
                                     }
 
@@ -259,14 +267,20 @@ class _BPublicPageState extends State<BPublicPage> {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
                                       return Center(
-                                        child: CircularProgressIndicator(
-                                            color: Colors.green),
+                                        child: Platform.isIOS
+                                            ? CupertinoActivityIndicator()
+                                            : CircularProgressIndicator(
+                                                color: Colors.green,
+                                              ),
                                       );
                                     }
 
                                     if (snapshot.hasError) {
                                       return Center(
-                                        child: Text('Error: ${snapshot.error}'),
+                                        child: Text(
+                                          'Error: ${snapshot.error}',
+                                          textAlign: TextAlign.center,
+                                        ),
                                       );
                                     }
 
@@ -276,7 +290,9 @@ class _BPublicPageState extends State<BPublicPage> {
                                     if (postBookmarks.isEmpty) {
                                       return Center(
                                         child: Text(
-                                            'No bookmarks yet, add them now!'),
+                                          'No bookmarks yet, add them now!',
+                                          textAlign: TextAlign.center,
+                                        ),
                                       );
                                     }
 
@@ -298,21 +314,31 @@ class _BPublicPageState extends State<BPublicPage> {
                                             if (postSnapshot.connectionState ==
                                                 ConnectionState.waiting) {
                                               return Center(
-                                                  child:
-                                                      CircularProgressIndicator());
+                                                child: Platform.isIOS
+                                                    ? CupertinoActivityIndicator()
+                                                    : CircularProgressIndicator(
+                                                        color: Colors.green,
+                                                      ),
+                                              );
                                             }
 
                                             if (postSnapshot.hasError) {
                                               return Center(
-                                                  child: Text(
-                                                      'Error loading post data'));
+                                                child: Text(
+                                                  'Error loading post data',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              );
                                             }
 
                                             if (!postSnapshot.hasData ||
                                                 !postSnapshot.data!.exists) {
                                               return Center(
-                                                  child:
-                                                      Text('Post not found'));
+                                                child: Text(
+                                                  'Post not found',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              );
                                             }
 
                                             final postData = postSnapshot.data!

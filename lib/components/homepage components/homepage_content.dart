@@ -1,10 +1,13 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously, avoid_print
 
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/screens/content/contentviewer.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/cupertino.dart';
 
 class HomepageContent extends StatefulWidget {
   final String folder;
@@ -39,9 +42,11 @@ class _HomepageContentState extends State<HomepageContent> {
       barrierDismissible: false, // Prevent dismissal while loading
       builder: (BuildContext context) {
         return Center(
-          child: CircularProgressIndicator(
-            color: Colors.green,
-          ),
+          child: Platform.isIOS
+              ? CupertinoActivityIndicator()
+              : CircularProgressIndicator(
+                  color: Colors.green,
+                ),
         );
       },
     );
@@ -104,9 +109,11 @@ class _HomepageContentState extends State<HomepageContent> {
       barrierDismissible: false, // Prevent dismissal while loading
       builder: (BuildContext context) {
         return Center(
-          child: CircularProgressIndicator(
-            color: Colors.green,
-          ), // Loading spinner
+          child: Platform.isIOS
+              ? CupertinoActivityIndicator()
+              : CircularProgressIndicator(
+                  color: Colors.green,
+                ), // Loading spinner
         );
       },
     );
@@ -170,102 +177,100 @@ class _HomepageContentState extends State<HomepageContent> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Color.fromARGB(255, 245, 241, 222),
-      ),
-      child: Scaffold(
-        backgroundColor: Color.fromARGB(255, 245, 241, 222),
-
-        // appbar
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-
-          // button to go back
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-            ),
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 245, 241, 222),
+    
+      // appbar
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+    
+        // button to go back
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back_ios_new_rounded,
           ),
         ),
-
-        // content inside
-        body: Padding(
-          padding: EdgeInsets.only(top: screenHeight * 0.03),
-          child: FutureBuilder<ListResult>(
-            future: futureFolders,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final folders = snapshot.data!.prefixes;
-
-                // susunan content
-                List<String> contentOrder = List.generate(30, (index) {
-                  final contentNumber = index + 1;
-                  return '${contentNumber.toString().padLeft(3, '0')}_ Juz $contentNumber';
-                });
-
-                return ListView.builder(
-                  itemCount: folders.length,
-                  itemBuilder: (context, index) {
-                    final folder = folders[index];
-
-                    return GestureDetector(
-                      onTap: () async {
-                        await openFolder(context, folder);
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(16.0),
-                        margin: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 3,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                getName(folder.name),
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+      ),
+    
+      // content inside
+      body: Padding(
+        padding: EdgeInsets.only(top: screenHeight * 0.03),
+        child: FutureBuilder<ListResult>(
+          future: futureFolders,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final folders = snapshot.data!.prefixes;
+    
+              // susunan content
+              List<String> contentOrder = List.generate(30, (index) {
+                final contentNumber = index + 1;
+                return '${contentNumber.toString().padLeft(3, '0')}_ Juz $contentNumber';
+              });
+    
+              return ListView.builder(
+                itemCount: folders.length,
+                itemBuilder: (context, index) {
+                  final folder = folders[index];
+    
+                  return GestureDetector(
+                    onTap: () async {
+                      await openFolder(context, folder);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(16.0),
+                      margin: EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 3,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              getName(folder.name),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            IconButton(
-                              icon: Icon(Icons.navigate_next_rounded),
-                              onPressed: () async {
-                                await openFolder(context, folder);
-                              },
-                            ),
-                          ],
-                        ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.navigate_next_rounded),
+                            onPressed: () async {
+                              await openFolder(context, folder);
+                            },
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-
-              return Center(
-                  child: CircularProgressIndicator(
-                color: Colors.green,
-              ));
-            },
-          ),
+                    ),
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+    
+            return Center(
+              child: Platform.isIOS
+                  ? CupertinoActivityIndicator()
+                  : CircularProgressIndicator(
+                      color: Colors.green,
+                    ),
+            );
+          },
         ),
       ),
     );

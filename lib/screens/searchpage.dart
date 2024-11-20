@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/components/searchpage_components/searchbar.dart';
 import 'package:majmu/screens/content/contentviewer.dart';
@@ -73,7 +76,13 @@ class _SearchPageState extends State<SearchPage> {
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return Center(
+                          child: Platform.isIOS
+                              ? CupertinoActivityIndicator()
+                              : CircularProgressIndicator(
+                                  color: Colors.green,
+                                ),
+                        );
                       }
 
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -145,9 +154,11 @@ class _SearchPageState extends State<SearchPage> {
             ),
             if (isLoading)
               Center(
-                child: CircularProgressIndicator(
-                  color: Colors.green,
-                ),
+                child: Platform.isIOS
+                              ? CupertinoActivityIndicator()
+                              : CircularProgressIndicator(
+                                  color: Colors.green,
+                                ),
               ),
           ],
         ),

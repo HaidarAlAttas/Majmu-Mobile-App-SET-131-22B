@@ -310,11 +310,15 @@ class _HomePageState extends State<HomePage> {
           items: [
             BottomNavigationBarItem(
               label: "",
+
+              // home button
               icon: Icon(
                 Icons.home_rounded,
                 color: currentIndex == 0 ? Colors.white : Colors.black,
               ),
             ),
+
+            // ilm page button
             BottomNavigationBarItem(
               label: "",
               icon: Icon(
@@ -322,6 +326,8 @@ class _HomePageState extends State<HomePage> {
                 color: currentIndex == 1 ? Colors.white : Colors.black,
               ),
             ),
+
+            // create post button
             BottomNavigationBarItem(
               label: "",
               icon: Icon(
@@ -329,6 +335,8 @@ class _HomePageState extends State<HomePage> {
                 color: currentIndex == 2 ? Colors.white : Colors.black,
               ),
             ),
+
+            // bookmark button
             BottomNavigationBarItem(
               label: "",
               icon: Icon(
@@ -336,6 +344,8 @@ class _HomePageState extends State<HomePage> {
                 color: currentIndex == 3 ? Colors.white : Colors.black,
               ),
             ),
+
+            // setting
             BottomNavigationBarItem(
               label: "",
               icon: Icon(

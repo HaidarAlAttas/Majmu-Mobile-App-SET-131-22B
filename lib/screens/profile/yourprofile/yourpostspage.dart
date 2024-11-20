@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/components/posts%20components/postbaselines.dart';
+import 'package:majmu/components/your%20profile%20page%20component/approvalrejectionbutton.dart';
 import 'package:majmu/screens/auth/googlebutton.dart';
 import 'package:majmu/screens/profile/yourprofile/rejectedpost.dart';
 import 'package:majmu/services/auth_service.dart';
@@ -101,115 +102,15 @@ class _YourPostsPageState extends State<YourPostsPage> {
               children: [
                 // button to change from approved posts to rejected posts
                 // container for approved and rejected navigator
-                Padding(
-                  padding: EdgeInsets.only(
-                      right: screenWidth * 0.03,
-                      left: screenWidth * 0.03,
-                      bottom: screenHeight * 0.03),
-                  child: Container(
-                    height: screenHeight * 0.047,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.5),
-                          spreadRadius: 1,
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-
-                    // button for approved and rejected bookmark
-                    child: Row(
-                      children: [
-                        // approved button
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              // to change the color of the button when clicked
-                              approvedChoice = true;
-                              rejectedChoice = true;
-                              appOrRej = 0;
-                              // get the approved bookmark
-                            });
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: screenWidth * 0.02,
-                                right: screenWidth * 0.01),
-                            child: Container(
-                              height: screenHeight * 0.035,
-                              width: screenWidth * 0.43,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-
-                                // conditional statement for the button color
-                                color: approvedChoice == true
-                                    ? blackColor
-                                    : whiteColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Approved",
-                                  style: TextStyle(
-
-                                      // conditional statement for the text in the button color
-                                      color: approvedChoice == false
-                                          ? blackColor
-                                          : whiteColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // rejected post button
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              approvedChoice = false;
-                              rejectedChoice = false;
-                              appOrRej = 1;
-                            });
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: screenWidth * 0.02,
-                                right: screenWidth * 0.01),
-                            child: Container(
-                              height: screenHeight * 0.035,
-                              width: screenWidth * 0.43,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-
-                                // conditional statement for the button color
-                                color: approvedChoice == false
-                                    ? blackColor
-                                    : whiteColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Rejected",
-                                  style: TextStyle(
-
-                                      // conditional statement for the text in the button color
-                                      color: approvedChoice == true
-                                          ? blackColor
-                                          : whiteColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                ApprovalRejectionButtons(
+                  approvedChoice: approvedChoice,
+                  appOrRej: appOrRej,
+                  onUpdate: (choice, state) {
+                    setState(() {
+                      approvedChoice = choice;
+                      appOrRej = state;
+                    });
+                  },
                 ),
 
                 appOrRej == 0

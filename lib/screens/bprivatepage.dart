@@ -49,6 +49,7 @@ class _BPrivatePageState extends State<BPrivatePage> {
                         Center(
                           child: Text(
                             'No Private Bookmarks yet, add them now :)',
+                            textAlign: TextAlign.center,
                           ),
                         ),
 

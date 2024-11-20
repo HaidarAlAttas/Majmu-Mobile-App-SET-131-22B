@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:majmu/components/posts%20components/bookmark_button.dart';
 import 'package:majmu/components/posts%20components/like_button.dart';
+import 'package:majmu/screens/profile/otherprofile/otherprofiles.dart';
 import 'package:popover/popover.dart';
 
 class PostBaseline extends StatefulWidget {
@@ -234,25 +235,37 @@ class _PostBaselineState extends State<PostBaseline> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            // Profile picture with fixed size for consistency
-                            InstaImageViewer(
-                              child: CircleAvatar(
+                        // if the username or image is tapped, it will go to other profiles page
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OtherProfiles(
+                                  userUid: widget.userUid,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              // Profile picture with fixed size for consistency
+                              CircleAvatar(
                                 backgroundImage: NetworkImage(widget.pfp),
                                 radius: screenHeight * 0.024, // Dynamic radius
                               ),
-                            ),
-                            SizedBox(
-                                width: screenWidth *
-                                    0.017), // Spacing between picture and text
-                            Text(
-                              widget.user,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold, // Bold username
+                              SizedBox(
+                                  width: screenWidth *
+                                      0.017), // Spacing between picture and text
+
+                              Text(
+                                widget.user,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold, // Bold username
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
 
                         // if on ilmpage, this button wont appear

@@ -14,8 +14,7 @@ class _CustomerServicePageState extends State<CustomerServicePage> {
     final Uri emailUri = Uri(
       scheme: 'mailto',
       path: 'sunnahorigin@gmail.com',
-      query:
-          'subject=Customer Service Inquiry&body=Hello, I need assistance with...',
+      query: 'subject=Customer Service Inquiry',
     );
 
     if (await canLaunchUrl(emailUri)) {
@@ -30,6 +29,7 @@ class _CustomerServicePageState extends State<CustomerServicePage> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
@@ -93,17 +93,58 @@ class _CustomerServicePageState extends State<CustomerServicePage> {
               child: Text(
                 'If you have any issues, please reach out to our support team. We’re here to help you with any questions or concerns.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: 16,
+                ),
               ),
             ),
-            SizedBox(height: 40),
-            ElevatedButton.icon(
+            SizedBox(height: screenHeight * 0.035),
+
+            // button to go to email app
+            ElevatedButton(
               onPressed: _launchEmail,
-              icon: Icon(Icons.email_outlined),
-              label: Text("Contact Support"),
               style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30), // Rounded corners
+                ),
+                elevation: 0, // No shadow
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
+                backgroundColor: Colors.transparent, // Transparent for gradient
+              ),
+              child: Ink(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue, // Start color
+                      Colors.green, // End color
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30), // Match button shape
+                ),
+                child: Container(
+                  constraints: BoxConstraints(
+                    minWidth: 200, // Minimum width
+                    minHeight: 50, // Minimum height
+                  ),
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.email_outlined, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text(
+                        "Contact Support",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
@@ -78,9 +79,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
             content: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(
-                  color: Colors.green,
-                ),
+                Platform.isIOS
+                    ? CupertinoActivityIndicator()
+                    : CircularProgressIndicator(
+                        color: Colors.green,
+                      ),
                 SizedBox(width: 20),
                 Text("Uploading..."),
               ],
@@ -200,118 +203,176 @@ class _EditProfilePageState extends State<EditProfilePage> {
         .get();
 
 // Extract the old username from the document snapshot
-    String oldUsername = oldValueDoc['username'] ??
-        ""; // Default to an empty string if not found
+    String oldUsername =
+        oldValueDoc[field] ?? ""; // Default to an empty string if not found
 
+    // dialog to edit field
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.grey[900],
-        title: Text(
-          "Edit" + field,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        content: TextField(
-          autofocus: true,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-          decoration: InputDecoration(
-              hintText: "Enter new" + field,
-              hintStyle: TextStyle(
-                color: Colors.grey,
-              )),
-          onChanged: (value) {
-            newValue = value;
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            String errorText = '';
+            return AlertDialog(
+              backgroundColor: Colors.grey[850],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+
+              // title for the dialog
+              title: Text(
+                "Edit $field",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // text field to edit the fields
+                  TextField(
+                    cursorColor: Colors.green,
+                    autofocus: true,
+                    maxLines: 3,
+                    maxLength: field == "bio" ? 100 : 20,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[800],
+                      counterStyle: TextStyle(
+                        color: Colors.grey[500],
+                      ),
+                      hintText: "Enter new $field",
+                      hintStyle: TextStyle(
+                        color: Colors.grey[500],
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      errorText: errorText.isNotEmpty ? errorText : null,
+                      errorStyle: TextStyle(
+                        color: Colors.red[300],
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        newValue = value;
+                        if (field == "bio" && value.length > 100) {
+                          errorText = "Bio cannot exceed 100 characters";
+                        } else if (field == "username" && value.length > 20) {
+                          errorText = "Username cannot exceed 20 characters";
+                        } else {
+                          errorText = '';
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                // Cancel button
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(
+                      color: Colors.red[300],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                // Save button
+                TextButton(
+                  onPressed: () {
+                    if (errorText.isEmpty && newValue.isNotEmpty) {
+                      Navigator.of(context).pop(newValue);
+                    }
+                  },
+                  child: Text(
+                    "Save",
+                    style: TextStyle(
+                      color: Colors.green[300],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            );
           },
-        ),
-        actions: [
-          // cancel button
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              "cancel",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-          // save button
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(newValue);
-            },
-            child: Text(
-              "save",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
 
     // update in firestore
     if (newValue.trim().isNotEmpty) {
       // Check if the username is already taken
       final existingUsers =
-          await usersCollection.where("username", isEqualTo: newValue).get();
+          await usersCollection.where(field, isEqualTo: newValue).get();
 
-      if (existingUsers.docs.isNotEmpty && newValue != currentUser.uid) {
-        // Show error snackbar if the username is already in use
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "Username has been used!",
-              style: TextStyle(color: Colors.white),
+      if (field == "username") {
+        if (existingUsers.docs.isNotEmpty && newValue != currentUser.uid) {
+          // Show error snackbar if the username is already in use
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "Username has been used!",
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.red,
             ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      } else {
+          );
+        } else {
+          // Proceed with updating Firestore if the username is unique
+          await usersCollection
+              .doc(currentUser.uid)
+              .update(({field: newValue}));
+
+          // Update the username in the user-posts collection
+          if (oldUsername.isNotEmpty) {
+            await FirebaseFirestore.instance
+                .collection("user-posts")
+                .where("username",
+                    isEqualTo: oldUsername) // Use the old username here
+                .get()
+                .then((snapshot) {
+              for (var doc in snapshot.docs) {
+                doc.reference.update({"username": newValue});
+              }
+            });
+
+            await FirebaseFirestore.instance
+                .collection("rejected-posts")
+                .where("username",
+                    isEqualTo: oldUsername) // Use the old username here
+                .get()
+                .then((snapshot) {
+              for (var doc in snapshot.docs) {
+                doc.reference.update({"username": newValue});
+              }
+            });
+          }
+
+          // Show success snackbar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "$field updated successfully!",
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else if (field == "bio") {
         // Proceed with updating Firestore if the username is unique
         await usersCollection.doc(currentUser.uid).update(({field: newValue}));
-
-        // Update the username in the user-posts collection
-        if (oldUsername.isNotEmpty) {
-          await FirebaseFirestore.instance
-              .collection("user-posts")
-              .where("username",
-                  isEqualTo: oldUsername) // Use the old username here
-              .get()
-              .then((snapshot) {
-            for (var doc in snapshot.docs) {
-              doc.reference.update({"username": newValue});
-            }
-          });
-
-          await FirebaseFirestore.instance
-              .collection("rejected-posts")
-              .where("username",
-                  isEqualTo: oldUsername) // Use the old username here
-              .get()
-              .then((snapshot) {
-            for (var doc in snapshot.docs) {
-              doc.reference.update({"username": newValue});
-            }
-          });
-        }
-
-        // Show success snackbar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "$field updated successfully!",
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     }
   }
@@ -344,164 +405,179 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       // fetch the data from firebase firestore "user-cred" collection
       body: isLogged
-          ? StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("user-cred")
-                  .doc(currentUser.uid)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final userData =
-                      snapshot.data!.data() as Map<String, dynamic>;
-                  return ListView(
-                    children: [
-                      SizedBox(height: screenHeight * 0.04),
-
-                      // profile text
-                      Center(
-                        child: Text(
-                          "P R O F I L E",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w900,
-                            fontSize: screenWidth * 0.08,
+          ? Container(
+            child: StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("user-cred")
+                    .doc(currentUser.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final userData =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    return ListView(
+                      children: [
+                        SizedBox(height: screenHeight * 0.04),
+            
+                        // profile text
+                        Center(
+                          child: Text(
+                            "P R O F I L E",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: screenWidth * 0.08,
+                            ),
                           ),
                         ),
-                      ),
-
-                      SizedBox(height: screenHeight * 0.02),
-
-                      // profile picture
-                      UserPfp(
-                        // component
-                        image: userData["profilePicture"] ??
-                            AssetImage(
-                                "baseProfilePicture.png"), // Handle empty profile picture case
-                        height: screenHeight * 0.2,
-                        width: screenWidth * 0.2,
-
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                contentPadding: EdgeInsets.all(16),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Close the dialog
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.of(context)
-                                                .pop(); // Close the AlertDialog
-                                          },
-                                          child: Text(
-                                            "Done",
-                                            style:
-                                                TextStyle(color: Colors.blue),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 16),
-
-                                    // View profile picture
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context)
-                                            .pop(); // Close the AlertDialog
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            content: InstaImageViewer(
-                                              child: Image.network(
-                                                userData["profilePicture"],
-                                                fit: BoxFit.cover,
-                                              ),
+            
+                        SizedBox(height: screenHeight * 0.02),
+            
+                        // profile picture
+                        UserPfp(
+                          // component
+                          image: userData["profilePicture"] ??
+                              AssetImage(
+                                  "baseProfilePicture.png"), // Handle empty profile picture case
+                          height: screenHeight * 0.2,
+                          width: screenWidth * 0.2,
+            
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  contentPadding: EdgeInsets.all(16),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Close the dialog
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.of(context)
+                                                  .pop(); // Close the AlertDialog
+                                            },
+                                            child: Text(
+                                              "Done",
+                                              style:
+                                                  TextStyle(color: Colors.blue),
                                             ),
                                           ),
-                                        );
-                                      },
-                                      child: Container(
-                                        width: double.infinity,
-                                        height: screenHeight *
-                                            0.03, // Adjust this as per your layout
-                                        child: Text(
-                                          'View Profile Picture',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                        ],
+                                      ),
+                                      SizedBox(height: 16),
+            
+                                      // View profile picture
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .pop(); // Close the AlertDialog
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              content: InstaImageViewer(
+                                                child: Image.network(
+                                                  userData["profilePicture"],
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: screenHeight *
+                                              0.03, // Adjust this as per your layout
+                                          child: Text(
+                                            'View Profile Picture',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(height: 16),
-
-                                    // Change profile picture
-                                    GestureDetector(
-                                      onTap: () {
-                                        addImage();
-                                        Navigator.of(context)
-                                            .pop(); // Close the AlertDialog
-                                      },
-                                      child: Container(
-                                        width: double.infinity,
-                                        height: screenHeight *
-                                            0.03, // Adjust this as per your layout
-                                        child: Text(
-                                          'Change Profile Picture',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                      SizedBox(height: 16),
+            
+                                      // Change profile picture
+                                      GestureDetector(
+                                        onTap: () {
+                                          addImage();
+                                          Navigator.of(context)
+                                              .pop(); // Close the AlertDialog
+                                        },
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: screenHeight *
+                                              0.03, // Adjust this as per your layout
+                                          child: Text(
+                                            'Change Profile Picture',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        },
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+            
+                        SizedBox(height: screenHeight * 0.04),
+            
+                        // username
+                        MyTextBox(
+                          text: userData["username"],
+                          sectionName: "Username",
+                          onTap: () => editField('username'),
+                        ),
+            
+                        SizedBox(height: screenHeight * 0.04),
+            
+                        // bio
+                        MyTextBox(
+                          text: userData["bio"],
+                          sectionName: "Bio",
+                          onTap: () => editField('bio'),
+                        ),
+            
+                        SizedBox(height: screenHeight * 0.04),
+            
+                        // email
+                        MyTextBox(
+                          text: userData["email"],
+                          sectionName: "Email",
+                          onTap: () {},
+                        ),
+
+                        SizedBox(height: screenHeight * 0.04),
+            
+                        // google sign in button
+                      ],
+                    );
+                  } else if (snapshot.hasError) {
+                    return Container(
+                      child: Center(
+                        child: Text("An error occurred: ${snapshot.error}"),
                       ),
-
-                      SizedBox(height: screenHeight * 0.04),
-
-                      // username
-                      MyTextBox(
-                        text: userData["username"],
-                        sectionName: "Username",
-                        onTap: () => editField('username'),
-                      ),
-
-                      SizedBox(height: screenHeight * 0.04),
-
-                      // email
-                      MyTextBox(
-                        text: userData["email"],
-                        sectionName: "Email",
-                        onTap: () {},
-                      ),
-
-                      // google sign in button
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  return Container(
-                    child: Center(
-                      child: Text("An error occurred: ${snapshot.error}"),
-                    ),
-                  );
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.green,
-                    ),
-                  );
-                }
-              },
-            )
+                    );
+                  } else {
+                    return Center(
+                      child: Platform.isIOS
+                          ? CupertinoActivityIndicator()
+                          : CircularProgressIndicator(
+                              color: Colors.green,
+                            ),
+                    );
+                  }
+                },
+              ),
+          )
           : Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
