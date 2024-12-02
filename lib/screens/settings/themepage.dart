@@ -77,6 +77,12 @@ class _ThemePageState extends State<ThemePage> {
           ),
         ],
       ),
+      body: Center(
+        child: Text(
+          "Feature is coming soon :)",
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 }

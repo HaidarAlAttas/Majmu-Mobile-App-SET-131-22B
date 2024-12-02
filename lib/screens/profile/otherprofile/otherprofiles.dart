@@ -148,7 +148,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
                               return PostBaseline(
                                 post: data["post"] ?? "",
                                 pfp: data['pfp'] ?? '',
-                                user: data['user'] ?? '',
+                                user: data['username'] ?? '',
                                 userEmail: data['userEmail'] ?? '',
                                 userUid: data['userUid'] ?? '',
                                 postId: doc.id,

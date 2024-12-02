@@ -1,7 +1,10 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, non_constant_identifier_names, sort_child_properties_last
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/components/private%20bookmark%20components/docscan.dart';
 import 'package:majmu/components/private%20bookmark%20components/private_bookmarks.dart';
@@ -38,10 +41,13 @@ class _BPrivatePageState extends State<BPrivatePage> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.green,
-                    ));
+                    return Center(
+                      child: Platform.isIOS
+                          ? CupertinoActivityIndicator()
+                          : CircularProgressIndicator(
+                              color: Colors.green,
+                            ),
+                    );
                   }
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                     return Stack(
@@ -74,8 +80,8 @@ class _BPrivatePageState extends State<BPrivatePage> {
                         children: snapshot.data!.docs.map((doc) {
                           return PrivateBookmarks(
                             bookmarkId: doc.id,
-                            fileName: doc['name'],
-                            description: doc['description'],
+                            fileName: doc['name'] ?? '',
+                            description: doc['description'] ?? '',
                             previewImageUrl: doc['previewImageUrl'],
                             pdfUrl: doc['fileUrl'], // Update to use 'fileUrl'
                             dateCreated: doc['dateCreated'],

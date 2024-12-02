@@ -47,9 +47,9 @@ class _StorageAndDataPageState extends State<StorageAndDataPage> {
     final currentUser = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 245, 241, 222),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 245, 241, 222),
+        backgroundColor: Colors.white,
         // back button
         leading: GestureDetector(
           onTap: () {
@@ -60,106 +60,109 @@ class _StorageAndDataPageState extends State<StorageAndDataPage> {
           ),
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.08, vertical: screenHeight * 0.04),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Title and description
-            Text(
-              "Manage Your Data",
-              style: TextStyle(
-                fontSize: screenWidth * 0.06,
-                fontWeight: FontWeight.bold,
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.08,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Title and description
+              Text(
+                "Manage Your Data",
+                style: TextStyle(
+                  fontSize: screenWidth * 0.06,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            Text(
-              "You can manage your data storage settings here. Be mindful that deleting your data will remove it permanently. from the cloud storage",
-              style: TextStyle(
-                fontSize: screenWidth * 0.045,
-                color: Colors.grey[700],
+              SizedBox(height: screenHeight * 0.02),
+              Text(
+                "You can manage your data storage settings here. Be mindful that deleting your data will remove it permanently from the cloud storage",
+                style: TextStyle(
+                  fontSize: screenWidth * 0.045,
+                  color: Colors.grey[700],
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            SizedBox(
-              height: screenHeight * 0.04,
-            ),
-            // Delete data button
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        backgroundColor: Colors.white,
-                        title: Text(
-                          "Delete Data?",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        content: Text(
-                          "Are you sure you want to delete all your data? This action cannot be undone.",
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Close the dialog
-                            },
-                            child: Text(
-                              "Cancel",
-                              style: TextStyle(color: Colors.grey),
+              SizedBox(
+                height: screenHeight * 0.04,
+              ),
+              // Delete data button
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: Colors.white,
+                          title: Text(
+                            "Delete Data?",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              // delete data logic
-                              await deleteData(
-                                  currentUser, "contentsPublicBookmark");
-                              await deleteData(currentUser, "privateBookmarks");
-                              await deleteData(
-                                  currentUser, "postPublicBookmark");
+                          content: Text(
+                            "Are you sure you want to delete all your data? This action cannot be undone.",
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: Text(
+                                "Cancel",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                // delete data logic
+                                await deleteData(
+                                    currentUser, "contentsPublicBookmark");
+                                await deleteData(
+                                    currentUser, "privateBookmarks");
+                                await deleteData(
+                                    currentUser, "postPublicBookmark");
 
-                              Navigator.of(context).pop(); // Close the dialog
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              child: Text(
+                                "Delete",
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
-                            child: Text(
-                              "Delete",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.2,
-                    vertical: screenHeight * 0.02,
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.2,
+                      vertical: screenHeight * 0.02,
+                    ),
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
-                  backgroundColor: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                  "Delete Data",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.045,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                  child: Text(
+                    "Delete Data",
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.045,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Spacer(),
-          ],
+            ],
+          ),
         ),
       ),
     );

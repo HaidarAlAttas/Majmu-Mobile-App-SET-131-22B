@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unrelated_type_equality_checks, unused_import, avoid_unnecessary_containers, unused_element
 
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:majmu/screens/bprivatepage.dart';
 import 'package:majmu/screens/bpublicpage.dart';
 import 'package:majmu/screens/createpostpage.dart';
@@ -60,6 +61,7 @@ class _HomePageState extends State<HomePage> {
 
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: false,
 
         appBar: AppBar(
           // majmu' logo
@@ -68,6 +70,7 @@ class _HomePageState extends State<HomePage> {
           title: Center(
             // when click the majmu' logo, it will go back to the home page
             child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () {
                 setState(() {
                   currentIndex = 0;
@@ -86,6 +89,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: EdgeInsets.only(right: screenWidth * 0.029),
               child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTap: () {
                   setState(() {
                     profileDialog(context);
@@ -93,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                 },
                 child: Icon(
                   Icons.account_circle,
-                  color: const Color.fromARGB(255, 26, 151, 33),
+                  color: const Color.fromARGB(255, 107, 154, 111),
                   size: screenWidth * 0.08,
                 ),
               ),
@@ -102,6 +106,7 @@ class _HomePageState extends State<HomePage> {
 
           // search button
           leading: GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () {
               setState(() {
                 Navigator.of(context).pushNamed("/searchp");
@@ -109,7 +114,7 @@ class _HomePageState extends State<HomePage> {
             },
             child: Icon(
               Icons.search,
-              color: const Color.fromARGB(255, 26, 151, 33),
+              color: const Color.fromARGB(255, 107, 154, 111),
               size: screenWidth * 0.08,
             ),
           ),
@@ -287,73 +292,73 @@ class _HomePageState extends State<HomePage> {
                                 HomePage()),
 
         // navigation bar
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: currentIndex,
-          backgroundColor: Colors.transparent,
+        bottomNavigationBar: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: screenHeight * 0.05,
+            horizontal: screenWidth * 0.04,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 64, 97, 66),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: Offset(0, -3),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.05, vertical: 8.0),
+              child: GNav(
+                selectedIndex:
+                    currentIndex, // will read the current index and will react within the UI
+                gap: screenWidth * 0.01,
+                onTabChange: (int index) {
+                  if (index == 4) {
+                    settingsDialog(context);
+                  } else if (index != currentIndex) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  }
+                },
+                backgroundColor: Colors.transparent,
+                color:
+                    Colors.white.withOpacity(0.7), // Inactive icon/text color
+                activeColor: Colors.white, // Active icon/text color
+                tabBackgroundColor: Colors.white.withOpacity(0.2),
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.02,
+                  vertical: screenHeight * 0.014,
+                ),
 
-          // to change pages
-          onTap: (int index) {
-            if (index == 4) {
-              // Show the settings dialog if the settings button is tapped
-              settingsDialog(context);
-            } else if (index != currentIndex) {
-              // Prevent duplicate navigation and avoid rebuilds
-              setState(() {
-                currentIndex = index;
-              });
-            }
-          },
-
-          iconSize: 47,
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              label: "",
-
-              // home button
-              icon: Icon(
-                Icons.home_rounded,
-                color: currentIndex == 0 ? Colors.white : Colors.black,
+                tabs: const [
+                  GButton(
+                    icon: Icons.home_rounded,
+                    text: "Home",
+                  ),
+                  GButton(
+                    icon: Icons.newspaper,
+                    text: "Ilm",
+                  ),
+                  GButton(
+                    icon: Icons.add_circle_outline_rounded,
+                    text: "Post",
+                  ),
+                  GButton(
+                    icon: Icons.menu_book_rounded,
+                    text: "Bookmark",
+                  ),
+                  GButton(
+                    icon: Icons.settings,
+                    text: "Settings",
+                  ),
+                ],
               ),
             ),
-
-            // ilm page button
-            BottomNavigationBarItem(
-              label: "",
-              icon: Icon(
-                Icons.newspaper,
-                color: currentIndex == 1 ? Colors.white : Colors.black,
-              ),
-            ),
-
-            // create post button
-            BottomNavigationBarItem(
-              label: "",
-              icon: Icon(
-                Icons.add_circle_rounded,
-                color: currentIndex == 2 ? Colors.white : Colors.black,
-              ),
-            ),
-
-            // bookmark button
-            BottomNavigationBarItem(
-              label: "",
-              icon: Icon(
-                Icons.menu_book_rounded,
-                color: currentIndex == 3 ? Colors.white : Colors.black,
-              ),
-            ),
-
-            // setting
-            BottomNavigationBarItem(
-              label: "",
-              icon: Icon(
-                Icons.settings,
-                color: currentIndex == 4 ? Colors.white : Colors.black,
-              ),
-            ),
-          ],
+          ),
         ),
         extendBody: true,
       ),

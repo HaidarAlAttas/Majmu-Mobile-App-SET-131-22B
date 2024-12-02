@@ -21,7 +21,13 @@ class _CustomerServicePageState extends State<CustomerServicePage> {
       await launchUrl(emailUri, mode: LaunchMode.externalApplication);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Could not open email app")),
+        SnackBar(
+          content: Text(
+              "Could not launch email:\nIf the issue persists, please contact our admin through this email: sunnahorigin@gmail.com"),
+          backgroundColor: Colors.grey[900],
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 7),
+        ),
       );
     }
   }

@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -193,9 +194,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
               // Loading indicator
               _isLoading == true
                   ? Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.green,
-                      ),
+                      child: Platform.isIOS
+                          ? CupertinoActivityIndicator()
+                          : CircularProgressIndicator(
+                              color: Colors.green,
+                            ),
                     )
                   : SingleChildScrollView(
                       child: Column(
@@ -238,6 +241,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                     children: [
                                       // Cancel button
                                       GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
                                         // If clicked
                                         onTap: () {
                                           setState(() {
@@ -259,6 +263,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
                                       // Post button
                                       GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
                                         // If clicked
                                         onTap: postMessage,
                                         child: Container(
@@ -382,6 +387,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                                 top: 5,
                                                 right: 5,
                                                 child: GestureDetector(
+                                                  behavior:
+                                                      HitTestBehavior.opaque,
                                                   onTap: () => removeImage(i),
                                                   child: Container(
                                                     color: Colors.black
@@ -402,9 +409,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                 // Add photo button
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: screenWidth * 0.02,
-                                      vertical: screenHeight * 0.01),
+                                    horizontal: screenWidth * 0.02,
+                                    vertical: screenHeight * 0.01,
+                                  ),
                                   child: GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
                                     onTap: addImage,
                                     child: Container(
                                       height: screenHeight * 0.055,
@@ -466,7 +475,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 ),
               ),
               SizedBox(height: 20),
-              GoogleButton(),
+              GoogleButton(
+                registration: false,
+              ),
             ],
           ),
         ),

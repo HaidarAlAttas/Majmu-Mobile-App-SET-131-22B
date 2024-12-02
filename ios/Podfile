@@ -1,3 +1,4 @@
+
 platform :ios, '14.0'
 
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -11,21 +12,19 @@ project 'Runner', {
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcode_build_settings_path)
-    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+    raise "#{generated_xcode_build_settings_path} must exist. Run `flutter pub get` first."
   end
 
   File.foreach(generated_xcode_build_settings_path) do |line|
     matches = line.match(/FLUTTER_ROOT\=(.*)/)
     return matches[1].strip if matches
   end
-  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}."
 end
 
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
 flutter_ios_podfile_setup
-
-source 'https://github.com/CocoaPods/Specs.git'
 
 target 'Runner' do
   use_frameworks!
@@ -38,33 +37,32 @@ target 'Runner' do
   pod 'Firebase/Storage', :modular_headers => true
   pod 'Firebase/Firestore', :modular_headers => true
   pod 'Firebase/Messaging', :modular_headers => true
-  # pod 'Permission-Camera', :modular_headers => true
 
   target 'RunnerTests' do
     inherit! :search_paths
   end
 end
 
+
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
 
-    # Configure the permissions
     target.build_configurations.each do |config|
+      
+
+      # Ensure correct architectures
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
       config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
-      
-      # Permission settings
+
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
-        '$(inherited)',
-        
-        ## Enable only necessary permissions
-        'PERMISSION_CAMERA=1',
-        'PERMISSION_MICROPHONE=1',
-        'PERMISSION_PHOTOS=1',
-        'PERMISSION_MEDIA_LIBRARY=1',
-        
-        ## Uncomment or add additional permissions as needed
+          '$(inherited)',
+          'PERMISSION_CAMERA=1',
+          'PERMISSION_MICROPHONE=1',
+          'PERMISSION_PHOTOS=1',
+          'PERMISSION_MEDIA_LIBRARY=1',
+
+           ## Uncomment or add additional permissions as needed
         # 'PERMISSION_EVENTS=1',
         # 'PERMISSION_REMINDERS=1',
         # 'PERMISSION_CONTACTS=1',
@@ -75,7 +73,7 @@ post_install do |installer|
         # 'PERMISSION_APP_TRACKING_TRANSPARENCY=1',
         # 'PERMISSION_CRITICAL_ALERTS=1',
         # 'PERMISSION_SENSORS=1',
-      ]
+        ]
     end
   end
 end

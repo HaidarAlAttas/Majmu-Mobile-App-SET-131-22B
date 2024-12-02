@@ -51,7 +51,8 @@ class Navigator2Bookmark extends StatelessWidget {
               top: 0,
               bottom: 0,
               child: Container(
-                width: screenWidth * 0.40,  // Adjusted width for better proportion
+                width:
+                    screenWidth * 0.40, // Adjusted width for better proportion
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -74,8 +75,10 @@ class Navigator2Bookmark extends StatelessWidget {
                   onTap: () {
                     onUpdate(true, 0);
                   },
+                  behavior: HitTestBehavior.opaque,
                   child: Container(
-                    width: screenWidth * 0.30, // Consistent width for both buttons
+                    width:
+                        screenWidth * 0.30, // Consistent width for both buttons
                     alignment: Alignment.center,
                     child: Text(
                       "Content",
@@ -92,8 +95,10 @@ class Navigator2Bookmark extends StatelessWidget {
                   onTap: () {
                     onUpdate(false, 1);
                   },
+                  behavior: HitTestBehavior.opaque,
                   child: Container(
-                    width: screenWidth * 0.30, // Consistent width for both buttons
+                    width:
+                        screenWidth * 0.30, // Consistent width for both buttons
                     alignment: Alignment.center,
                     child: Text(
                       "Post",

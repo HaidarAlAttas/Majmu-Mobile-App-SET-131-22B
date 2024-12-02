@@ -222,6 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     // back button
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       // logical implementation here
                       onTap: () {
                         setState(() {
@@ -247,10 +248,9 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             "Back",
                             style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                              fontSize: ScreenWidth * 0.04
-                            ),
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: ScreenWidth * 0.04),
                           ),
                         ),
                       ),
@@ -258,6 +258,7 @@ class _LoginPageState extends State<LoginPage> {
 
                     // surf in button
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       // logical implementation here
                       onTap: () async {
                         //
@@ -304,10 +305,9 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             "Surf in",
                             style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                              fontSize: ScreenWidth * 0.04
-                            ),
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: ScreenWidth * 0.04),
                           ),
                         ),
                       ),
@@ -334,6 +334,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       // Forgot Password URL link button
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         // logical implementation for forgot password
                         onTap: () {
                           setState(() {
@@ -359,7 +360,9 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.only(
                   top: ScreenHeight * 0.04,
                 ),
-                child: GoogleButton(),
+                child: GoogleButton(
+                  registration: false,
+                ),
               ),
             ],
           ),

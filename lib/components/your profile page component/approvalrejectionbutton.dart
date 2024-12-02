@@ -69,6 +69,7 @@ class ApprovalRejectionButtons extends StatelessWidget {
                   onTap: () {
                     onUpdate?.call(true, 0);
                   },
+                  behavior: HitTestBehavior.opaque,
                   child: Container(
                     width: screenWidth * 0.43,
                     alignment: Alignment.center,
@@ -87,6 +88,7 @@ class ApprovalRejectionButtons extends StatelessWidget {
                   onTap: () {
                     onUpdate?.call(false, 1);
                   },
+                  behavior: HitTestBehavior.opaque,
                   child: Container(
                     width: screenWidth * 0.43,
                     alignment: Alignment.center,

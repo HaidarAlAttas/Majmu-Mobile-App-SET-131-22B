@@ -76,6 +76,7 @@ Future profileDialog(BuildContext context) {
                   children: [
                     // edit profile button
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         // Implement your logic here
                         Navigator.pushNamed(context, "/editprofilep");
@@ -138,6 +139,7 @@ Future profileDialog(BuildContext context) {
 
                     // your posts button
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         // Implement your logic here
                         Navigator.pushNamed(context, "/yourpostsp");
@@ -200,11 +202,80 @@ Future profileDialog(BuildContext context) {
 
                     // log out button
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         // Implement your logic here
 
-                        AuthService().signOut();
-                        Navigator.popAndPushNamed(context, "/staylogged");
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(
+                              'Logout',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            content: Container(
+                              height: screenHeight * 0.2,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    'Are you sure you want to logout?',
+                                    style: TextStyle(
+                                      fontSize: screenWidth * 0.03,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors
+                                              .grey[400], // Cancel button color
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Close dialog
+                                        },
+                                        child: Text(
+                                          'Cancel',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              Colors.red, // Logout button color
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          AuthService().signOut();
+                                          Navigator.popAndPushNamed(
+                                              context, "/staylogged");
+                                        },
+                                        child: Text(
+                                          'Logout',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
                       },
                       child: Container(
                         width: screenWidth * 0.7,

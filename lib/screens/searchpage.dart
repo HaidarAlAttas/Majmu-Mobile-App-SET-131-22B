@@ -47,6 +47,7 @@ class _SearchPageState extends State<SearchPage> {
           backgroundColor: Color.fromARGB(255, 245, 241, 222),
           title: Text("Search Page"),
           leading: GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -155,10 +156,10 @@ class _SearchPageState extends State<SearchPage> {
             if (isLoading)
               Center(
                 child: Platform.isIOS
-                              ? CupertinoActivityIndicator()
-                              : CircularProgressIndicator(
-                                  color: Colors.green,
-                                ),
+                    ? CupertinoActivityIndicator()
+                    : CircularProgressIndicator(
+                        color: Colors.green,
+                      ),
               ),
           ],
         ),

@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:majmu/services/auth_service.dart';
 
 class GoogleButton extends StatefulWidget {
-  const GoogleButton({super.key});
+  final bool registration;
+  const GoogleButton({
+    super.key,
+    required this.registration,
+  });
 
   @override
   State<GoogleButton> createState() => _GoogleButtonState();
@@ -22,7 +26,7 @@ class _GoogleButtonState extends State<GoogleButton> {
           onTap: () {
             AuthService().signInWithGoogle(context);
           },
-    
+
           // base for the google sign in button
           child: Container(
             height: ScreenHeight * 0.04,
@@ -40,7 +44,7 @@ class _GoogleButtonState extends State<GoogleButton> {
               ],
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 // google image
                 Image(
@@ -50,12 +54,17 @@ class _GoogleButtonState extends State<GoogleButton> {
                   height: ScreenHeight * 0.03,
                   width: ScreenWidth * 0.1,
                 ),
-    
+
                 // sign in with google text
-                Text(
-                  "Sign in with Google",
-                  style: TextStyle(
-                    fontSize: ScreenWidth * 0.036,
+                Padding(
+                  padding: EdgeInsets.only(left: ScreenWidth * 0.01),
+                  child: Text(
+                    widget.registration
+                        ? "Register with google"
+                        : "Sign in with Google",
+                    style: TextStyle(
+                      fontSize: ScreenWidth * 0.036,
+                    ),
                   ),
                 ),
               ],

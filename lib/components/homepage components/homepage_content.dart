@@ -179,13 +179,14 @@ class _HomepageContentState extends State<HomepageContent> {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 245, 241, 222),
-    
+
       // appbar
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-    
+
         // button to go back
         leading: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () {
             Navigator.pop(context);
           },
@@ -194,7 +195,7 @@ class _HomepageContentState extends State<HomepageContent> {
           ),
         ),
       ),
-    
+
       // content inside
       body: Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.03),
@@ -203,26 +204,26 @@ class _HomepageContentState extends State<HomepageContent> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final folders = snapshot.data!.prefixes;
-    
+
               // susunan content
               List<String> contentOrder = List.generate(30, (index) {
                 final contentNumber = index + 1;
                 return '${contentNumber.toString().padLeft(3, '0')}_ Juz $contentNumber';
               });
-    
+
               return ListView.builder(
                 itemCount: folders.length,
                 itemBuilder: (context, index) {
                   final folder = folders[index];
-    
+
                   return GestureDetector(
                     onTap: () async {
                       await openFolder(context, folder);
                     },
                     child: Container(
                       padding: EdgeInsets.all(16.0),
-                      margin: EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 16.0),
+                      margin:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8.0),
@@ -262,7 +263,7 @@ class _HomepageContentState extends State<HomepageContent> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
-    
+
             return Center(
               child: Platform.isIOS
                   ? CupertinoActivityIndicator()

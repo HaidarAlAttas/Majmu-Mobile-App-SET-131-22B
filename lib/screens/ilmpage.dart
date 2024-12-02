@@ -116,7 +116,9 @@ class _IlmPageState extends State<IlmPage> {
                 ),
               ),
               SizedBox(height: 20),
-              GoogleButton(),
+              GoogleButton(
+                registration: false,
+              ),
             ],
           ),
         ),

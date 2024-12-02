@@ -1,7 +1,10 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:majmu/components/posts%20components/postbaselines.dart';
 import 'package:majmu/components/your%20profile%20page%20component/approvalrejectionbutton.dart';
@@ -184,9 +187,11 @@ class _YourPostsPageState extends State<YourPostsPage> {
                             // Show loading indicator while waiting for data
                             else {
                               return Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.green,
-                                ),
+                                child: Platform.isIOS
+                                    ? CupertinoActivityIndicator()
+                                    : CircularProgressIndicator(
+                                        color: Colors.green,
+                                      ),
                               );
                             }
                           },
@@ -262,9 +267,11 @@ class _YourPostsPageState extends State<YourPostsPage> {
                             // Show loading indicator while waiting for data
                             else {
                               return Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.green,
-                                ),
+                                child: Platform.isIOS
+                                    ? CupertinoActivityIndicator()
+                                    : CircularProgressIndicator(
+                                        color: Colors.green,
+                                      ),
                               );
                             }
                           },
@@ -304,7 +311,9 @@ class _YourPostsPageState extends State<YourPostsPage> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  GoogleButton(),
+                  GoogleButton(
+                    registration: false,
+                  ),
                 ],
               ),
             ),

@@ -17,6 +17,7 @@ class ContentBookmarkButton extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Icon(
         isBookmarked ? Icons.bookmark : Icons.bookmark_add_outlined,

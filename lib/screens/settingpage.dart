@@ -16,8 +16,8 @@ Future settingsDialog(BuildContext context) {
       backgroundColor: Color.fromARGB(255, 36, 36, 36),
       content: Container(
         height: screenHeight <= screenWidth * 2
-            ? screenHeight * 0.5
-            : screenHeight * 0.45,
+            ? screenHeight * 0.45
+            : screenHeight * 0.40,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: Color.fromARGB(255, 36, 36, 36),
@@ -78,10 +78,9 @@ Future settingsDialog(BuildContext context) {
                     // Majmu' button
                     GestureDetector(
                       onTap: () {
-                        // Implement your logic here
-                        // demo
                         Navigator.pushNamed(context, "/biographiesnreferencep");
                       },
+                      behavior: HitTestBehavior.opaque,
                       child: Padding(
                         padding: EdgeInsets.all(screenWidth * 0.02),
                         child: Row(
@@ -142,6 +141,7 @@ Future settingsDialog(BuildContext context) {
                         Navigator.pop(context);
                         profileDialog(context);
                       },
+                      behavior: HitTestBehavior.opaque,
                       child: Container(
                         width: screenWidth * 0.7,
                         decoration: BoxDecoration(
@@ -201,8 +201,8 @@ Future settingsDialog(BuildContext context) {
             // Storage and data, theme, customer service button container
             Container(
               height: screenHeight <= screenWidth * 2
-                  ? screenHeight * 0.18
-                  : screenHeight * 0.17,
+                  ? screenHeight * 0.13
+                  : screenHeight * 0.12,
               width: screenWidth * 0.74,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 85, 84, 84),
@@ -216,6 +216,7 @@ Future settingsDialog(BuildContext context) {
                       // Implement your logic here
                       Navigator.pushNamed(context, "/storagep");
                     },
+                    behavior: HitTestBehavior.opaque,
                     child: Container(
                       width: screenWidth * 0.7,
                       height: screenHeight <= screenWidth * 2
@@ -271,72 +272,74 @@ Future settingsDialog(BuildContext context) {
                     ),
                   ),
                   // Theme button
-                  GestureDetector(
-                    onTap: () {
-                      // Implement your logic here
-                      Navigator.pushNamed(context, "/themep");
-                    },
-                    child: Container(
-                      width: screenWidth * 0.7,
-                      height: screenHeight <= screenWidth * 2
-                          ? screenHeight * 0.06
-                          : screenHeight * 0.055,
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     // Implement your logic here
+                  //     Navigator.pushNamed(context, "/themep");
+                  //   },
+                  //   behavior: HitTestBehavior.opaque,
+                  //   child: Container(
+                  //     width: screenWidth * 0.7,
+                  //     height: screenHeight <= screenWidth * 2
+                  //         ? screenHeight * 0.06
+                  //         : screenHeight * 0.055,
 
-                      decoration: BoxDecoration(
-                        // To create a line on top of theme button
-                        border: Border(
-                          bottom: BorderSide(width: 2, color: Colors.grey),
-                        ),
-                      ),
-                      // Theme button icon and text
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: screenWidth * 0.05,
-                                right: screenWidth * 0.017,
-                                top: screenWidth * 0.015,
-                                bottom: screenWidth * 0.01),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                // Theme button icon
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      right: screenWidth * 0.02),
-                                  child: Icon(
-                                    Icons.format_paint_rounded,
-                                    size: screenWidth * 0.08,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                // Theme button text
-                                Text(
-                                  "Theme",
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          // Icon for next
-                          Icon(
-                            Icons.navigate_next_rounded,
-                            size: screenWidth * 0.08,
-                            color: Colors.grey,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  //     decoration: BoxDecoration(
+                  //       // To create a line on top of theme button
+                  //       border: Border(
+                  //         bottom: BorderSide(width: 2, color: Colors.grey),
+                  //       ),
+                  //     ),
+                  //     // Theme button icon and text
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //       children: [
+                  //         Padding(
+                  //           padding: EdgeInsets.only(
+                  //               left: screenWidth * 0.05,
+                  //               right: screenWidth * 0.017,
+                  //               top: screenWidth * 0.015,
+                  //               bottom: screenWidth * 0.01),
+                  //           child: Row(
+                  //             mainAxisAlignment: MainAxisAlignment.start,
+                  //             children: [
+                  //               // Theme button icon
+                  //               Padding(
+                  //                 padding: EdgeInsets.only(
+                  //                     right: screenWidth * 0.02),
+                  //                 child: Icon(
+                  //                   Icons.format_paint_rounded,
+                  //                   size: screenWidth * 0.08,
+                  //                   color: Colors.white,
+                  //                 ),
+                  //               ),
+                  //               // Theme button text
+                  //               Text(
+                  //                 "Theme",
+                  //                 style: TextStyle(
+                  //                   color: Colors.grey,
+                  //                 ),
+                  //               )
+                  //             ],
+                  //           ),
+                  //         ),
+                  //         // Icon for next
+                  //         Icon(
+                  //           Icons.navigate_next_rounded,
+                  //           size: screenWidth * 0.08,
+                  //           color: Colors.grey,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   // Customer Service
                   GestureDetector(
                     onTap: () {
                       // Implement your logic here
                       Navigator.pushNamed(context, "/customerservp");
                     },
+                    behavior: HitTestBehavior.opaque,
                     child: Container(
                       width: screenWidth * 0.7,
                       height: screenHeight <= screenWidth * 2

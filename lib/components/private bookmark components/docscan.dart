@@ -31,159 +31,186 @@ class _DocScanButtonState extends State<DocScanButton> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     // Add new bookmarks button
-    return FloatingActionButton(
-      // show a popup
-      onPressed: () => showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        gradient: LinearGradient(
+          colors: [
+            Colors.blue,
+            Colors.green,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.topRight,
+        ),
+      ),
+      child: FloatingActionButton(
+        // show a popup
+        onPressed: () => showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
 
-            // title
-            title: Text('Add New Bookmarks'),
-            content: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.01,
-                vertical: screenHeight * 0.01,
-              ),
+              // title
+              title: Text('Add New Bookmarks'),
+              content: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.01,
+                  vertical: screenHeight * 0.01,
+                ),
 
-              // content inside dialog box
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // TextField for file name
-                  Container(
-                    width: screenWidth * 0.8,
-                    child: TextField(
-                      onChanged: (value) => fileName = value,
-                      maxLength: 50,
-                      decoration: InputDecoration(
-                        labelText: 'File Name',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 98, 147, 101)),
+                // content inside dialog box
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // TextField for file name
+                    Container(
+                      width: screenWidth * 0.8,
+                      child: TextField(
+                        onChanged: (value) => fileName = value,
+                        maxLength: 50,
+                        decoration: InputDecoration(
+                          labelText: 'File Name',
+                          labelStyle: TextStyle(color: Colors.grey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 98, 147, 101)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 98, 147, 101),
+                                width: 2),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: EdgeInsets.all(12),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 98, 147, 101),
-                              width: 2),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: EdgeInsets.all(12),
                       ),
                     ),
-                  ),
 
-                  SizedBox(height: screenHeight * 0.012),
+                    SizedBox(height: screenHeight * 0.012),
 
-                  // Multi-line TextField for file description
-                  Container(
-                    width: screenWidth * 0.8,
-                    child: TextField(
-                      onChanged: (value) => description = value,
-                      maxLength: 400,
-                      decoration: InputDecoration(
-                        labelText: 'Descriptions',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 98, 147, 101)),
+                    // Multi-line TextField for file description
+                    Container(
+                      width: screenWidth * 0.8,
+                      child: TextField(
+                        onChanged: (value) => description = value,
+                        maxLength: 400,
+                        decoration: InputDecoration(
+                          labelText: 'Descriptions',
+                          labelStyle: TextStyle(color: Colors.grey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 98, 147, 101)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 98, 147, 101),
+                                width: 2),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: EdgeInsets.all(12),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 98, 147, 101),
-                              width: 2),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: EdgeInsets.all(12),
+                        maxLines: 3,
+                        keyboardType: TextInputType.multiline,
                       ),
-                      maxLines: 3,
-                      keyboardType: TextInputType.multiline,
                     ),
-                  ),
 
-                  SizedBox(height: screenHeight * 0.012),
+                    SizedBox(height: screenHeight * 0.012),
 
-                  // Row for buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Cancel button
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close dialog
-                        },
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(color: Colors.red),
+                    // Row for buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Cancel button
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close dialog
+                          },
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(color: Colors.red),
+                          ),
                         ),
-                      ),
 
-                      // Scan File button
-                      ElevatedButton(
-                        onPressed: () {
-                          requestCameraPermission().then((granted) {
-                            if (granted) {
-                              // If granted, proceed to scan
-
-                              //
-
-                              scanAndSavePDF();
-                              // Close the Dialog after the process is finished
-                              Navigator.of(context).pop();
-                            } else {
-                              // Handle the case when permission is denied
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content:
-                                      const Text('Camera permission denied.'),
-                                  duration: const Duration(seconds: 2),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          });
-                        },
-                        child: const Text(
-                          'Scan File',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 98, 147, 101),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 10.0),
-                          shape: RoundedRectangleBorder(
+                        // Scan File button
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color.fromARGB(255, 98, 147, 101), // Greenish
+                                Color.fromARGB(255, 67, 184, 196), // Bluish
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
-                          elevation: 5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                          child: ElevatedButton(
+                            onPressed: () {
+                              requestCameraPermission().then((granted) {
+                                if (granted) {
+                                  // If granted, proceed to scan
+                                  scanAndSavePDF();
+                                  // Close the Dialog after the process is finished
+                                  Navigator.of(context).pop();
+                                } else {
+                                  // Handle the case when permission is denied
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
+                                          'Camera permission denied.'),
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: screenWidth * 0.02,
+                                vertical: screenHeight * 0.01,
+                              ),
+                              backgroundColor: Colors
+                                  .transparent, // Transparent to show gradient
+                              shadowColor: Colors
+                                  .transparent, // Prevent shadows from hiding the gradient
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              elevation: 5,
+                            ),
+                            child: const Text(
+                              'Scan File',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      ),
-      backgroundColor: const Color.fromARGB(255, 98, 147, 101),
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.circular(8.0), // Square shape with rounded edges
-      ),
-      child: Icon(
-        Icons.document_scanner_rounded, // Icon resembling "add document"
-        color: Colors.white,
-        size: screenWidth * 0.08,
+            );
+          },
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(8.0), // Square shape with rounded edges
+        ),
+        child: Icon(
+          Icons.document_scanner_rounded, // Icon resembling "add document"
+          color: Colors.white,
+          size: screenWidth * 0.08,
+        ),
       ),
     );
   }
@@ -266,17 +293,17 @@ class _DocScanButtonState extends State<DocScanButton> {
           });
         } else {
           print("Please scan at least one document.");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Please scan at least one document."),
+              duration: Duration(seconds: 2),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       } catch (e) {
         // Handle exceptions
         print("An error occurred while saving the PDF.");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("You need to fill in the name and description field"),
-            duration: Duration(seconds: 2),
-            backgroundColor: Colors.red,
-          ),
-        );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

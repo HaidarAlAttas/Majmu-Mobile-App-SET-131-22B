@@ -52,7 +52,8 @@ class NavigatorBookmark extends StatelessWidget {
               top: 0,
               bottom: 0,
               child: Container(
-                width: screenWidth * 0.47,  // Adjusted width for better proportion
+                width:
+                    screenWidth * 0.47, // Adjusted width for better proportion
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [

@@ -104,6 +104,7 @@ class _ContentViewerState extends State<ContentViewer> {
         backgroundColor: Colors.white,
         // back button
         leading: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () {
             Navigator.pop(context);
           },

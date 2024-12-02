@@ -19,7 +19,6 @@ import 'package:majmu/screens/createpostpage.dart';
 import 'package:majmu/screens/homepage.dart';
 import 'package:majmu/screens/ilmpage.dart';
 import 'package:majmu/screens/profile/editprofilepage.dart';
-import 'package:majmu/screens/profile/logoutpage.dart';
 import 'package:majmu/screens/profile/yourprofile/yourpostspage.dart';
 import 'package:majmu/screens/searchpage.dart';
 import 'package:majmu/screens/settings/accountpage.dart';
@@ -85,7 +84,6 @@ class MyApp extends StatelessWidget {
 
         // profile page route
         "/editprofilep": (context) => const EditProfilePage(),
-        "/logoutp": (context) => const LogoutPage(),
         "/yourpostsp": (context) => const YourPostsPage(),
       },
 

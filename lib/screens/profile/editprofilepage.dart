@@ -406,7 +406,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       // fetch the data from firebase firestore "user-cred" collection
       body: isLogged
           ? Container(
-            child: StreamBuilder<DocumentSnapshot>(
+              child: StreamBuilder<DocumentSnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection("user-cred")
                     .doc(currentUser.uid)
@@ -418,7 +418,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     return ListView(
                       children: [
                         SizedBox(height: screenHeight * 0.04),
-            
+
                         // profile text
                         Center(
                           child: Text(
@@ -429,9 +429,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                           ),
                         ),
-            
+
                         SizedBox(height: screenHeight * 0.02),
-            
+
                         // profile picture
                         UserPfp(
                           // component
@@ -440,7 +440,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   "baseProfilePicture.png"), // Handle empty profile picture case
                           height: screenHeight * 0.2,
                           width: screenWidth * 0.2,
-            
+
                           onTap: () {
                             showDialog(
                               context: context,
@@ -449,11 +449,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   contentPadding: EdgeInsets.all(16),
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       // Close the dialog
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
                                         children: [
                                           GestureDetector(
                                             onTap: () {
@@ -469,7 +471,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                         ],
                                       ),
                                       SizedBox(height: 16),
-            
+
                                       // View profile picture
                                       GestureDetector(
                                         onTap: () {
@@ -500,7 +502,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                         ),
                                       ),
                                       SizedBox(height: 16),
-            
+
                                       // Change profile picture
                                       GestureDetector(
                                         onTap: () {
@@ -527,36 +529,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             );
                           },
                         ),
-            
+
                         SizedBox(height: screenHeight * 0.04),
-            
+
                         // username
                         MyTextBox(
-                          text: userData["username"],
+                          text: userData["username"] ?? "",
                           sectionName: "Username",
                           onTap: () => editField('username'),
                         ),
-            
+
                         SizedBox(height: screenHeight * 0.04),
-            
+
                         // bio
                         MyTextBox(
-                          text: userData["bio"],
+                          text: userData["bio"] ?? "",
                           sectionName: "Bio",
                           onTap: () => editField('bio'),
                         ),
-            
+
                         SizedBox(height: screenHeight * 0.04),
-            
+
                         // email
                         MyTextBox(
-                          text: userData["email"],
+                          text: userData["email"] ?? "",
                           sectionName: "Email",
                           onTap: () {},
                         ),
 
                         SizedBox(height: screenHeight * 0.04),
-            
+
                         // google sign in button
                       ],
                     );
@@ -577,7 +579,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   }
                 },
               ),
-          )
+            )
           : Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -593,7 +595,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                     ),
                   ),
-                  GoogleButton(),
+                  GoogleButton(
+                    registration: false,
+                  ),
                 ],
               ),
             ),

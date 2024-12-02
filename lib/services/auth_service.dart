@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,10 +33,12 @@ class AuthService {
     showDialog(
       context: context,
       barrierDismissible: false, // Prevent dismissal of the dialog
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(
-          color: Colors.green,
-        ),
+      builder: (context) => Center(
+        child: Platform.isIOS
+            ? CupertinoActivityIndicator()
+            : CircularProgressIndicator(
+                color: Colors.green,
+              ),
       ),
     );
 
@@ -162,10 +165,12 @@ class AuthService {
   }) async {
     showDialog(
       context: context,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(
-          color: Colors.green,
-        ),
+      builder: (context) => Center(
+        child: Platform.isIOS
+            ? CupertinoActivityIndicator()
+            : CircularProgressIndicator(
+                color: Colors.green,
+              ),
       ),
     );
 
@@ -179,7 +184,12 @@ class AuthService {
 
       await Future.delayed(const Duration(seconds: 1));
 
-      Navigator.pushNamed(context, "/home");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StayLogged(),
+        ),
+      );
 
       return null;
     } on FirebaseAuthException catch (e) {
@@ -206,10 +216,12 @@ class AuthService {
   Future<User?> signInWithGoogle(BuildContext context) async {
     showDialog(
       context: context,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(
-          color: Colors.green,
-        ),
+      builder: (context) => Center(
+        child: Platform.isIOS
+            ? CupertinoActivityIndicator()
+            : CircularProgressIndicator(
+                color: Colors.green,
+              ),
       ),
     );
 
@@ -305,7 +317,12 @@ class AuthService {
 
         if (context.mounted) await Future.delayed(const Duration(seconds: 1));
         Navigator.pop(context);
-        Navigator.pushNamed(context, "/home");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StayLogged(),
+          ),
+        );
 
         return user;
       } else {
@@ -313,7 +330,6 @@ class AuthService {
         return null;
       }
     } catch (e) {
-      Navigator.pop(context);
       print("Error during Google Sign-In: $e");
       return null;
     }
@@ -339,10 +355,12 @@ class AuthService {
   }) async {
     showDialog(
       context: context,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(
-          color: Colors.green,
-        ),
+      builder: (context) => Center(
+        child: Platform.isIOS
+            ? CupertinoActivityIndicator()
+            : CircularProgressIndicator(
+                color: Colors.green,
+              ),
       ),
     );
 
@@ -407,10 +425,13 @@ class StayLogged extends StatelessWidget {
               future: checkIfUserIsBanned(currentUser),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                      child: CircularProgressIndicator(
-                    color: Colors.green,
-                  ));
+                  return Center(
+                    child: Platform.isIOS
+                        ? CupertinoActivityIndicator()
+                        : CircularProgressIndicator(
+                            color: Colors.green,
+                          ),
+                  );
                 }
 
                 if (snapshot.hasError) {
@@ -430,7 +451,7 @@ class StayLogged extends StatelessWidget {
               },
             );
           } else {
-            return const RegisterPage();
+            return RegisterPage();
           }
         },
       ),

@@ -56,9 +56,11 @@ class _BPublicPageState extends State<BPublicPage> {
       barrierDismissible: false, // Prevent dismissing the dialog manually
       builder: (BuildContext context) {
         return Center(
-          child: CircularProgressIndicator(
-            color: Colors.green,
-          ), // Loading spinner
+          child: Platform.isIOS
+              ? CupertinoActivityIndicator()
+              : CircularProgressIndicator(
+                  color: Colors.green,
+                ), // Loading spinner
         );
       },
     );
@@ -157,9 +159,11 @@ class _BPublicPageState extends State<BPublicPage> {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
                                       return Center(
-                                        child: CircularProgressIndicator(
-                                          color: Colors.green,
-                                        ),
+                                        child: Platform.isIOS
+                                            ? CupertinoActivityIndicator()
+                                            : CircularProgressIndicator(
+                                                color: Colors.green,
+                                              ),
                                       ); // Loading state
                                     }
 
@@ -269,9 +273,11 @@ class _BPublicPageState extends State<BPublicPage> {
                                       return Center(
                                         child: Platform.isIOS
                                             ? CupertinoActivityIndicator()
-                                            : CircularProgressIndicator(
-                                                color: Colors.green,
-                                              ),
+                                            : Platform.isIOS
+                                                ? CupertinoActivityIndicator()
+                                                : CircularProgressIndicator(
+                                                    color: Colors.green,
+                                                  ),
                                       );
                                     }
 
@@ -316,9 +322,11 @@ class _BPublicPageState extends State<BPublicPage> {
                                               return Center(
                                                 child: Platform.isIOS
                                                     ? CupertinoActivityIndicator()
-                                                    : CircularProgressIndicator(
-                                                        color: Colors.green,
-                                                      ),
+                                                    : Platform.isIOS
+                                                        ? CupertinoActivityIndicator()
+                                                        : CircularProgressIndicator(
+                                                            color: Colors.green,
+                                                          ),
                                               );
                                             }
 
