@@ -13,6 +13,7 @@ import 'package:image/image.dart' as img;
 import 'package:majmu/screens/auth/registerpage.dart';
 import 'package:majmu/screens/bannedpage.dart';
 import 'package:majmu/screens/homepage.dart';
+import 'package:majmu/screens/tutorialpage.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AuthService {
@@ -29,34 +30,32 @@ class AuthService {
     required BuildContext context,
     required File profilePictureFile,
   }) async {
-    // Show loading dialog
     showDialog(
       context: context,
-      barrierDismissible: false, // Prevent dismissal of the dialog
+      barrierDismissible: false,
       builder: (context) => Center(
         child: Platform.isIOS
             ? CupertinoActivityIndicator()
-            : CircularProgressIndicator(
-                color: Colors.green,
-              ),
+            : CircularProgressIndicator(color: Colors.green),
       ),
     );
 
     try {
-      // Create user with email and password
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
       String uid = userCredential.user!.uid;
 
-      // Close the loading dialog after the user is registered
       if (context.mounted) Navigator.pop(context);
 
-      // Navigate to the homepage right after user registration
-      Navigator.pushNamed(context, "/home");
-
-      // Start uploading the profile picture and saving user info in Firestore in the background
+      // Start uploading profile picture and saving user info
       _saveUserProfile(profilePictureFile, uid, email);
+
+      // Navigate to TutorialPage after registration
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => TutorialPage()),
+      );
 
       return null;
     } on FirebaseAuthException catch (e) {
@@ -66,12 +65,10 @@ class AuthService {
       } else if (e.code == 'email-already-in-use') {
         return 'The email has already been taken';
       } else {
-        return 'An error occurred: Email doesnt exist';
+        return 'An error occurred: Email doesn’t exist';
       }
-
-      // if the error was not from firebaseAuth
-      // tambah click button so that boleh go to email to email teh admin about the problem
     } catch (e) {
+      Navigator.pop(context);
       return 'An unexpected error occurred: please contact the Admin by clicking here';
     }
   }
@@ -219,9 +216,7 @@ class AuthService {
       builder: (context) => Center(
         child: Platform.isIOS
             ? CupertinoActivityIndicator()
-            : CircularProgressIndicator(
-                color: Colors.green,
-              ),
+            : CircularProgressIndicator(color: Colors.green),
       ),
     );
 
@@ -240,39 +235,35 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      // to fetch user credentials from firebase auth
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       User? user = userCredential.user;
 
-      //
       if (user != null) {
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('user-cred')
             .doc(user.uid)
             .get();
 
-        Future<File> assetImageToFile(String assetPath) async {
-          ByteData byteData = await rootBundle.load(assetPath);
-          Uint8List uint8List = byteData.buffer.asUint8List();
-          Directory tempDir = await getTemporaryDirectory();
-          File tempFile = File('${tempDir.path}/temp_profile_picture.jpg');
-          await tempFile.writeAsBytes(uint8List);
-          return tempFile;
-        }
-
-        File profilePictureFile =
-            await assetImageToFile('assets/baseProfilePicture.png');
-
-        String profilePictureUrl =
-            await uploadFileToNestedFolder(profilePictureFile, user.uid);
-
         if (!userDoc.exists) {
-          // Reference to the user's document
+          Future<File> assetImageToFile(String assetPath) async {
+            ByteData byteData = await rootBundle.load(assetPath);
+            Uint8List uint8List = byteData.buffer.asUint8List();
+            Directory tempDir = await getTemporaryDirectory();
+            File tempFile = File('${tempDir.path}/temp_profile_picture.jpg');
+            await tempFile.writeAsBytes(uint8List);
+            return tempFile;
+          }
+
+          // Create new user document
+          File profilePictureFile =
+              await assetImageToFile('assets/baseProfilePicture.png');
+          String profilePictureUrl =
+              await uploadFileToNestedFolder(profilePictureFile, user.uid);
+
           DocumentReference userDocRef =
               FirebaseFirestore.instance.collection('user-cred').doc(user.uid);
 
-          // Create the user document with basic fields
           await userDocRef.set({
             "username": user.email!.split("@")[0],
             "email": user.email!,
@@ -284,7 +275,7 @@ class AuthService {
             "postPublicBookmark": [],
           });
 
-          // Add empty sub-collections for bookmarks and delete the initialList right after
+          // Add empty sub-collections
           await userDocRef
               .collection("contentsPublicBookmark")
               .doc("initialList")
@@ -298,7 +289,6 @@ class AuthService {
               .collection("postPublicBookmark")
               .doc("initialList")
               .set({});
-
           await userDocRef
               .collection("postPublicBookmark")
               .doc("initialList")
@@ -308,21 +298,24 @@ class AuthService {
               .collection("privateBookmarks")
               .doc("initialList")
               .set({});
-
           await userDocRef
               .collection("privateBookmarks")
               .doc("initialList")
               .delete();
+
+          // Navigate to TutorialPage
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => TutorialPage()),
+          );
+        } else {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => StayLogged()),
+          );
         }
-
-        if (context.mounted) await Future.delayed(const Duration(seconds: 1));
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StayLogged(),
-          ),
-        );
 
         return user;
       } else {
@@ -330,7 +323,6 @@ class AuthService {
         return null;
       }
     } catch (e) {
-      Navigator.pop(context);
       print("Error during Google Sign-In: $e");
       return null;
     }

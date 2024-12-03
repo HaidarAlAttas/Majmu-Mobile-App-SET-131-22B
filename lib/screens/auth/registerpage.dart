@@ -429,18 +429,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       duration: Duration(seconds: 3),
                                     ),
                                   );
-                                } else if (mounted) {
-                                  // Display welcome message in a SnackBar
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          "Account registered: Welcome to Majmu x PAID app, to unlock the full feature, please link your account with a gmail account ;)"),
-                                      backgroundColor: Colors.green,
-                                      behavior: SnackBarBehavior.floating,
-                                      duration: Duration(seconds: 10),
-                                    ),
-                                  );
-                                }
+                                } else if (mounted) {}
                               }
                             } else {
                               setState(() {
