@@ -330,6 +330,7 @@ class AuthService {
         return null;
       }
     } catch (e) {
+      Navigator.pop(context);
       print("Error during Google Sign-In: $e");
       return null;
     }

@@ -36,6 +36,20 @@ class _StorageAndDataPageState extends State<StorageAndDataPage> {
     for (var doc in postDocs.docs) {
       await doc.reference.delete();
     }
+
+    // Additionally, remove the currentUser UID from the "bookmarkedBy" array in the "user-posts" collection
+    CollectionReference userPosts =
+        FirebaseFirestore.instance.collection("user-posts");
+
+    // Fetch all posts where the current user's UID might exist in the "bookmarkedBy" array
+    QuerySnapshot postsWithBookmarks =
+        await userPosts.where("bookmarkedBy", arrayContains: currentUser).get();
+
+    for (var postDoc in postsWithBookmarks.docs) {
+      await postDoc.reference.update({
+        "bookmarkedBy": FieldValue.arrayRemove([currentUser]),
+      });
+    }
   }
 
   @override
