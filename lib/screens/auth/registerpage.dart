@@ -526,27 +526,27 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 // register with google
-                Padding(
-                  padding: EdgeInsets.only(top: ScreenHeight * 0.02),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "OR",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: ScreenWidth * 0.037),
-                      ),
-                      SizedBox(
-                        height: ScreenHeight * 0.015,
-                      ),
-                      GoogleButton(
-                        registration: true,
-                      ),
-                    ],
-                  ),
-                ),
+                // Padding(
+                //   padding: EdgeInsets.only(top: ScreenHeight * 0.02),
+                //   child: Column(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Text(
+                //         "OR",
+                //         style: TextStyle(
+                //             fontWeight: FontWeight.bold,
+                //             color: Colors.white,
+                //             fontSize: ScreenWidth * 0.037),
+                //       ),
+                //       SizedBox(
+                //         height: ScreenHeight * 0.015,
+                //       ),
+                //       GoogleButton(
+                //         registration: true,
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ),

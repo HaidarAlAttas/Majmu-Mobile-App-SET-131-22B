@@ -211,6 +211,7 @@ class AuthService {
 
   // Google Sign-In method
   Future<User?> signInWithGoogle(BuildContext context) async {
+    // Show the loading dialog
     showDialog(
       context: context,
       builder: (context) => Center(
@@ -223,7 +224,7 @@ class AuthService {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        Navigator.pop(context);
+        Navigator.pop(context); // Close dialog if user cancels the sign-in
         return null;
       }
 
@@ -240,12 +241,27 @@ class AuthService {
       User? user = userCredential.user;
 
       if (user != null) {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        // Check if email is not null before proceeding
+        if (user.email == null) {
+          print("Error: User email is null.");
+          Navigator.pop(context); // Close dialog before exiting
+          return null;
+        }
+
+        // Query Firestore to check for existing email
+        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
             .collection('user-cred')
-            .doc(user.uid)
+            .where('email', isEqualTo: user.email)
             .get();
 
-        if (!userDoc.exists) {
+        print("Query Result Count: ${querySnapshot.docs.length}");
+        print("User Email: ${user.email}");
+
+        if (querySnapshot.docs.isEmpty) {
+          // Close the dialog before proceeding with user setup
+          Navigator.pop(context);
+
+          // Convert asset image to file
           Future<File> assetImageToFile(String assetPath) async {
             ByteData byteData = await rootBundle.load(assetPath);
             Uint8List uint8List = byteData.buffer.asUint8List();
@@ -255,17 +271,19 @@ class AuthService {
             return tempFile;
           }
 
-          // Create new user document
+          // Upload profile picture
           File profilePictureFile =
               await assetImageToFile('assets/baseProfilePicture.png');
           String profilePictureUrl =
               await uploadFileToNestedFolder(profilePictureFile, user.uid);
 
+          // Create new user document
           DocumentReference userDocRef =
               FirebaseFirestore.instance.collection('user-cred').doc(user.uid);
 
           await userDocRef.set({
-            "username": user.email!.split("@")[0],
+            "username":
+                user.email!.split("@")[0], // Ensure `email` is not null here
             "email": user.email!,
             "profilePicture": profilePictureUrl,
             "bio": "",
@@ -304,26 +322,33 @@ class AuthService {
               .delete();
 
           // Navigate to TutorialPage
-          Navigator.pop(context);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => TutorialPage()),
-          );
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => TutorialPage()),
+            );
+          }
         } else {
+          // Close the dialog if user exists in the collection
           Navigator.pop(context);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => StayLogged()),
-          );
+
+          // Navigate to StayLogged
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => StayLogged()),
+            );
+          }
         }
 
         return user;
       } else {
-        Navigator.pop(context);
+        Navigator.pop(context); // Close dialog
         return null;
       }
     } catch (e) {
-      print("Error during Google Sign-In: $e");
+      print(
+          "Error during Google Sign-In: $e"); // Ensure dialog is closed on error
       return null;
     }
   }
