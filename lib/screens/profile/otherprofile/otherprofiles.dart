@@ -159,8 +159,8 @@ class _OtherProfilesState extends State<OtherProfiles> {
                                             [])
                                         .cast<String>(),
                                 isChecked: data['isChecked'] ?? false,
-                                images: (data['images'] as List<dynamic>? ?? [])
-                                    .cast<String>(),
+                                images: List<String>.from(
+                              data["Images"] ?? []),
                                 settingButton: false,
                               );
                             }).toList(),

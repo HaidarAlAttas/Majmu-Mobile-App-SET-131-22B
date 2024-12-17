@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:path_provider/path_provider.dart';
@@ -125,9 +126,11 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
       ),
       body: _pdfController == null
           ? Center(
-              child: CircularProgressIndicator(
-                color: Colors.green,
-              ),
+              child: Platform.isAndroid
+                  ? CircularProgressIndicator(
+                      color: Colors.green,
+                    )
+                  : CupertinoActivityIndicator(),
             )
           : PdfView(controller: _pdfController!),
     );

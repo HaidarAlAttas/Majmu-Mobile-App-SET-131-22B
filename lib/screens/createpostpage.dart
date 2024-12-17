@@ -96,6 +96,18 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   // Function to upload post with images to Firebase Storage and Firestore
   Future<void> postMessage() async {
+    if (_post.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Please insert your caption"),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return; // Stop the function execution here
+    }
+
     if (_post.text.isNotEmpty || _images.isNotEmpty) {
       setState(() {
         _isLoading = true; // Show loading indicator
@@ -123,9 +135,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
           .doc(currentUser.uid)
           .get();
 
-      // Optional: Add a delay to see the loading indicator
-      await Future.delayed(Duration(seconds: 2));
-
       // Save post data to Firestore
       await FirebaseFirestore.instance.collection("user-posts").add({
         "userUid": currentUser.uid,
@@ -152,16 +161,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
         SnackBar(
           content: Text("Post is under review"),
           backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 3),
-        ),
-      );
-    }
-    if (_post.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Please insert your caption"),
-          backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           duration: Duration(seconds: 3),
         ),
