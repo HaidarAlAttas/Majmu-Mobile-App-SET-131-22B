@@ -1,6 +1,13 @@
 # Majmu' Mobile App
 
-A new Flutter project.
+Final year project that focuses on spreading Islamic knowledge. 
+
+This project has been finished but are still open to any maintenance work and updates.
+
+to consult more about this project feel free to contact us at:-
+
+sunnahorigin@gmail.com
+syedhaidar04@gmail.com
 
 ## Getting Started
 
